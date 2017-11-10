@@ -52,15 +52,16 @@ def dijkstra(graph, start):
  
         # for each neighbor of v not in S
         for neighbor in set(graph.neighbors[v]) - S:
-            new_path = delta[v] + graph.edges[v, neighbor].distance
+            edge = graph.edges[v, neighbor]
+            new_path = delta[v] + edge.distance
  
             # is the new path from neighbor through 
             if new_path < delta[neighbor]:
                 # since it's optimal, update the shortest path for neighbor
                 delta[neighbor] = new_path
  
-                # set the previous vertex of neighbor to v
-                previous[neighbor] = v
+                # set the previous edge of neighbor to v
+                previous[neighbor] = edge
         S.add(v)
 
     return delta, previous
@@ -74,10 +75,14 @@ def shortest_path(graph, start, end):
     
     path = []
     vertex = end
- 
-    while vertex is not None:
-        path.append(vertex)
-        vertex = previous[vertex]
+
+    if vertex not in previous:
+        return path
+
+    edge = previous[vertex]
+    while edge:
+        path.append(edge)
+        edge = previous[edge.from_vertex]
  
     path.reverse()
     return path

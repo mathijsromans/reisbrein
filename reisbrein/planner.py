@@ -1,27 +1,49 @@
+from copy import deepcopy
 from .graph import Graph, shortest_path, Edge
+from.segment import Segment, TransportType
 
 
 class Planner:
     def __init__(self):
-        self.graph = self.get_test_graph()
+        pass
 
     def solve(self, start, end):
-        return shortest_path(self.graph, start, end)
+        edges = self.create_test_edges()
+        graphs = []
+        graphs.append(self.create_graph(edges))
+        graphs.append(self.create_graph(self.exclude(edges, TransportType.BIKE)))
+        graphs.append(self.create_graph(self.exclude(edges, TransportType.TRAIN)))
+        return [shortest_path(g, start, end) for g in graphs]
 
     @staticmethod
-    def get_test_graph():
-        G = Graph()
-        G.add_vertex('a')
-        G.add_vertex('b')
-        G.add_vertex('c')
-        G.add_vertex('d')
-        G.add_vertex('e')
+    def exclude(edges, transport_type):
+        return [e for e in edges if e.transport_type != transport_type ]
 
-        G.add_edge(Edge('a', 'b', 2))
-        G.add_edge(Edge('a', 'c', 8))
-        G.add_edge(Edge('a', 'd', 5))
-        G.add_edge(Edge('b', 'c', 1))
-        G.add_edge(Edge('c', 'e', 3))
-        G.add_edge(Edge('d', 'e', 4))
+
+    @staticmethod
+    def create_test_edges():
+        edges = [Segment(TransportType.BIKE, 'a', 'b', 2),
+                 Segment(TransportType.BIKE, 'a', 'c', 8),
+                 Segment(TransportType.TRAIN, 'a', 'd', 5),
+                 Segment(TransportType.TRAIN, 'b', 'c', 1),
+                 Segment(TransportType.TRAIN, 'c', 'e', 3),
+                 Segment(TransportType.TRAIN, 'd', 'e', 4)]
+        return edges
+
+    @staticmethod
+    def create_graph(edges):
+
+        vertices = set()
+        for e in edges:
+            vertices.add(e.from_vertex)
+            vertices.add(e.to_vertex)
+
+        G = Graph()
+
+        for v in vertices:
+            G.add_vertex(v)
+
+        for e in edges:
+            G.add_edge(e)
 
         return G

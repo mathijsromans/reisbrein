@@ -30,11 +30,16 @@ class TestGraph(TestCase):
         G.add_edge(Edge('c', 'e', 3))
         G.add_edge(Edge('d', 'e', 4))
 
-        self.assertEqual(shortest_path(G, 'a', 'e'), ['a', 'b', 'c', 'e'])
+        vertices = [edge.to_vertex for edge in shortest_path(G, 'a', 'e')]
+        self.assertEqual(vertices, ['b', 'c', 'e'])
 
 
 class TestPlanner(TestCase):
 
     def test_asserts(self):
         p = Planner()
-        self.assertEqual(p.solve('a', 'e'), ['a', 'b', 'c', 'e'])
+
+        vertices = []
+        for plan in p.solve('a', 'e'):
+            vertices.append([edge.to_vertex for edge in plan])
+        self.assertEqual(vertices, [['b', 'c', 'e'], ['d', 'e'], []])
