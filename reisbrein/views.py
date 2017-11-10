@@ -12,7 +12,6 @@ class PlanForm(forms.Form):
 class PlanInputView(FormView):
     template_name = 'reisbrein/plan_input.html'
     form_class = PlanForm
-    success_url = '/thanks/'
 
     def form_valid(self, form):
         self.from_location = form.cleaned_data['from_location']
@@ -20,4 +19,14 @@ class PlanInputView(FormView):
         return super().form_valid(form)
 
     def get_success_url(self):
-        return reverse('plan-results', args=(self.from_location, self.to_location)) #'/plan/results?from=' + self.from_location + '&to=' + self.to_location
+        return reverse('plan-results', args=(self.from_location, self.to_location))
+
+
+class PlanView(TemplateView):
+    template_name = 'reisbrein/plan_results.html'
+
+    def get_context_data(self, from_location, to_location, **kwargs):
+        context = super().get_context_data()
+        context['from'] = from_location
+        context['to'] = to_location
+        return context
