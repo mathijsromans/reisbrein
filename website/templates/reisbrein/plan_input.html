@@ -19,8 +19,8 @@
     {% bootstrap_form_errors form %}
     <form action="" method="post">
       {% csrf_token %}
-      {% bootstrap_field form.from_location show_label=False %}
-      {% bootstrap_field form.to_location show_label=False %}
+      {% bootstrap_field form.start show_label=False %}
+      {% bootstrap_field form.end show_label=False %}
       {% buttons %}
       <button type="submit" class="btn btn-primary" title="Plan reis">
         Plan
