@@ -2,6 +2,7 @@ from django import forms
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import FormView
 from django.urls import reverse
+from reisbrein.planner import Planner
 
 
 class PlanForm(forms.Form):
@@ -27,14 +28,25 @@ class PlanView(TemplateView):
 
     def get_context_data(self, start, end, **kwargs):
         context = super().get_context_data()
-        results = [
+        p = Planner()
+        solution = p.solve(start, end)
+        results = self.get_results(solution)
+
+        context['start'] = start
+        context['end'] = end
+        context['results'] = results
+        return context
+
+    @staticmethod
+    def get_results(solution):
+        return [
             {
                 'travel_time_min': 46,
                 'travel_time_percentage': 85,
                 'segments': [
                     {
-                        'start': start,
-                        'end': end,
+                        'start': 'a',
+                        'end': 'b',
                         'type': 'Auto',
                         'travel_time_min': 46,
                         'travel_time_percentage': 100,
@@ -46,7 +58,7 @@ class PlanView(TemplateView):
                 'travel_time_percentage': 100,
                 'segments':[
                     {
-                        'start': start,
+                        'start': 'a',
                         'end': 'Utrecht Centraal',
                         'type': 'Fiets',
                         'travel_time_min': 10,
@@ -58,8 +70,8 @@ class PlanView(TemplateView):
                         'travel_time_min': 32,
                         'travel_time_percentage': 59
                     }, {
-                        'start': start,
-                        'end': end,
+                        'start': 'a',
+                        'end': 'b',
                         'type': 'Fiets',
                         'travel_time_min': 12,
                         'travel_time_percentage': 22
@@ -67,7 +79,3 @@ class PlanView(TemplateView):
                 ]
             }
         ]
-        context['start'] = start
-        context['end'] = end
-        context['results'] = results
-        return context

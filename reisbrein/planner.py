@@ -9,10 +9,12 @@ class Planner:
 
     def solve(self, start, end):
         edges = self.create_test_edges()
-        graphs = []
-        graphs.append(self.create_graph(edges))
-        graphs.append(self.create_graph(self.exclude(edges, TransportType.BIKE)))
-        graphs.append(self.create_graph(self.exclude(edges, TransportType.TRAIN)))
+        graphs = [
+            self.create_graph(edges),
+            self.create_graph(self.exclude(edges, TransportType.BIKE)),
+            self.create_graph(self.exclude(edges, TransportType.TRAIN))
+        ]
+
         return [shortest_path(g, start, end) for g in graphs]
 
     @staticmethod
