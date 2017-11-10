@@ -13,7 +13,7 @@ from website.views import UserProfileView
 
 urlpatterns = [
     url(r'^$', PlanInputView.as_view(), name='plan-input'),
-    url(r'^reisadvies/(?P<from_location>.+)/(?P<to_location>.+)$', PlanView.as_view(), name='plan-results'),
+    url(r'^reisadvies/(?P<start>.+)/(?P<end>.+)$', PlanView.as_view(), name='plan-results'),
 
     url(r'^about/$', TemplateView.as_view(template_name="website/about.html"), name='about'),
     url(r'^contact/$', ContactView.as_view(), name='contact'),

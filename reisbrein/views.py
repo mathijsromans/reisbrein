@@ -5,8 +5,8 @@ from django.urls import reverse
 
 
 class PlanForm(forms.Form):
-    from_location = forms.CharField(label='Van')
-    to_location = forms.CharField(label='Naar')
+    start = forms.CharField(label='Van')
+    end = forms.CharField(label='Naar')
 
 
 class PlanInputView(FormView):
@@ -14,8 +14,8 @@ class PlanInputView(FormView):
     form_class = PlanForm
 
     def form_valid(self, form):
-        self.from_location = form.cleaned_data['from_location']
-        self.to_location = form.cleaned_data['to_location']
+        self.start = form.cleaned_data['start']
+        self.end = form.cleaned_data['end']
         return super().form_valid(form)
 
     def get_success_url(self):
@@ -25,8 +25,8 @@ class PlanInputView(FormView):
 class PlanView(TemplateView):
     template_name = 'reisbrein/plan_results.html'
 
-    def get_context_data(self, from_location, to_location, **kwargs):
+    def get_context_data(self, start, end, **kwargs):
         context = super().get_context_data()
-        context['from'] = from_location
-        context['to'] = to_location
+        context['start'] = start
+        context['end'] = end
         return context
