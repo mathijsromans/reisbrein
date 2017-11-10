@@ -5,7 +5,7 @@ from enum import Enum
 class TransportType(Enum):
     TRAIN = 1
     BIKE = 2
-    CAR = 2
+    CAR = 3
 
 
 class Segment(Edge):

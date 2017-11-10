@@ -43,11 +43,11 @@ class TestPlanner(TestCase):
         vertices = []
         for plan in p.solve('a', 'e'):
             vertices.append([edge.to_vertex for edge in plan])
-        self.assertEqual(vertices, [['b', 'c', 'e'], ['d', 'e'], []])
+        self.assertEqual(vertices, [['b', 'c', 'e'], ['e'], ['e']])
 
 class TestViews(TestCase):
 
     def test(self):
         p = Planner()
         options = p.solve('a', 'e')
-        print(PlanView.get_results(options))
+        self.assertEqual(PlanView.get_results(options)[0]['travel_time_min'], 60)

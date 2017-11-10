@@ -50,7 +50,7 @@ class PlanView(TemplateView):
             for segment in option:
                 segments.append(
                     {
-                        'segment': segment.from_vertex,
+                        'start': segment.from_vertex,
                         'end': segment.to_vertex,
                         'type': segment.transport_type.name,
                         'travel_time_min': segment.distance,

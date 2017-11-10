@@ -1,4 +1,3 @@
-from copy import deepcopy
 from .graph import Graph, shortest_path, Edge
 from.segment import Segment, TransportType
 
@@ -12,7 +11,7 @@ class Planner:
         graphs = [
             self.create_graph(edges),
             self.create_graph(self.exclude(edges, TransportType.BIKE)),
-            self.create_graph(self.exclude(edges, TransportType.TRAIN))
+            self.create_graph(self.exclude(edges, TransportType.TRAIN)),
         ]
 
         return [shortest_path(g, start, end) for g in graphs]
@@ -24,12 +23,13 @@ class Planner:
 
     @staticmethod
     def create_test_edges():
-        edges = [Segment(TransportType.BIKE, 'a', 'b', 2),
-                 Segment(TransportType.TRAIN, 'a', 'c', 8),
-                 Segment(TransportType.TRAIN, 'a', 'd', 5),
-                 Segment(TransportType.BIKE, 'b', 'c', 1),
-                 Segment(TransportType.TRAIN, 'c', 'e', 3),
-                 Segment(TransportType.TRAIN, 'd', 'e', 4)]
+        edges = [Segment(TransportType.BIKE, 'a', 'b', 20),
+                 Segment(TransportType.TRAIN, 'a', 'c', 80),
+                 Segment(TransportType.TRAIN, 'a', 'd', 50),
+                 Segment(TransportType.TRAIN, 'b', 'c', 10),
+                 Segment(TransportType.BIKE, 'c', 'e', 30),
+                 Segment(TransportType.TRAIN, 'd', 'e', 40),
+                 Segment(TransportType.CAR, 'a', 'e', 70)]
         return edges
 
     @staticmethod
