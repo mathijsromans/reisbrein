@@ -27,6 +27,47 @@ class PlanView(TemplateView):
 
     def get_context_data(self, start, end, **kwargs):
         context = super().get_context_data()
+        results = [
+            {
+                'travel_time_min': 46,
+                'travel_time_percentage': 85,
+                'steps': [
+                    {
+                        'start': start,
+                        'end': end,
+                        'type': 'Auto',
+                        'travel_time_min': 46,
+                        'travel_time_percentage': 100,
+                    },
+                ]
+            },
+            {
+                'travel_time_min': 54,
+                'travel_time_percentage': 100,
+                'steps':[
+                    {
+                        'start': start,
+                        'end': 'Utrecht Centraal',
+                        'type': 'Fiets',
+                        'travel_time_min': 10,
+                        'travel_time_percentage': 19,
+                    }, {
+                        'start': 'Utrecht Centraal',
+                        'end': 'Amsterdam Centraal',
+                        'type': 'Trein',
+                        'travel_time_min': 32,
+                        'travel_time_percentage': 59
+                    }, {
+                        'start': start,
+                        'end': end,
+                        'type': 'Fiets',
+                        'travel_time_min': 12,
+                        'travel_time_percentage': 22
+                    }
+                ]
+            }
+        ]
         context['start'] = start
         context['end'] = end
+        context['results'] = results
         return context
