@@ -1,5 +1,7 @@
 from django.test import TestCase
-from .graph import Graph, dijkstra, shortest_path, Edge
+from .graph import Graph, shortest_path, Edge
+from.planner import Planner
+
 
 class TestTest(TestCase):
     """ Example test case. """
@@ -28,5 +30,11 @@ class TestGraph(TestCase):
         G.add_edge(Edge('c', 'e', 3))
         G.add_edge(Edge('d', 'e', 4))
 
-        self.assertEqual(shortest_path(G, 'a', 'e'), ['a', 'b', 'c', 'e'] )
+        self.assertEqual(shortest_path(G, 'a', 'e'), ['a', 'b', 'c', 'e'])
 
+
+class TestPlanner(TestCase):
+
+    def test_asserts(self):
+        p = Planner()
+        self.assertEqual(p.solve('a', 'e'), ['a', 'b', 'c', 'e'])

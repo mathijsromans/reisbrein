@@ -1,7 +1,7 @@
 import collections
 
 
-class Edge:
+class Edge(object):
     def __init__(self, from_vertex, to_vertex, distance):
         self.from_vertex = from_vertex
         self.to_vertex = to_vertex
@@ -32,7 +32,7 @@ class Graph:
         string += "Edges: " + str(self.edges)
         return string
 
- 
+
 def dijkstra(graph, start):
     # initializations
     S = set()
@@ -66,8 +66,10 @@ def dijkstra(graph, start):
     return delta, previous
  
  
-# Uses dijkstra function in order to output the shortest path from start to end
 def shortest_path(graph, start, end):
+    """Uses dijkstra function in order to output the shortest path from start to end
+    """
+
     delta, previous = dijkstra(graph, start)
     
     path = []
