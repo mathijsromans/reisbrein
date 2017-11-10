@@ -1,6 +1,7 @@
 from django.test import TestCase
 from .graph import Graph, shortest_path, Edge
 from.planner import Planner
+from .views import PlanView
 
 
 class TestTest(TestCase):
@@ -15,7 +16,7 @@ class TestTest(TestCase):
 
 class TestGraph(TestCase):
 
-    def test_asserts(self):
+    def test(self):
         G = Graph()
         G.add_vertex('a')
         G.add_vertex('b')
@@ -36,10 +37,17 @@ class TestGraph(TestCase):
 
 class TestPlanner(TestCase):
 
-    def test_asserts(self):
+    def test(self):
         p = Planner()
 
         vertices = []
         for plan in p.solve('a', 'e'):
             vertices.append([edge.to_vertex for edge in plan])
         self.assertEqual(vertices, [['b', 'c', 'e'], ['d', 'e'], []])
+
+class TestViews(TestCase):
+
+    def test(self):
+        p = Planner()
+        options = p.solve('a', 'e')
+        print(PlanView.get_results(options))

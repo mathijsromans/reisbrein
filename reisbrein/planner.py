@@ -25,9 +25,9 @@ class Planner:
     @staticmethod
     def create_test_edges():
         edges = [Segment(TransportType.BIKE, 'a', 'b', 2),
-                 Segment(TransportType.BIKE, 'a', 'c', 8),
+                 Segment(TransportType.TRAIN, 'a', 'c', 8),
                  Segment(TransportType.TRAIN, 'a', 'd', 5),
-                 Segment(TransportType.TRAIN, 'b', 'c', 1),
+                 Segment(TransportType.BIKE, 'b', 'c', 1),
                  Segment(TransportType.TRAIN, 'c', 'e', 3),
                  Segment(TransportType.TRAIN, 'd', 'e', 4)]
         return edges

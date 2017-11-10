@@ -24,18 +24,17 @@
             {{ result.travel_time_min }} <small>min</small>
           </span>
         </div>
-
         <div class="col-xs-9 col-sm-10">
           <div class="progress" style="height: 30px; margin-bottom: 5px; width: {{ result.travel_time_percentage }}%">
           {% for segment in result.segments %}
-            <div class="progress-bar {% if segment.type == 'Fiets' %}progress-bar-success{% endif %}" role="progressbar" aria-valuenow="{{ step.travel_time_percentage }}" aria-valuemin="0" aria-valuemax="100"
+            <div class="progress-bar {% if segment.type == 'BIKE' %}progress-bar-success{% endif %}" role="progressbar" aria-valuenow="{{ step.travel_time_percentage }}" aria-valuemin="0" aria-valuemax="100"
                  style="width: {{ segment.travel_time_percentage }}%">
               <span style="font-size: 16px; line-height: 30px;">
-                {% if segment.type == 'Trein' %}
+                {% if segment.type == 'TRAIN' %}
                   <span class="fa fa-train"></span>
-                {% elif segment.type == 'Fiets' %}
+                {% elif segment.type == 'BIKE' %}
                   <span class="fa fa-bicycle"></span>
-                {% elif segment.type == 'Auto' %}
+                {% elif segment.type == 'CAR' %}
                   <span class="fa fa-car"></span>
                 {% endif %}
                 <span style="font-size: 12px;">{{ segment.travel_time_min }} min</span>

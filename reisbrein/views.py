@@ -29,8 +29,8 @@ class PlanView(TemplateView):
     def get_context_data(self, start, end, **kwargs):
         context = super().get_context_data()
         p = Planner()
-        solution = p.solve(start, end)
-        results = self.get_results(solution)
+        options = p.solve(start, end)
+        results = self.get_results(options)
 
         context['start'] = start
         context['end'] = end
@@ -38,44 +38,44 @@ class PlanView(TemplateView):
         return context
 
     @staticmethod
-    def get_results(solution):
-        return [
-            {
-                'travel_time_min': 46,
-                'travel_time_percentage': 85,
-                'segments': [
+    def get_results(options):
+        max_time = PlanView.max_travel_time(options)
+        if max_time == 0:
+            return []
+
+        result = []
+        for option in options:
+            time = PlanView.travel_time(option)
+            segments = []
+            for segment in option:
+                segments.append(
                     {
-                        'start': 'a',
-                        'end': 'b',
-                        'type': 'Auto',
-                        'travel_time_min': 46,
-                        'travel_time_percentage': 100,
-                    },
-                ]
-            },
+                        'segment': segment.from_vertex,
+                        'end': segment.to_vertex,
+                        'type': segment.transport_type.name,
+                        'travel_time_min': segment.distance,
+                        'travel_time_percentage': 100*segment.distance / time,
+                    })
+            result.append(
             {
-                'travel_time_min': 54,
-                'travel_time_percentage': 100,
-                'segments':[
-                    {
-                        'start': 'a',
-                        'end': 'Utrecht Centraal',
-                        'type': 'Fiets',
-                        'travel_time_min': 10,
-                        'travel_time_percentage': 19,
-                    }, {
-                        'start': 'Utrecht Centraal',
-                        'end': 'Amsterdam Centraal',
-                        'type': 'Trein',
-                        'travel_time_min': 32,
-                        'travel_time_percentage': 59
-                    }, {
-                        'start': 'a',
-                        'end': 'b',
-                        'type': 'Fiets',
-                        'travel_time_min': 12,
-                        'travel_time_percentage': 22
-                    }
-                ]
-            }
-        ]
+                'travel_time_min': time,
+                'travel_time_percentage': 100*time/max_time,
+                'segments': segments
+            })
+        return result
+
+
+    @staticmethod
+    def max_travel_time(options):
+        max_travel_time = 0
+        for option in options:
+            max_travel_time = max(max_travel_time, PlanView.travel_time(option))
+        return max_travel_time
+
+    @staticmethod
+    def travel_time(option):
+        time = 0
+        for segment in option:
+            time += segment.distance
+        return time
+
