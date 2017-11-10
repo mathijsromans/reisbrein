@@ -6,50 +6,50 @@
 
 {% block content %}
 <div class="container">
+
   <div class="row">
     <div class="col-sm-12" align="center">
-      <h3>Reisadvies</h3>
-      <h4>{{ start }} - {{ end }}</h4>
+      <h5>{{ start }} - {{ end }}</h5>
     </div>
   </div>
-</div>
 
-<div class="row">
-  <div class="col-md-6 col-md-offset-3">
+  <div class="row">
+    <div class="col-md-8 col-md-offset-2">
 
-    {% for result in results %}
-    <div class="row">
+      {% for result in results %}
+      <div class="row">
 
-      <div class="col-xs-2">
-        <span style="font-size: 16px; line-height: 30px;">
-          {{ result.travel_time_min }} min
-        </span>
-      </div>
-
-      <div class="col-xs-10">
-        <div class="progress" style="height: 30px; margin-bottom: 5px; width: {{ result.travel_time_percentage }}%">
-        {% for segment in result.segments %}
-          <div class="progress-bar {% if segment.type == 'Fiets' %}progress-bar-success{% endif %}" role="progressbar" aria-valuenow="{{ step.travel_time_percentage }}" aria-valuemin="0" aria-valuemax="100"
-               style="width: {{ segment.travel_time_percentage }}%">
-            <span style="font-size: 16px; line-height: 30px;">
-              {% if segment.type == 'Trein' %}
-                <span class="fa fa-train"></span>
-              {% elif segment.type == 'Fiets' %}
-                <span class="fa fa-bicycle"></span>
-              {% elif segment.type == 'Auto' %}
-                <span class="fa fa-car"></span>
-              {% endif %}
-              <span style="font-size: 12px;">{{ segment.travel_time_min }} min</span>
-            </span>
-          </div>
-        {% endfor %}
+        <div class="col-xs-3 col-sm-2">
+          <span style="font-size: 16px; line-height: 30px;">
+            {{ result.travel_time_min }} <small>min</small>
+          </span>
         </div>
+
+        <div class="col-xs-9 col-sm-10">
+          <div class="progress" style="height: 30px; margin-bottom: 5px; width: {{ result.travel_time_percentage }}%">
+          {% for segment in result.segments %}
+            <div class="progress-bar {% if segment.type == 'Fiets' %}progress-bar-success{% endif %}" role="progressbar" aria-valuenow="{{ step.travel_time_percentage }}" aria-valuemin="0" aria-valuemax="100"
+                 style="width: {{ segment.travel_time_percentage }}%">
+              <span style="font-size: 16px; line-height: 30px;">
+                {% if segment.type == 'Trein' %}
+                  <span class="fa fa-train"></span>
+                {% elif segment.type == 'Fiets' %}
+                  <span class="fa fa-bicycle"></span>
+                {% elif segment.type == 'Auto' %}
+                  <span class="fa fa-car"></span>
+                {% endif %}
+                <span style="font-size: 12px;">{{ segment.travel_time_min }} min</span>
+              </span>
+            </div>
+          {% endfor %}
+          </div>
+        </div>
+
       </div>
+      {% endfor %}
 
     </div>
-    {% endfor %}
-
   </div>
-</div>
 
+</div>
 {% endblock %}
