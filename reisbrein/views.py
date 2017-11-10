@@ -31,7 +31,7 @@ class PlanView(TemplateView):
             {
                 'travel_time_min': 46,
                 'travel_time_percentage': 85,
-                'steps': [
+                'segments': [
                     {
                         'start': start,
                         'end': end,
@@ -44,7 +44,7 @@ class PlanView(TemplateView):
             {
                 'travel_time_min': 54,
                 'travel_time_percentage': 100,
-                'steps':[
+                'segments':[
                     {
                         'start': start,
                         'end': 'Utrecht Centraal',
