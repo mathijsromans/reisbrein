@@ -19,7 +19,7 @@ class PlanInputView(FormView):
         return super().form_valid(form)
 
     def get_success_url(self):
-        return reverse('plan-results', args=(self.from_location, self.to_location))
+        return reverse('plan-results', args=(self.start, self.end))
 
 
 class PlanView(TemplateView):
