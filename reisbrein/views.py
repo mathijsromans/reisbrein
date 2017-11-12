@@ -3,7 +3,7 @@ from django.views.generic.base import TemplateView
 from django.views.generic.edit import FormView
 from django.urls import reverse
 from reisbrein.planner import Planner
-
+from reisbrein.generator import TestGenerator
 
 class PlanForm(forms.Form):
     start = forms.CharField(label='Van')
@@ -28,7 +28,7 @@ class PlanView(TemplateView):
 
     def get_context_data(self, start, end, **kwargs):
         context = super().get_context_data()
-        p = Planner()
+        p = Planner(TestGenerator())
         options = p.solve(start, end)
         results = self.get_results(options)
 

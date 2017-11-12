@@ -1,6 +1,7 @@
 from django.test import TestCase
 from .graph import Graph, shortest_path, Edge
-from.planner import Planner
+from .planner import Planner
+from .generator import TestGenerator
 from .views import PlanView
 
 
@@ -38,7 +39,7 @@ class TestGraph(TestCase):
 class TestPlanner(TestCase):
 
     def test(self):
-        p = Planner()
+        p = Planner(TestGenerator())
 
         vertices = []
         for plan in p.solve('a', 'e'):
@@ -48,6 +49,6 @@ class TestPlanner(TestCase):
 class TestViews(TestCase):
 
     def test(self):
-        p = Planner()
+        p = Planner(TestGenerator())
         options = p.solve('a', 'e')
         self.assertEqual(PlanView.get_results(options)[0]['travel_time_min'], 60)
