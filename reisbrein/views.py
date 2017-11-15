@@ -3,7 +3,7 @@ from django import forms
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import FormView
 from django.urls import reverse
-from reisbrein.planner import Planner
+from reisbrein.planner import DijkstraPlanner
 from reisbrein.generator.generator import Generator, TestGenerator
 
 
@@ -30,7 +30,7 @@ class PlanView(TemplateView):
 
     def get_context_data(self, start, end, **kwargs):
         context = super().get_context_data()
-        p = Planner(Generator())
+        p = DijkstraPlanner(Generator())
         now = datetime.now()
         options = p.solve(start, end, now)
         results = self.get_results(options)

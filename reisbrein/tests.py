@@ -1,7 +1,7 @@
 from datetime import datetime
 from django.test import TestCase
 from .graph import Graph, shortest_path, Edge
-from .planner import Planner, Location, Point
+from .planner import DijkstraPlanner, Location, Point
 from reisbrein.generator.generator import TestGenerator, Generator
 from .views import PlanView
 
@@ -53,7 +53,7 @@ class TestLocation(TestCase):
 class TestPlanner(TestCase):
 
     def test_fixed_generator(self):
-        p = Planner(TestGenerator())
+        p = DijkstraPlanner(TestGenerator())
 
         vertices = []
         noon = datetime(year=2017, month=11, day=17, hour=12)
@@ -75,7 +75,7 @@ class TestPlanner(TestCase):
         self.assertEqual(vertices[2][0].location.loc_str, 'e')
 
     def test_planner(self):
-        p = Planner(Generator())
+        p = DijkstraPlanner(Generator())
         vertices = []
         noon = datetime(year=2017, month=11, day=17, hour=12)
         for plan in p.solve('Madurodam', 'Martinitoren', noon):
@@ -94,7 +94,7 @@ class TestPlanner(TestCase):
 class TestViews(TestCase):
 
     def test(self):
-        p = Planner(Generator())
+        p = DijkstraPlanner(Generator())
         noon = datetime(year=2017, month=11, day=17, hour=12)
         options = p.solve('Madurodam', 'Martinitoren', noon)
         self.assertEqual(PlanView.get_results(options)[0]['travel_time_min'], 50)

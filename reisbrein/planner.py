@@ -34,7 +34,7 @@ class Point:
         return str(self.location) + ' @ ' + str(self.time)
 
 
-class Planner:
+class Planner(object):
     def __init__(self, generator):
         self.generator = generator
 
@@ -42,6 +42,15 @@ class Planner:
         start = Point(Location(start_loc), start_time)
         end = Point(Location(end_loc), start_time + timedelta(hours=12))
         edges = self.generator.create_edges(start, end)
+        return self.make_plans(start, end, edges)
+
+    def make_plans(self, start, end, edges):
+        raise NotImplementedError()
+
+
+class DijkstraPlanner(Planner):
+
+    def make_plans(self, start, end, edges):
         graphs = [
             self.create_graph(edges),
             self.create_graph(self.exclude(edges, TransportType.BIKE)),
