@@ -1,7 +1,7 @@
 from django.test import TestCase
 from .graph import Graph, shortest_path, Edge
 from .planner import Planner
-from .generator import TestGenerator
+from reisbrein.generator.generator import TestGenerator
 from .views import PlanView
 
 

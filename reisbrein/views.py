@@ -3,7 +3,8 @@ from django.views.generic.base import TemplateView
 from django.views.generic.edit import FormView
 from django.urls import reverse
 from reisbrein.planner import Planner
-from reisbrein.generator import TestGenerator
+from reisbrein.generator.generator import TestGenerator
+
 
 class PlanForm(forms.Form):
     start = forms.CharField(label='Van')

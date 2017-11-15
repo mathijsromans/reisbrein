@@ -3,9 +3,11 @@ from enum import Enum
 
 
 class TransportType(Enum):
-    TRAIN = 1
-    BIKE = 2
-    CAR = 3
+    WAIT = 0
+    WALK = 1
+    TRAIN = 2
+    BIKE = 3
+    CAR = 4
 
 
 class Segment(Edge):

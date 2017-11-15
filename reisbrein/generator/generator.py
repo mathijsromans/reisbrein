@@ -1,4 +1,4 @@
-from.segment import Segment, TransportType
+from reisbrein.segment import Segment, TransportType
 
 
 class TestGenerator:
