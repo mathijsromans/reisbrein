@@ -2,12 +2,20 @@ from reisbrein.segment import Segment, TransportType
 from reisbrein.generator.gen_train import TrainGenerator
 from reisbrein.generator.gen_walk import WalkGenerator
 
-class TestGenerator:
+
+class Generator:
     def __init__(self):
-        generators = [
-            TrainGenerator(),
-            WalkGenerator()
-        ]
+        self.walk_generator = WalkGenerator()
+        self.train_generator = TrainGenerator()
+
+    def create_edges(self, start, end):
+        edges = []
+        self.train_generator(edges, start, end)
+        self.walk_generator(edges, start, end)
+        return edges
+
+
+class TestGenerator:
 
     def create_edges(self, start, end):
         edges = [Segment(TransportType.BIKE, start, 'b', 20),

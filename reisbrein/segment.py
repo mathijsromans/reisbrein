@@ -8,10 +8,14 @@ class TransportType(Enum):
     TRAIN = 2
     BIKE = 3
     CAR = 4
+    BUS = 5
 
 
 class Segment(Edge):
     def __init__(self, transport_type, from_vertex, to_vertex, distance):
         super(Segment, self).__init__(from_vertex, to_vertex, distance)
         self.transport_type = transport_type
+
+    def __str__(self):
+        return 'segment(['+str(self.transport_type)+']'+str(self.from_vertex)+' --> '+str(self.to_vertex)+')'
 

@@ -1,8 +1,7 @@
 from datetime import datetime, timedelta
 from geopy.geocoders import Nominatim
-from .graph import Graph, shortest_path, Edge
-from.segment import TransportType
-
+from .graph import Graph, shortest_path
+from .segment import TransportType
 
 
 class Location:
@@ -14,11 +13,25 @@ class Location:
     def gps(self):
         return (self.location.latitude, self.location.longitude) if self.location else None
 
+    def __str__(self):
+        return self.loc_str
+
+    @property
+    def latitude(self):
+        return self.location.latitude
+
+    @property
+    def longitude(self):
+        return self.location.longitude
+
 
 class Point:
     def __init__(self, location, time):
         self.location = location
         self.time = time
+
+    def __str__(self):
+        return str(self.location) + ' @ ' + str(self.time)
 
 
 class Planner:
