@@ -1,13 +1,35 @@
+from datetime import datetime, timedelta
+from geopy.geocoders import Nominatim
 from .graph import Graph, shortest_path, Edge
 from.segment import TransportType
+
+
+
+class Location:
+    def __init__(self, loc_str):
+        geolocator = Nominatim()
+        self.loc_str = loc_str
+        self.location = geolocator.geocode(self.loc_str)
+
+    def gps(self):
+        return (self.location.latitude, self.location.longitude) if self.location else None
+
+
+class Point:
+    def __init__(self, location, time):
+        self.location = location
+        self.time = time
 
 
 class Planner:
     def __init__(self, generator):
         self.generator = generator
 
-    def solve(self, start, end):
-        edges = self.generator.create_edges()
+    def solve(self, start_loc, end_loc):
+        now = datetime.now()
+        start = Point(start_loc, now)
+        end = Point(end_loc, now + timedelta(hours=12))
+        edges = self.generator.create_edges(start, end)
         graphs = [
             self.create_graph(edges),
             self.create_graph(self.exclude(edges, TransportType.BIKE)),
