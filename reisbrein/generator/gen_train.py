@@ -44,7 +44,7 @@ class TrainGenerator:
     def closest_stations(self, location, n):
         return heapq.nsmallest(n, self.stations, lambda x: vincenty(location.gps(), x.gps()).meters)
 
-    def create_segments(self, start, end):
+    def create_edges(self, start, end):
         st_start_loc = self.closest_stations(start.location, 2)
         st_end_loc = self.closest_stations(end.location, 2)
         stops_1 = [Point(s, start.time + timedelta(minutes=10)) for s in st_start_loc]

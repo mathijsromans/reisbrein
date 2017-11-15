@@ -9,10 +9,7 @@ class Generator:
         self.train_generator = TrainGenerator()
 
     def create_edges(self, start, end):
-        edges = []
-        self.train_generator(edges, start, end)
-        self.walk_generator(edges, start, end)
-        return edges
+        return self.train_generator.create_edges(start, end)
 
 
 class TestGenerator:

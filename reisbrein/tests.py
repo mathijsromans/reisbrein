@@ -1,8 +1,13 @@
+from datetime import datetime
 from django.test import TestCase
 from .graph import Graph, shortest_path, Edge
-from .planner import Planner, Location
-from reisbrein.generator.generator import TestGenerator
+from .planner import Planner, Location, Point
+from reisbrein.generator.generator import TestGenerator, Generator
 from .views import PlanView
+
+
+def recur_map(f, data):
+    return [not hasattr(x, "__iter__") and f(x) or recur_map(f, x) for x in data]
 
 
 class TestTest(TestCase):
@@ -47,11 +52,12 @@ class TestLocation(TestCase):
 
 class TestPlanner(TestCase):
 
-    def test(self):
+    def test_fixed_generator(self):
         p = Planner(TestGenerator())
 
         vertices = []
-        for plan in p.solve('a', 'e'):
+        noon = datetime(year=2017, month=11, day=17, hour=12)
+        for plan in p.solve('a', 'e', noon):
             vertices.append([edge.to_vertex for edge in plan])
 
         # [['b', 'c', <reisbrein.planner.Point object at 0x7f8eee966630>],
@@ -64,14 +70,31 @@ class TestPlanner(TestCase):
         self.assertEqual(len(vertices[2]), 1)
         self.assertEqual(vertices[0][0], 'b')
         self.assertEqual(vertices[0][1], 'c')
-        self.assertEqual(vertices[0][2].location, 'e')
-        self.assertEqual(vertices[1][0].location, 'e')
-        self.assertEqual(vertices[2][0].location, 'e')
+        self.assertEqual(vertices[0][2].location.loc_str, 'e')
+        self.assertEqual(vertices[1][0].location.loc_str, 'e')
+        self.assertEqual(vertices[2][0].location.loc_str, 'e')
 
+    def test_planner(self):
+        p = Planner(Generator())
+        vertices = []
+        noon = datetime(year=2017, month=11, day=17, hour=12)
+        for plan in p.solve('Madurodam', 'Martinitoren', noon):
+            vertices.append([edge.to_vertex for edge in plan])
+
+        # print(list(recur_map(str, vertices)))
+        # [['Station: Den Haag HS @ 2017-11-17 12:10:00', 'Station: Groningen Noord @ 2017-11-17 12:40:00',
+        # 'Martinitoren @ 2017-11-17 12:50:00'], ['Station: Den Haag HS @ 2017-11-17 12:10:00',
+        # 'Station: Groningen Noord @ 2017-11-17 12:40:00', 'Martinitoren @ 2017-11-17 12:50:00'], []]
+
+        self.assertEqual(len(vertices), 3)
+        self.assertEqual(len(vertices[0]), 3)
+        self.assertEqual(len(vertices[1]), 3)
+        self.assertEqual(len(vertices[2]), 0)
 
 class TestViews(TestCase):
 
     def test(self):
-        p = Planner(TestGenerator())
-        options = p.solve('a', 'e')
-        self.assertEqual(PlanView.get_results(options)[0]['travel_time_min'], 60)
+        p = Planner(Generator())
+        noon = datetime(year=2017, month=11, day=17, hour=12)
+        options = p.solve('Madurodam', 'Martinitoren', noon)
+        self.assertEqual(PlanView.get_results(options)[0]['travel_time_min'], 50)

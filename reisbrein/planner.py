@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import timedelta
 from geopy.geocoders import Nominatim
 from .graph import Graph, shortest_path
 from .segment import TransportType
@@ -38,10 +38,9 @@ class Planner:
     def __init__(self, generator):
         self.generator = generator
 
-    def solve(self, start_loc, end_loc):
-        now = datetime.now()
-        start = Point(start_loc, now)
-        end = Point(end_loc, now + timedelta(hours=12))
+    def solve(self, start_loc, end_loc, start_time):
+        start = Point(Location(start_loc), start_time)
+        end = Point(Location(end_loc), start_time + timedelta(hours=12))
         edges = self.generator.create_edges(start, end)
         graphs = [
             self.create_graph(edges),

@@ -1,9 +1,10 @@
+from datetime import datetime
 from django import forms
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import FormView
 from django.urls import reverse
 from reisbrein.planner import Planner
-from reisbrein.generator.generator import TestGenerator
+from reisbrein.generator.generator import Generator, TestGenerator
 
 
 class PlanForm(forms.Form):
@@ -29,8 +30,9 @@ class PlanView(TemplateView):
 
     def get_context_data(self, start, end, **kwargs):
         context = super().get_context_data()
-        p = Planner(TestGenerator())
-        options = p.solve(start, end)
+        p = Planner(Generator())
+        now = datetime.now()
+        options = p.solve(start, end, now)
         results = self.get_results(options)
 
         context['start'] = start
