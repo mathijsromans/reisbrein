@@ -128,4 +128,4 @@ class TestViews(TestCase):
         p = RichPlanner(Generator())
         noon = datetime(year=2017, month=11, day=17, hour=12)
         options = p.solve('Madurodam', 'Martinitoren', noon)
-        self.assertEqual(PlanView.get_results(options)[0]['travel_time_min'], 90.1147782)
+        self.assertEqual(PlanView.get_results(options)[0]['travel_time_min'], 90)
