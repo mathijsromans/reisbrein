@@ -50,7 +50,8 @@ class TestTrainGenerator(TestCase):
         noon = datetime(year=2017, month=11, day=17, hour=12)
         start = Point(Location('Madurodam'), noon)
         end = Point(Location('Martinitoren'), noon)
-        segments = self.generator.create_edges(start, end)
-        self.assertEqual(len(segments), 8)
+        segments = []
+        self.generator.create_edges(start, end, segments)
+        self.assertEqual(len(segments), 4)
 
 
