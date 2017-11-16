@@ -84,6 +84,12 @@ Activate the virtualenv (always do this before working on the project),
 source env/Scripts/activate
 ```
 
+## Installation part 1 (Linux using virtual machine)
+
+Follow instructions from https://www.lifewire.com/run-ubuntu-within-windows-virtualbox-2202098.
+
+Proceed with Installation part 1 (Linux)
+
 ## Installation part 2 (Windows and linux)
 
 Install python packages in the local env,
