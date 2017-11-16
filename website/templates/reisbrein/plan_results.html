@@ -36,6 +36,10 @@
                   <span class="fa fa-bicycle"></span>
                 {% elif segment.type == 'CAR' %}
                   <span class="fa fa-car"></span>
+                {% elif segment.type == 'WALK' %}
+                  <span class="fa fa-blind"></span>
+                {% elif segment.type == 'WAIT' %}
+                  <span class="fa fa-child"></span>
                 {% endif %}
                 <span style="font-size: 12px;">{{ segment.travel_time_min }} min</span>
               </span>
