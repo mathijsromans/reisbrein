@@ -2,7 +2,7 @@
 
 Requires Python 3.4+ and Django 1.11+
 
-## Installation part 1(Linux)
+## Installation part 1 (Linux)
 
 Get the code and enter the project directory,
 ```
@@ -24,14 +24,24 @@ Create a virtual environment,
 virtualenv -p python3 env
 ```
 
+Activate the virtualenv (always do this before working on the project),
+```
+source env/bin/activate
+```
+
+Make sure you have a recent version of pip,
+```
+pip install --upgrade pip
+```
+
 ## Installation part 1 (Windows)
 
-Install git for windows from:
-https://git-scm.com/download/win
-Choose default options
+Install git for windows from
+https://git-scm.com/download/win.
+Choose default options.
 
-Install python for windows:
-https://www.python.org/ftp/python/3.6.3/python-3.6.3-amd64-webinstall.exe
+Install python for windows from
+https://www.python.org/ftp/python/3.6.3/python-3.6.3-amd64-webinstall.exe.
 Before you install, make sure you check "add Python to PATH"!
 
 Check that python works:
@@ -39,17 +49,20 @@ Run program GIT Bash
 ```
 python --version
 ```
-outcome should be: Python 3.6.3
+Outcome should be:
+```
+Python 3.6.3
+```
 
 Download TortoiseGit (this is optional: you can also directly use GIT Bash or GIT Gui)
-From: https://tortoisegit.org/
+from https://tortoisegit.org.
 
 Create directory reisbrein
 In the directory, right click on an empty space and choose Git Clone...
 source: https://github.com/mathijsromans/reisbrein.git
 Note that you get a double directory reisbrein/reisbrein. This is good.
 
-Run program GIT Bash: enter the reisbrein/reisbrein directory. Right-click and choose Run Git Bash Here.
+Enter the reisbrein/reisbrein directory. Right-click and choose Run Git Bash Here.
 
 Make sure you have a recent version of pip,
 ```
@@ -66,17 +79,12 @@ Create a virtual environment,
 virtualenv env
 ```
 
-## Installation part 2 (Windows and linux)
-
 Activate the virtualenv (always do this before working on the project),
 ```
-source env/bin/activate
+source env/Scripts/activate
 ```
 
-Make sure you have a recent version of pip,
-```
-pip install --upgrade pip
-```
+## Installation part 2 (Windows and linux)
 
 Install python packages in the local env,
 ```
