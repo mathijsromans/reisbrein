@@ -1,13 +1,9 @@
 from datetime import datetime
 from django.test import TestCase
 from .graph import Graph, shortest_path, Edge
-from .planner import DijkstraPlanner, Location, Point
+from .planner import DijkstraPlanner, RichPlanner, Location, recur_map
 from reisbrein.generator.generator import TestGenerator, Generator
 from .views import PlanView
-
-
-def recur_map(f, data):
-    return [not hasattr(x, "__iter__") and f(x) or recur_map(f, x) for x in data]
 
 
 class TestTest(TestCase):
@@ -50,7 +46,7 @@ class TestLocation(TestCase):
         self.assertEqual(loc2.gps(), None)
 
 
-class TestPlanner(TestCase):
+class TestDijkstraPlanner(TestCase):
 
     def test_fixed_generator(self):
         p = DijkstraPlanner(TestGenerator())
@@ -91,10 +87,45 @@ class TestPlanner(TestCase):
         self.assertEqual(len(vertices[1]), 3)
         self.assertEqual(len(vertices[2]), 0)
 
+
+class TestRichPlanner(TestCase):
+
+    def test_fixed_generator(self):
+        p = RichPlanner(TestGenerator())
+
+        vertices = []
+        noon = datetime(year=2017, month=11, day=17, hour=12)
+        plans = p.solve('a', 'e', noon)
+        for plan in plans:
+            vertices.append([edge.to_vertex for edge in plan])
+        # print(list(recur_map(str, plans)))
+
+        self.assertEqual(len(plans), 4)
+        self.assertEqual(len(plans[0]), 3)
+        self.assertEqual(len(plans[1]), 1)
+        self.assertEqual(len(plans[2]), 2)
+        self.assertEqual(len(plans[3]), 2)
+
+    def test_planner(self):
+        p = RichPlanner(Generator())
+        vertices = []
+        noon = datetime(year=2017, month=11, day=17, hour=12)
+        plans = p.solve('Madurodam', 'Martinitoren', noon)
+        for plan in plans:
+            vertices.append([edge.to_vertex for edge in plan])
+        # print(list(recur_map(str, vertices)))
+
+        self.assertEqual(len(plans), 4)
+        self.assertEqual(len(plans[0]), 3)
+        self.assertEqual(len(plans[1]), 3)
+        self.assertEqual(len(plans[2]), 3)
+        self.assertEqual(len(plans[3]), 3)
+
+
 class TestViews(TestCase):
 
     def test(self):
-        p = DijkstraPlanner(Generator())
+        p = RichPlanner(Generator())
         noon = datetime(year=2017, month=11, day=17, hour=12)
         options = p.solve('Madurodam', 'Martinitoren', noon)
         self.assertEqual(PlanView.get_results(options)[0]['travel_time_min'], 50)

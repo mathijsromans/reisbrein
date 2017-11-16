@@ -1,7 +1,12 @@
+import copy
 from datetime import timedelta
 from geopy.geocoders import Nominatim
 from .graph import Graph, shortest_path
 from .segment import TransportType
+
+
+def recur_map(f, data):
+    return [not hasattr(x, "__iter__") and f(x) or recur_map(f, x) for x in data]
 
 
 class Location:
@@ -47,6 +52,43 @@ class Planner(object):
     def make_plans(self, start, end, edges):
         raise NotImplementedError()
 
+
+class RichPlanner(Planner):
+
+    def make_plans(self, start, end, edges):
+        new_plans = [[edge] for edge in self.edges_starting_at(start, edges)]
+        num_changes = 0
+        final_plans = []
+        while new_plans:
+            partial_plans = []
+            for p in new_plans:
+                if p[-1].to_vertex == end:
+                    final_plans.append(p)
+                else:
+                    partial_plans.append(p)
+            num_changes += len(new_plans)
+            if num_changes > 100:
+                break
+            new_plans.clear()
+            for p in partial_plans:
+                for e in self.edges_starting_at(p[-1].to_vertex, edges):
+                    new_p = copy.deepcopy(p)
+                    new_p.append(e)
+                    new_plans.append(new_p)
+
+        final_plans.sort(key=RichPlanner.weight)
+        return final_plans
+
+    @staticmethod
+    def edges_starting_at(point, edges):
+        return filter(lambda x: x.from_vertex == point, edges)
+
+    @staticmethod
+    def weight(option):
+        w = 0
+        for segment in option:
+            w += segment.distance
+        return w
 
 class DijkstraPlanner(Planner):
 
