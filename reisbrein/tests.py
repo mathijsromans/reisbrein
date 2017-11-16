@@ -83,8 +83,8 @@ class TestDijkstraPlanner(TestCase):
         # 'Station: Groningen Noord @ 2017-11-17 12:40:00', 'Martinitoren @ 2017-11-17 12:50:00'], []]
 
         self.assertEqual(len(vertices), 3)
-        self.assertEqual(len(vertices[0]), 3)
-        self.assertEqual(len(vertices[1]), 3)
+        self.assertEqual(len(vertices[0]), 4)
+        self.assertEqual(len(vertices[1]), 4)
         self.assertEqual(len(vertices[2]), 0)
 
 
@@ -116,10 +116,10 @@ class TestRichPlanner(TestCase):
         # print(list(recur_map(str, vertices)))
 
         self.assertEqual(len(plans), 4)
-        self.assertEqual(len(plans[0]), 3)
-        self.assertEqual(len(plans[1]), 3)
-        self.assertEqual(len(plans[2]), 3)
-        self.assertEqual(len(plans[3]), 3)
+        self.assertEqual(len(plans[0]), 4)
+        self.assertEqual(len(plans[1]), 4)
+        self.assertEqual(len(plans[2]), 4)
+        self.assertEqual(len(plans[3]), 4)
 
 
 class TestViews(TestCase):
@@ -128,4 +128,4 @@ class TestViews(TestCase):
         p = RichPlanner(Generator())
         noon = datetime(year=2017, month=11, day=17, hour=12)
         options = p.solve('Madurodam', 'Martinitoren', noon)
-        self.assertEqual(PlanView.get_results(options)[0]['travel_time_min'], 50)
+        self.assertEqual(PlanView.get_results(options)[0]['travel_time_min'], 90.1147782)

@@ -47,8 +47,8 @@ class TrainGenerator:
     def create_edges(self, start, end, edges):
         st_start_loc = self.closest_stations(start.location, 2)
         st_end_loc = self.closest_stations(end.location, 2)
-        stops_1 = [Point(s, start.time + timedelta(minutes=10)) for s in st_start_loc]
-        stops_2 = [Point(s, start.time + timedelta(minutes=40)) for s in st_end_loc]
+        stops_1 = [Point(s, start.time + timedelta(minutes=50)) for s in st_start_loc]
+        stops_2 = [Point(s, start.time + timedelta(minutes=140)) for s in st_end_loc]
         for s1 in stops_1:
             for s2 in stops_2:
                 # take the train

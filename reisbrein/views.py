@@ -56,12 +56,12 @@ class PlanView(TemplateView):
                         'start': segment.from_vertex,
                         'end': segment.to_vertex,
                         'type': segment.transport_type.name,
-                        'travel_time_min': segment.distance,
+                        'travel_time_min': int(segment.distance),
                         'travel_time_percentage': 100*segment.distance / time,
                     })
             result.append(
             {
-                'travel_time_min': time,
+                'travel_time_min': int(time),
                 'travel_time_percentage': 100*time/max_time,
                 'segments': segments
             })

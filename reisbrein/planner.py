@@ -47,7 +47,11 @@ class Planner(object):
         start = Point(Location(start_loc), start_time)
         end = Point(Location(end_loc), start_time + timedelta(hours=12))
         edges = self.generator.create_edges(start, end)
-        return self.make_plans(start, end, edges)
+        plans = self.make_plans(start, end, edges)
+        for p in plans:
+            if p and p[-1].transport_type == TransportType.WAIT:
+                p.pop()
+        return plans
 
     def make_plans(self, start, end, edges):
         raise NotImplementedError()
