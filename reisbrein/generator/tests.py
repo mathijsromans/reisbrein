@@ -53,5 +53,3 @@ class TestTrainGenerator(TestCase):
         segments = []
         self.generator.create_edges(start, end, segments)
         self.assertEqual(len(segments), 4)
-
-

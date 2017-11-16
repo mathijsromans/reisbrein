@@ -54,3 +54,7 @@ DBBACKUP_STORAGE_OPTIONS = {'location': os.path.join(BASE_DIR, 'backup/')}
 CRON_CLASSES = [
     'website.cron.BackupDaily',
 ]
+
+#NS API
+NSAPI_USERNAME = 'name@domain.com'
+NSAPI_KEY = 'xxx-your-key-xxx'
