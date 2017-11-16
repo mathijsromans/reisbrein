@@ -6,8 +6,10 @@ Requires Python 3.4+ and Django 1.11+
 
 Get the code and enter the project directory,
 ```
-git clone https://github.com/bartromgens/django-project-template.git
-cd django-project-template
+mkdir reisbrein
+cd reisbrein
+git clone https://github.com/mathijsromans/reisbrein.git
+cd reisbrein
 ```
 
 Install dependencies that you will need,
