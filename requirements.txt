@@ -7,3 +7,4 @@ django-dbbackup==3.2.0
 django-debug-toolbar
 geopy==1.11.0
 nsapi==2.7.4
+numpy
