@@ -37,4 +37,10 @@ class TestMonotch(TestCase):
     def testStations(self):
         begin = Location('Madurodam')
         end = Location('Martinitoren')
-        self.assertEqual(self.monotch.search( begin, end ), 0)
+        result = self.monotch.search(begin, end)
+        # print(result)
+        self.assertNotEqual(result, [])
+        self.assertEqual(len(result['itineraries']), 6)
+        self.assertEqual(len(result['itineraries'][0]['legs']), 5)
+        # self.assertEqual(len(result['itineraries'][0]['legs']['from']), 5)
+        # self.assertEqual(len(result['itineraries'][0]['legs']['from']), 5)

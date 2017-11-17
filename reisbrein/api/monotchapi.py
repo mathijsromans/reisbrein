@@ -28,7 +28,5 @@ class MonotchApi:
         # print(response.json())
         foo = json.dumps(response.json())
         result = json.loads(foo)
-        # # print(result['routes'][0]['summary'])
-        # time = result['routes'][0]['summary']['travelTimeInSeconds']
-        return 0
+        return result['plan']
 
