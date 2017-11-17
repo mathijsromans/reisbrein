@@ -128,5 +128,5 @@ class TestViews(TestCase):
         p = RichPlanner(Generator())
         time = datetime(year=2017, month=11, day=17, hour=22, minute=32)
         plans = p.solve('Madurodam', 'Martinitoren', time)
-        self.assertEqual(len(plans), 7)
-        self.assertEqual(PlanView.get_results(plans)[0]['travel_time_min'], 135)
+        self.assertEqual(len(plans), 5)
+        self.assertEqual(PlanView.get_results(plans)[0]['travel_time_min'], 134)

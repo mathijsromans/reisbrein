@@ -19,7 +19,7 @@ class MonotchApi:
             'arriveBy' : 'false',
             'maxWalkDistance' : '3000',
             'mode' : 'TRANSIT,WALK',
-            'date' : '11-17-2017',
+            'date' : str(start_time.month) + '-' + str(start_time.day) + '-' + str(start_time.year),
             'time' : str(start_time.hour) + ':' + str(start_time.minute),
             'api_key' : MONOTCH_APIKEY
         }
