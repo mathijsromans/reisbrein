@@ -3,6 +3,8 @@ from website.local_settings import *
 from reisbrein.planner import Location
 from ns_api import *
 from .tomtom import TomTomApi
+from .monotchapi import MonotchApi
+
 
 
 class TestNSAPI(TestCase):
@@ -24,4 +26,15 @@ class TestTomTom(TestCase):
     def testStations(self):
         begin = Location('Madurodam')
         end = Location('Martinitoren')
-        self.assertGreater(self.tomtom.travel_time( begin, end ), 8300)
+        self.assertGreater(self.tomtom.travel_time( begin, end ), 8000)
+
+
+class TestMonotch(TestCase):
+
+    def setUp(self):
+        self.monotch = MonotchApi()
+
+    def testStations(self):
+        begin = Location('Madurodam')
+        end = Location('Martinitoren')
+        self.assertEqual(self.monotch.search( begin, end ), 0)

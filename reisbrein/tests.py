@@ -77,7 +77,7 @@ class TestDijkstraPlanner(TestCase):
         for plan in p.solve('Madurodam', 'Martinitoren', noon):
             vertices.append([edge.to_vertex for edge in plan])
 
-        print(list(recur_map(str, vertices)))
+        # print(list(recur_map(str, vertices)))
         # [['Station: Den Haag HS @ 2017-11-17 12:10:00', 'Station: Groningen Noord @ 2017-11-17 12:40:00',
         # 'Martinitoren @ 2017-11-17 12:50:00'], ['Station: Den Haag HS @ 2017-11-17 12:10:00',
         # 'Station: Groningen Noord @ 2017-11-17 12:40:00', 'Martinitoren @ 2017-11-17 12:50:00'], []]
