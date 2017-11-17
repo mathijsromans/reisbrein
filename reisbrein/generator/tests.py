@@ -2,6 +2,7 @@ from django.test import TestCase
 from datetime import datetime
 from reisbrein.planner import Point, Location
 from reisbrein.generator.gen_walk import WalkGenerator
+from reisbrein.generator.gen_bike import BikeGenerator
 from reisbrein.generator.gen_train import TrainGenerator, skip_first
 from reisbrein.segment import Segment, TransportType
 from .gen_common import FixTime
@@ -27,6 +28,29 @@ class TestWalkGenerator(TestCase):
         self.assertEqual(new_point.time, datetime(2017, 11, 17, 18, 2, 25, 755992))
         self.assertEqual(new_point2.time, datetime(2017, 11, 17, 5, 57, 34, 244008))
         self.assertEqual(segment2.to_vertex.time, noon)
+
+
+class TestBikeGenerator(TestCase):
+
+    def test(self):
+        loc_utr = Location('Utrecht')
+        loc_ams = Location('Amsterdam')
+        noon = datetime(year=2017, month=11, day=17, hour=12)
+        start1 = Point(location=loc_utr, time=noon)
+        end1 = Point(location=loc_ams, time=noon)
+        start2 = Point(location=loc_utr, time=noon)
+        end2 = Point(location=loc_ams, time=noon)
+        generator = BikeGenerator()
+        segment, new_point = generator.create_segment(start1, end1, FixTime.START)
+        segment2, new_point2 = generator.create_segment(start2, end2, FixTime.END)
+        self.assertEqual(segment.transport_type, TransportType.BIKE)
+        self.assertEqual(segment.from_vertex.location, loc_utr)
+        self.assertEqual(segment.to_vertex.location, loc_ams)
+        self.assertEqual(segment.from_vertex.time, noon)
+        self.assertEqual(new_point.time, datetime(2017, 11, 17, 13, 48, 43, 726798))
+        self.assertEqual(new_point2.time, datetime(2017, 11, 17, 10, 11, 16, 273202))
+        self.assertEqual(segment2.to_vertex.time, noon)
+
 
 
 class TestTrainGenerator(TestCase):

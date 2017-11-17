@@ -6,7 +6,6 @@ from .tomtom import TomTomApi
 from .monotchapi import MonotchApi
 
 
-
 class TestNSAPI(TestCase):
 
     def setUp(self):
