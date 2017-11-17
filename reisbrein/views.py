@@ -98,6 +98,8 @@ class PlanView(TemplateView):
 
 
 class UserTravelPreferencesForm(forms.Form):
+    home_address = forms.CharField(label='Home address', required=False)
+    has_car = forms.BooleanField(label='I have a car', required=False)
     has_bicycle = forms.BooleanField(label='I have a bicycle', required=False)
     likes_to_bike = forms.IntegerField()
     travel_time_importance = forms.IntegerField()
@@ -110,6 +112,8 @@ class UserTravelPreferencesView(FormView):
     def get_initial(self):
         user_preferences, created = UserTravelPreferences.objects.get_or_create(user=self.request.user)
         initial = super().get_initial()
+        initial['home_address'] = user_preferences.home_address
+        initial['has_car'] = user_preferences.has_car
         initial['has_bicycle'] = user_preferences.has_bicycle
         initial['likes_to_bike'] = user_preferences.likes_to_bike
         initial['travel_time_importance'] = user_preferences.travel_time_importance
@@ -117,6 +121,8 @@ class UserTravelPreferencesView(FormView):
 
     def form_valid(self, form):
         user_preferences, created = UserTravelPreferences.objects.get_or_create(user=self.request.user)
+        user_preferences.home_address = form.cleaned_data['home_address']
+        user_preferences.has_car = form.cleaned_data['has_car']
         user_preferences.has_bicycle = form.cleaned_data['has_bicycle']
         user_preferences.likes_to_bike = form.cleaned_data['likes_to_bike']
         user_preferences.travel_time_importance = form.cleaned_data['travel_time_importance']

@@ -7,7 +7,11 @@
 {% block content %}
 <div class="container">
 
-  <div style="margin-top: 20px;"></div>
+  <div class="row" align="center">
+    <div class="col-md-4 col-md-offset-4">
+      <h3>Preferences</h3>
+    </div>
+  </div>
 
   <div class="row">
     <div class="col-md-4 col-md-offset-4">
@@ -15,6 +19,8 @@
       {% bootstrap_form_errors form %}
       <form action="" method="post" novalidate>
         {% csrf_token %}
+        {% bootstrap_field form.home_address show_label=True%}
+        {% bootstrap_field form.has_car show_label=False %}
         {% bootstrap_field form.has_bicycle show_label=False %}
         {% bootstrap_field form.likes_to_bike show_label=False %}
         {% bootstrap_field form.travel_time_importance show_label=False %}
