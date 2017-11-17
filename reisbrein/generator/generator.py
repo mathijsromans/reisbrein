@@ -1,17 +1,21 @@
 from reisbrein.segment import Segment, TransportType
 from reisbrein.generator.gen_train import TrainGenerator
 from reisbrein.generator.gen_walk import WalkGenerator
+from reisbrein.generator.gen_car import CarGenerator
+
 
 
 class Generator:
     def __init__(self):
         self.walk_generator = WalkGenerator()
         self.train_generator = TrainGenerator()
+        self.car_generator = CarGenerator()
 
     def create_edges(self, start, end):
         edges = []
         self.train_generator.create_edges(start, end, edges)
         self.walk_generator.create_edges(start, end, edges)
+        self.car_generator.create_edges(start, end, edges)
         return edges
 
 

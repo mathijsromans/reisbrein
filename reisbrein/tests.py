@@ -77,15 +77,15 @@ class TestDijkstraPlanner(TestCase):
         for plan in p.solve('Madurodam', 'Martinitoren', noon):
             vertices.append([edge.to_vertex for edge in plan])
 
-        # print(list(recur_map(str, vertices)))
+        print(list(recur_map(str, vertices)))
         # [['Station: Den Haag HS @ 2017-11-17 12:10:00', 'Station: Groningen Noord @ 2017-11-17 12:40:00',
         # 'Martinitoren @ 2017-11-17 12:50:00'], ['Station: Den Haag HS @ 2017-11-17 12:10:00',
         # 'Station: Groningen Noord @ 2017-11-17 12:40:00', 'Martinitoren @ 2017-11-17 12:50:00'], []]
 
         self.assertEqual(len(vertices), 3)
-        self.assertEqual(len(vertices[0]), 0)
+        self.assertEqual(len(vertices[0]), 4)
         self.assertEqual(len(vertices[1]), 4)
-        self.assertEqual(len(vertices[2]), 4)
+        self.assertEqual(len(vertices[2]), 1)
 
 
 class TestRichPlanner(TestCase):
@@ -115,7 +115,7 @@ class TestRichPlanner(TestCase):
             vertices.append([edge.to_vertex for edge in plan])
         # print(list(recur_map(str, vertices)))
 
-        self.assertEqual(len(plans), 4)
+        self.assertEqual(len(plans), 5)
         self.assertEqual(len(plans[0]), 4)
         self.assertEqual(len(plans[1]), 4)
         self.assertEqual(len(plans[2]), 4)

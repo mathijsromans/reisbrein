@@ -4,6 +4,7 @@ from reisbrein.planner import Point, Location
 from reisbrein.generator.gen_walk import WalkGenerator
 from reisbrein.generator.gen_train import TrainGenerator, skip_first
 from reisbrein.segment import Segment, TransportType
+from .gen_common import FixTime
 
 
 class TestWalkGenerator(TestCase):
@@ -17,8 +18,8 @@ class TestWalkGenerator(TestCase):
         start2 = Point(location=loc_utr, time=noon)
         end2 = Point(location=loc_ams, time=noon)
         generator = WalkGenerator()
-        segment, new_point = generator.create_segment(start1, end1, WalkGenerator.FixTime.START)
-        segment2, new_point2 = generator.create_segment(start2, end2, WalkGenerator.FixTime.END)
+        segment, new_point = generator.create_segment(start1, end1, FixTime.START)
+        segment2, new_point2 = generator.create_segment(start2, end2, FixTime.END)
         self.assertEqual(segment.transport_type, TransportType.WALK)
         self.assertEqual(segment.from_vertex.location, loc_utr)
         self.assertEqual(segment.to_vertex.location, loc_ams)

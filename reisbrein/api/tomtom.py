@@ -7,8 +7,8 @@ class TomTomApi:
 
     BASE_URL = 'https://api.tomtom.com/routing/1/calculateRoute/'
 
-    def travel_time(self, begin, end):
-        begin_gps = begin.gps()
+    def travel_time(self, start, end):
+        begin_gps = start.gps()
         end_gps = end.gps()
         arguments = { 'key': TOMTOM_APIKEY }
         # headers = {'contentType': 'jsonp'}
