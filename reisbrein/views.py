@@ -1,10 +1,16 @@
 import datetime
+
 from django import forms
-from django.views.generic.base import TemplateView
+from django.contrib.auth.models import User
+from django.contrib.messages.views import SuccessMessageMixin
+from django.views.generic import TemplateView, UpdateView
 from django.views.generic.edit import FormView
+from django.core.exceptions import PermissionDenied
 from django.urls import reverse
+
 from reisbrein.planner import RichPlanner
 from reisbrein.generator.generator import Generator
+from reisbrein.models import UserTravelPreferences
 
 
 class PlanForm(forms.Form):
@@ -90,3 +96,32 @@ class PlanView(TemplateView):
             time += segment.distance
         return time
 
+
+class UserTravelPreferencesForm(forms.Form):
+    has_bicycle = forms.BooleanField(label='I have a bicycle', required=False)
+    likes_to_bike = forms.IntegerField()
+    travel_time_importance = forms.IntegerField()
+
+
+class UserTravelPreferencesView(FormView):
+    form_class=UserTravelPreferencesForm
+    template_name = 'reisbrein/user_travel_preferences.html'
+
+    def get_initial(self):
+        user_preferences, created = UserTravelPreferences.objects.get_or_create(user=self.request.user)
+        initial = super().get_initial()
+        initial['has_bicycle'] = user_preferences.has_bicycle
+        initial['likes_to_bike'] = user_preferences.likes_to_bike
+        initial['travel_time_importance'] = user_preferences.travel_time_importance
+        return initial
+
+    def form_valid(self, form):
+        user_preferences, created = UserTravelPreferences.objects.get_or_create(user=self.request.user)
+        user_preferences.has_bicycle = form.cleaned_data['has_bicycle']
+        user_preferences.likes_to_bike = form.cleaned_data['likes_to_bike']
+        user_preferences.travel_time_importance = form.cleaned_data['travel_time_importance']
+        user_preferences.save()
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse('plan-input')

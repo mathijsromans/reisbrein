@@ -1,0 +1,71 @@
+{% extends "website/base.html" %}
+
+{% load bootstrap3 %}
+
+{% block title %}User Travel Preferences {{ block.super }}{% endblock %}
+
+{% block content %}
+<div class="container">
+
+  <div style="margin-top: 20px;"></div>
+
+  <div class="row">
+    <div class="col-md-4 col-md-offset-4">
+
+      {% bootstrap_form_errors form %}
+      <form action="" method="post" novalidate>
+        {% csrf_token %}
+        {% bootstrap_field form.has_bicycle show_label=False %}
+        {% bootstrap_field form.likes_to_bike show_label=False %}
+        {% bootstrap_field form.travel_time_importance show_label=False %}
+        <div class="form-group">
+            <span>Love for bicycle</span>
+        </div>
+        <div class="form-group">
+            <div id="likes_to_bike_slider"></div>
+        </div>
+        <div class="form-group">
+            <span>Travel time importance</span>
+        </div>
+        <div class="form-group">
+          <div id="travel_time_importance_slider"></div>
+        </div>
+        {% buttons %}
+        <button type="submit" class="btn btn-block btn-primary" title="Save preferences">
+          Save
+        </button>
+        {% endbuttons %}
+      </form>
+
+    </div>
+  </div>
+
+</div>
+
+<script>
+$( function() {
+  $("#id_likes_to_bike").hide();
+  $("#id_travel_time_importance").hide();
+
+  function setLikesBikeValue(event, ui) {
+    $("#id_likes_to_bike").val(ui.value);
+  }
+
+  function setTravelTimeImportanceValue(event, ui) {
+    $("#id_travel_time_importance").val(ui.value);
+  }
+
+  $("#likes_to_bike_slider").slider({
+    value: $("#id_likes_to_bike").val(),
+    stop: setLikesBikeValue
+  });
+
+  $("#travel_time_importance_slider").slider({
+  value: $("#id_travel_time_importance").val(),
+    stop: setTravelTimeImportanceValue
+  });
+});
+</script>
+
+
+{% endblock %}

@@ -6,6 +6,7 @@ from django.views.generic import TemplateView
 
 from reisbrein.views import PlanInputView
 from reisbrein.views import PlanView
+from reisbrein.views import UserTravelPreferencesView
 
 from website.views import ContactView
 from website.views import UserProfileView
@@ -16,6 +17,8 @@ urlpatterns = [
     url(r'^reisadvies/(?P<start>.+)/(?P<end>.+)$', PlanView.as_view(), name='plan-results'),
 
     url(r'^about/$', TemplateView.as_view(template_name="website/about.html"), name='about'),
+
+    url(r'^travel/preferences/$', login_required(UserTravelPreferencesView.as_view()), name='user-travel-preferences'),
 
     url(r'^userprofile/(?P<pk>[0-9]+)/$', login_required(UserProfileView.as_view()), name='userprofile'),
 
