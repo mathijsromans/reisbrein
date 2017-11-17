@@ -30,3 +30,17 @@ def transport_type_color(transport_type):
     if transport_type in color_map:
         return color_map[transport_type]
     return 'default'
+
+
+@register.simple_tag
+def transport_type_bgcolor(transport_type):
+    color_map = {
+        TransportType.TRAIN.name: 'success',
+        TransportType.WALK.name: 'info',
+        TransportType.CAR.name: 'primary',
+        TransportType.BIKE.name: 'warning',
+        TransportType.WAIT.name: 'danger',
+    }
+    if transport_type in color_map:
+        return color_map[transport_type]
+    return 'default'
