@@ -56,5 +56,5 @@ CRON_CLASSES = [
 ]
 
 #NS API
-NSAPI_USERNAME = 'name@domain.com'
-NSAPI_KEY = 'xxx-your-key-xxx'
+NSAPI_USERNAME = ''
+NSAPI_KEY = ''

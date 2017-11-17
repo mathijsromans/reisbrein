@@ -9,9 +9,6 @@ class TestNSAPI(TestCase):
         self.nsapi = NSAPI(NSAPI_USERNAME, NSAPI_KEY)
 
     def testStations(self):
-        # commented-out because NSAPI_USERNAME, NSAPI_KEY need to be set
-        # stations = self.nsapi.get_stations()
-        # self.assertGreater(len(stations), 10)
-
-
-
+        if NSAPI_USERNAME:
+            stations = self.nsapi.get_stations()
+            self.assertGreater(len(stations), 10)
