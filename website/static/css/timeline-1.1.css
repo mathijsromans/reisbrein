@@ -187,7 +187,7 @@ Modules - reusable parts of our design
   display: table;
   clear: both;
 }
-.cd-timeline-content {
+.cd-timeline-content time {
   margin: 10px 0 10px 0;
   font-size: 18px;
   font-size: 1.6rem;
@@ -246,6 +246,7 @@ Modules - reusable parts of our design
     left: 122%;
     top: 6px;
     font-size: 18px;
+    font-size: 1.4rem;
   }
   .cd-timeline-block:nth-child(even) .cd-timeline-content {
     float: right;
