@@ -29,7 +29,8 @@
           <div class="progress" style="height: 30px; margin-bottom: 5px; width: {{ result.travel_time_percentage }}%">
           {% for segment in result.segments %}
             {% transport_type_icon segment.type as icon %}
-            <div class="progress-bar {% if segment.type == 'BIKE' %}progress-bar-success{% endif %}" role="progressbar" aria-valuenow="{{ step.travel_time_percentage }}" aria-valuemin="0" aria-valuemax="100"
+            {% transport_type_color segment.type as color %}
+            <div class="progress-bar progress-bar-{{ color }}" role="progressbar" aria-valuenow="{{ step.travel_time_percentage }}" aria-valuemin="0" aria-valuemax="100"
                  style="width: {{ segment.travel_time_percentage }}%">
               <span style="font-size: 16px; line-height: 30px;">
                 <span class="fa {{ icon }}"></span>

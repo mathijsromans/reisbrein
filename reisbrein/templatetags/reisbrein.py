@@ -18,6 +18,15 @@ def transport_type_icon(transport_type):
     return 'fa-question'
 
 
-# @register.simple_tag
-# def transport_type_color(transport_type):
-#     return datetime.datetime.now().strftime(format_string)
+@register.simple_tag
+def transport_type_color(transport_type):
+    color_map = {
+        TransportType.TRAIN.name: 'success',
+        TransportType.WALK.name: 'default',
+        TransportType.CAR.name: 'primary',
+        TransportType.BIKE.name: 'warning',
+        TransportType.WAIT.name: 'danger',
+    }
+    if transport_type in color_map:
+        return color_map[transport_type]
+    return 'default'
