@@ -19,38 +19,44 @@
     <div class="col-md-8 col-md-offset-2">
 
       {% for result in results %}
-      <div class="row">
 
-        <div class="col-xs-1 col-sm-1">
-          <span style="font-size: 16px; line-height: 30px;">
-            {{ result.travel_time_str }}
-          </span>
-        </div>
+      <div class="row result-bar">
 
-        <div class="col-xs-11 col-sm-11">
-
-          <div class="progress" style="height: 30px; margin-bottom: 5px; width: {{ result.travel_time_percentage }}%">
-          {% for segment in result.segments %}
-            {% transport_type_icon segment.type as icon %}
-            {% transport_type_color segment.type as color %}
-            <div class="progress-bar progress-bar-{{ color }}" role="progressbar" aria-valuenow="{{ segment.travel_time_percentage }}" aria-valuemin="0" aria-valuemax="100"
-                 style="width: {{ segment.travel_time_percentage }}%">
-              <span style="font-size: 16px; line-height: 30px;">
-                <span class="fa {{ icon }}"></span>
-              </span>
-            </div>
-          {% endfor %}
+        <a href="#detail-{{ forloop.counter0 }}" data-toggle="collapse">
+          <div class="col-xs-1 col-sm-1">
+            <span style="font-size: 16px; line-height: 30px;">
+              {{ result.travel_time_str }}
+            </span>
           </div>
 
-        </div>
+          <div class="col-xs-11 col-sm-11">
 
+            <div class="progress" style="height: 30px; margin-bottom: 5px; width: {{ result.travel_time_percentage }}%">
+            {% for segment in result.segments %}
+              {% transport_type_icon segment.type as icon %}
+              {% transport_type_color segment.type as color %}
+              <div class="progress-bar progress-bar-{{ color }}" role="progressbar" aria-valuenow="{{ segment.travel_time_percentage }}" aria-valuemin="0" aria-valuemax="100"
+                   style="width: {{ segment.travel_time_percentage }}%">
+                <span style="font-size: 16px; line-height: 30px;">
+                  <span class="fa {{ icon }}"></span>
+                </span>
+              </div>
+            {% endfor %}
+            </div>
+
+          </div>
+        </a>
+
+      </div>
+
+      <div id="detail-{{ forloop.counter0 }}" class="row collapse">
+        {% include "reisbrein/result_timeline.html" %}
       </div>
       {% endfor %}
 
     </div>
   </div>
 
-  {% include "reisbrein/result_timeline.html" %}
-
 </div>
+
 {% endblock %}
