@@ -60,15 +60,11 @@ class TestDijkstraPlanner(TestCase):
         #  [<reisbrein.planner.Point object at 0x7f8eee966630>],
         #  [<reisbrein.planner.Point object at 0x7f8eee966630>]]
 
-        self.assertEqual(len(vertices), 3)
+        self.assertEqual(len(vertices), 1)
         self.assertEqual(len(vertices[0]), 3)
-        self.assertEqual(len(vertices[1]), 1)
-        self.assertEqual(len(vertices[2]), 1)
         self.assertEqual(vertices[0][0], 'b')
         self.assertEqual(vertices[0][1], 'c')
         self.assertEqual(vertices[0][2].location.loc_str, 'e')
-        self.assertEqual(vertices[1][0].location.loc_str, 'e')
-        self.assertEqual(vertices[2][0].location.loc_str, 'e')
 
     def test_planner(self):
         p = DijkstraPlanner(Generator())
@@ -100,11 +96,9 @@ class TestRichPlanner(TestCase):
             vertices.append([edge.to_vertex for edge in plan])
         # print(list(recur_map(str, plans)))
 
-        self.assertEqual(len(plans), 4)
+        self.assertEqual(len(plans), 2)
         self.assertEqual(len(plans[0]), 3)
-        self.assertEqual(len(plans[1]), 1)
-        self.assertEqual(len(plans[2]), 2)
-        self.assertEqual(len(plans[3]), 2)
+        self.assertEqual(len(plans[1]), 2)
 
     def test_planner(self):
         p = RichPlanner(Generator())
@@ -115,11 +109,9 @@ class TestRichPlanner(TestCase):
             vertices.append([edge.to_vertex for edge in plan])
         # print(list(recur_map(str, vertices)))
 
-        self.assertEqual(len(plans), 6)
-        self.assertEqual(len(plans[0]), 1)
+        self.assertEqual(len(plans), 2)
+        self.assertEqual(len(plans[0]), 4)
         self.assertEqual(len(plans[1]), 4)
-        self.assertEqual(len(plans[2]), 4)
-        self.assertEqual(len(plans[3]), 4)
 
 
 class TestViews(TestCase):
@@ -128,5 +120,5 @@ class TestViews(TestCase):
         p = RichPlanner(Generator())
         time = datetime(year=2017, month=11, day=17, hour=22, minute=32)
         plans = p.solve('Madurodam', 'Martinitoren', time)
-        self.assertEqual(len(plans), 5)
-        self.assertEqual(PlanView.get_results(plans)[0]['travel_time_min'], 134)
+        self.assertEqual(len(plans), 1)
+        self.assertEqual(PlanView.get_results(plans)[0]['travel_time_min'], 337)
