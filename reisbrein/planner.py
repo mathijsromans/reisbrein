@@ -39,6 +39,7 @@ class Point:
     def __str__(self):
         return str(self.location) + ' @ ' + str(self.time)
 
+
 class Planner(object):
     def __init__(self, generator):
         self.generator = generator

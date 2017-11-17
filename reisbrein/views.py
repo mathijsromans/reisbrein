@@ -1,4 +1,4 @@
-from datetime import datetime
+import datetime
 from django import forms
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import FormView
@@ -31,7 +31,7 @@ class PlanView(TemplateView):
     def get_context_data(self, start, end, **kwargs):
         context = super().get_context_data()
         p = RichPlanner(Generator())
-        now = datetime.now()
+        now = datetime.datetime.now()
         options = p.solve(start, end, now)
         results = self.get_results(options)
 
@@ -57,15 +57,23 @@ class PlanView(TemplateView):
                         'end': segment.to_vertex,
                         'type': segment.transport_type.name,
                         'travel_time_min': int(segment.distance),
+                        'travel_time_str': PlanView.format_minutes(int(segment.distance)),
                         'travel_time_percentage': 100*segment.distance / time,
                     })
             result.append(
             {
                 'travel_time_min': int(time),
+                'travel_time_str': PlanView.format_minutes(int(time)),
                 'travel_time_percentage': 100*time/max_time,
                 'segments': segments
             })
         return result
+
+    @staticmethod
+    def format_minutes(minutes):
+        hours = minutes // 60
+        minutes %= 60
+        return "%2i:%02i" % (hours, minutes)
 
 
     @staticmethod
