@@ -83,9 +83,9 @@ class TestDijkstraPlanner(TestCase):
         # 'Station: Groningen Noord @ 2017-11-17 12:40:00', 'Martinitoren @ 2017-11-17 12:50:00'], []]
 
         self.assertEqual(len(vertices), 3)
-        self.assertEqual(len(vertices[0]), 4)
+        self.assertEqual(len(vertices[0]), 0)
         self.assertEqual(len(vertices[1]), 4)
-        self.assertEqual(len(vertices[2]), 0)
+        self.assertEqual(len(vertices[2]), 4)
 
 
 class TestRichPlanner(TestCase):

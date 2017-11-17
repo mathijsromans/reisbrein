@@ -3,6 +3,7 @@ from datetime import timedelta
 from geopy.geocoders import Nominatim
 from .graph import Graph, shortest_path
 from .segment import TransportType
+from .userpreference import order_by_preference
 
 
 def recur_map(f, data):
@@ -38,7 +39,6 @@ class Point:
     def __str__(self):
         return str(self.location) + ' @ ' + str(self.time)
 
-
 class Planner(object):
     def __init__(self, generator):
         self.generator = generator
@@ -51,6 +51,7 @@ class Planner(object):
         for p in plans:
             if p and p[-1].transport_type == TransportType.WAIT:
                 p.pop()
+        order_by_preference(plans)
         return plans
 
     def make_plans(self, start, end, edges):
@@ -80,19 +81,12 @@ class RichPlanner(Planner):
                     new_p.append(e)
                     new_plans.append(new_p)
 
-        final_plans.sort(key=RichPlanner.weight)
         return final_plans
 
     @staticmethod
     def edges_starting_at(point, edges):
         return filter(lambda x: x.from_vertex == point, edges)
 
-    @staticmethod
-    def weight(option):
-        w = 0
-        for segment in option:
-            w += segment.distance
-        return w
 
 class DijkstraPlanner(Planner):
 
