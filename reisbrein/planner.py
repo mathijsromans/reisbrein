@@ -1,9 +1,12 @@
 import copy
 from datetime import timedelta
+
 from geopy.geocoders import Nominatim
+
 from .graph import Graph, shortest_path
 from .segment import TransportType
 from .userpreference import order_by_preference
+from .models import UserTravelPreferences
 
 
 def recur_map(f, data):
@@ -44,7 +47,7 @@ class Planner(object):
     def __init__(self, generator):
         self.generator = generator
 
-    def solve(self, start_loc, end_loc, start_time):
+    def solve(self, start_loc, end_loc, start_time, user_preferences=UserTravelPreferences()):
         start = Point(Location(start_loc), start_time)
         end = Point(Location(end_loc), start_time + timedelta(hours=12))
         edges = self.generator.create_edges(start, end)

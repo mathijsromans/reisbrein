@@ -36,9 +36,12 @@ class PlanView(TemplateView):
 
     def get_context_data(self, start, end, **kwargs):
         context = super().get_context_data()
+        user_preferences = UserTravelPreferences()
+        if (self.request.user.is_authenticated):
+            user_preferences, created = UserTravelPreferences.objects.get_or_create(user=self.request.user)
         p = RichPlanner(Generator())
         now = datetime.datetime.now()
-        options = p.solve(start, end, now)
+        options = p.solve(start, end, now, user_preferences)
         results = self.get_results(options)
 
         context['start'] = start
