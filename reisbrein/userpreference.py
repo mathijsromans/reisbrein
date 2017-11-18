@@ -45,6 +45,8 @@ def order_by_preference(plans, user_preferences):
         min_distance_search.append( distance(p) )
         if p[0].transport_type == TransportType.CAR:
             min_distance_search[-1] *= 2
+        if len(p)==1 and p[0].transport_type == TransportType.BIKE:
+            min_distance_search[-1] *= 2
             
 
     min_distance = min(min_distance_search)        
@@ -99,7 +101,7 @@ def weight(option, user_preferences):
             condition_dict['starts with bike'] = 1
         else:
             condition_dict['starts with bike'] = 0
-        if option[-1].transport_type == TransportType.BIKE:
+        if option[-1].transport_type == TransportType.BIKE and len(option)>2:
             condition_dict['ends with bike'] = 1
         else:
             condition_dict['ends with bike'] = 0
