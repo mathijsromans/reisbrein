@@ -20,7 +20,7 @@ class PublicGenerator:
             legs = it['legs']
             if legs:
                 prev_point = start
-            for leg in legs:
+            for index, leg in enumerate(legs):
                 transport_type = translate.get(leg['mode'])
                 if not transport_type:
                     continue
@@ -35,7 +35,8 @@ class PublicGenerator:
                     p_loc = Location(p_loc_name, (p_loc_lat, p_loc_lon))
                 p_time = datetime.fromtimestamp(int(leg['to']['arrival']) / 1000)
                 p = Point(p_loc, p_time)
-                edges.append(Segment(transport_type, prev_point, p, (p_time-prev_point.time).seconds/60))
+                if index != 0:  # walk to first stop will be added later
+                    edges.append(Segment(transport_type, prev_point, p, (p_time-prev_point.time).seconds/60))
                 prev_point = p
                 # print('Adding edge' + str(edges[-1]))
 
