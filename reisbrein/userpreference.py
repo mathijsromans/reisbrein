@@ -29,7 +29,8 @@ def order_by_preference(plans, user_preferences):
         
 
     if keep_plans != []:
-        plans[:] = [p for _,p in sorted(zip(keep_weights,keep_plans), reverse=True)]
+        zipped = list(zip(keep_weights, keep_plans))
+        plans[:] = [p for _,p in sorted(zipped, reverse=True)]
     else:
         plans = []
     
@@ -65,7 +66,7 @@ def weight(option, user_preferences):
         condition_dict['starts with car'] = 0
 
         # for now, since only car trips have only a single segment
-        if option[1].transport_type == TransportType.BIKE:
+        if len(option) > 1 and option[1].transport_type == TransportType.BIKE:
             condition_dict['starts with bike'] = 1
         else:
             condition_dict['starts with bike'] = 0

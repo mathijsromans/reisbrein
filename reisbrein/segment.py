@@ -17,6 +17,9 @@ class Segment(Edge):
         super(Segment, self).__init__(from_vertex, to_vertex, distance)
         self.transport_type = transport_type
 
+    def __lt__(self, other):
+        return self.distance < other.distance
+
     def __str__(self):
         return '(['+str(self.transport_type)+'] '+str(self.from_vertex)+' --> '+str(self.to_vertex)+')'
 

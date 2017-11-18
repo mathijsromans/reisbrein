@@ -23,6 +23,18 @@ class WalkGenerator:
         return segment, new_point
 
     def create_edges(self, start, end, edges):
+
+        # walk begin to end
+        segment, new_point = self.create_segment(start, end, FixTime.START, WalkGenerator.SPEED_WALK, TransportType.WALK)
+        if new_point.time < end.time:
+            edges.append(Segment(TransportType.WALK, start, new_point, (new_point.time - start.time).total_seconds() / 60))
+            edges.append(Segment(TransportType.WAIT, new_point, end, (end.time - new_point.time).total_seconds() / 60))
+        # bike begin to end
+        segment, new_point = self.create_segment(start, end, FixTime.START, WalkGenerator.SPEED_BIKE, TransportType.BIKE)
+        if new_point.time < end.time:
+            edges.append(Segment(TransportType.BIKE, start, new_point, (new_point.time - start.time).total_seconds() / 60))
+            edges.append(Segment(TransportType.WAIT, new_point, end, (end.time - new_point.time).total_seconds() / 60))
+
         public_types = [TransportType.TRAIN, TransportType.TRAM, TransportType.BUS]
         train_edges = [e for e in edges if e.transport_type in public_types]
         stops_1 = set([e.from_vertex for e in train_edges])
@@ -50,7 +62,5 @@ class WalkGenerator:
             # bike from second station
             segment, new_point = self.create_segment(s, end, FixTime.START, WalkGenerator.SPEED_BIKE, TransportType.BIKE)
             if new_point.time < end.time:
-                edges.append(
-                    Segment(TransportType.BIKE, s, new_point, (new_point.time - s.time).total_seconds() / 60))
-                edges.append(
-                    Segment(TransportType.WAIT, new_point, end, (end.time - new_point.time).total_seconds() / 60))
+                edges.append(Segment(TransportType.BIKE, s, new_point, (new_point.time - s.time).total_seconds() / 60))
+                edges.append(Segment(TransportType.WAIT, new_point, end, (end.time - new_point.time).total_seconds() / 60))
