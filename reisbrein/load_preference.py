@@ -25,8 +25,8 @@ def load_dummy_preference_condition_matrix():
     M[pl.index('nobike'), cl.index('involves bike')] = -1e10
     M[pl.index('no bike at start'), cl.index('starts with bike')] = -1e10
     M[pl.index('no bike at end'), cl.index('ends with bike')] = -1e10
-    M[pl.index('likewalk'), cl.index('involves walk')] = 10
-    M[pl.index('likebike'), cl.index('involves bike')] = 10
+    M[pl.index('likewalk'), cl.index('involves walk')] = 30
+    M[pl.index('likebike'), cl.index('involves bike')] = 30
     M[pl.index('mindrain'), cl.index('rainy')] = -20
 
     
