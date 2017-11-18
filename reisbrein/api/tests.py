@@ -6,6 +6,8 @@ from ns_api import NSAPI
 from .tomtom import TomTomApi
 from .mapquest import MapQuestApi
 from .monotchapi import MonotchApi
+from .weather import WeatherApi
+
 import time
 
 class TestNSAPI(TestCase):
@@ -40,6 +42,16 @@ class TestMapQuest(TestCase):
     def testSearch(self):
         location = self.mapquest.search('wassenaarsseweg 220 Den Haag')
         location = self.mapquest.search('wassenaarsseweg 220 Den Haag')
+
+
+class TestWeather(TestCase):
+
+    def setUp(self):
+        self.weather = WeatherApi()
+
+    def testSearch(self):
+        weather = self.weather.search('Madrid')
+        # print(weather)
 
 class TestMonotch(TestCase):
 
