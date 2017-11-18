@@ -5,8 +5,8 @@ from django.contrib.auth.models import User
 class UserTravelPreferences(models.Model):
     user = models.OneToOneField(User)
     home_address = models.CharField(max_length=500, blank=True, default="")
-    has_bicycle = models.BooleanField(default=False, blank=True)
-    has_car = models.BooleanField(default=False, blank=True)
+    has_bicycle = models.BooleanField(default=True, blank=True)
+    has_car = models.BooleanField(default=True, blank=True)
     travel_time_importance = models.IntegerField(default=5)
     likes_to_bike = models.IntegerField(default=5)
     show_n_results = models.IntegerField(default=15)
