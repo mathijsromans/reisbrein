@@ -60,6 +60,8 @@
                                     {{ segment.travel_time_str }}
                                     {% if segment.delay_min %}
                                     <span class="text-danger"> +{{ segment.delay_min|floatformat:0 }} min</span>
+                                    {% elif segment.type == 'CAR' %}
+                                    <span class="text-danger"> +0 min</span>
                                     {% endif %}
                                 </div>
                             </div>
