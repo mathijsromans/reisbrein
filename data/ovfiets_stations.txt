@@ -1,0 +1,301 @@
+Amsterdam Bijlmer ArenA
+Arnhem
+Arnhem Sonsbeek
+Almere Centrum
+Amersfoort Centraal
+Amersfoort Mondriaanplein
+Amersfoort Schothorst
+Almelo
+Alkmaar
+Alkmaar Noord
+Anna Paulowna
+Apeldoorn
+Appingedam
+Alphen aan den Rijn
+Amsterdam Amstel
+Amsterdam Bijlmer ArenA
+Amsterdam Centraal Oost
+Amsterdam Paradiso
+Amsterdam Centraal West
+Amsterdam IJzijde-A
+Amsterdam Lelylaan
+Amsterdam Muiderpoort
+Amsterdam Zuid
+Amsterdam Mahlerplein
+Assen
+Amsterdam Sloterdijk
+Aalten
+Amersfoort Vathorst
+Breda Belcrum
+Breda Centrum
+Breda Prinsenbeek
+Best
+Bergen op Zoom
+Bilthoven
+Bovenkarspel-Grootebroek
+Breukelen
+Beilen
+Bloemendaal
+Brummen
+Boxmeer
+Borne
+Barneveld Centrum
+Bunnik
+Barneveld Noord
+Barendrecht
+Baarn
+Beesd
+Bussum Zuid
+Boxtel
+Veghel
+Boxtel
+Beverwijk
+Castricum
+Cuijk
+Culemborg
+Driebergen-Zeist
+Zeist
+Delden
+Dordrecht
+Didam
+Dalfsen
+Den Dolder
+Diemen
+Diemen Zuid
+Deurne
+Dieren
+Driehuis
+Dronten
+Delft
+Doetinchem
+Doetinchem de Huet
+Delft Zuid
+Deventer
+Deventer Boerhavelaan
+Deventer Colmschate
+Duivendrecht
+Leiden de Vink
+Delfzijl
+Echt
+Ede-Wageningen
+Ede-Wageningen Zuidplein
+Otterlo
+Eindhoven Beukenlaan
+Eindhoven Zuidzijde
+Eindhoven Noordzijde
+Enkhuizen
+Emmen
+Enschede
+Elst
+Etten-Leur
+Gouda
+Gouda Goverwelle
+Geldermalsen
+Groningen
+Groningen P+R Hoogkerk
+Groningen P+R Kardinge
+Groningen Noord
+Goor
+Geldrop Fietskluis
+Gorinchem
+Goes
+Den Haag HS
+Den Haag Centraal
+Den Haag Buitenhof
+Den Haag Driehoekjes
+Den Haag Grote Markt
+Den Haag Palaceplein
+Den Haag Spuiplein
+Den Haag Voldersgracht
+Nootdorp
+Den Haag Mariahoeve
+Gilze Rijen
+Heemstede-Aerdenhout
+Harderwijk
+Hardenberg
+Den Helder
+Den Helder Zuid
+Hoofddorp
+Hengelo
+Hengelo Gezondheidspark
+Hoogeveen
+Hoogezand Sappemeer
+Hillegom
+Heemskerk
+Hoogkarspel
+Hoek van Holland Haven
+Terschelling
+Haarlem
+Haarlem Spaarnwoude
+Heiloo
+Helmond
+Helmond Brouwhuis
+Helmond Brandevoort
+Helmond 't Hout
+Hoorn
+Hoorn Kersenboogerd
+Hollandse Rading
+Heerenveen
+Heerlen
+Haren P+R Transferium
+Horst Sevenum
+s-Hertogenbosch
+Houten
+Houten Castellum
+Werkhoven
+s-Hertogenbosch Oost
+Hilversum
+Hilversum Sportpark
+Heerhugowaard
+Halfweg Zwanenburg
+Heeze-Leende
+Veenendaal-De klomp
+Krommenie-Assendelft
+Kampen
+Kerkrade Centrum
+Den Haag Laan van NOI
+Lochem
+Leiden Lammenschans
+Leiden Centraal
+Landgraaf
+Lelystad Centrum
+Leeuwarden
+Maarssen-Fietsenstalling
+Maarssen
+Middelburg
+Meerssen
+Meppel
+Maassluis
+Maastricht
+Maastricht Noord
+Maastricht Randwyck
+Maarheeze
+Naarden-Bussum
+Nijkerk
+Nijmegen
+Nijmegen Goffert
+Nijmegen Heyendaal
+Hellendoorn/Nijverdal
+Oss
+Obdam
+Oldenzaal
+Ommen
+Olst
+Oisterwijk
+Overveen
+Oss West
+Uden
+Purmerend Overwhere
+Purmerend
+Putten
+Amsterdam RAI
+Raalte
+Rheden
+Rotterdam Lombardijen
+Roermond
+Rosmalen
+Roosendaal
+Rijswijk
+Rotterdam Alexander
+Rotterdam Capelsebrug
+Rotterdam Kralingse Zoom
+Rotterdam Blaak
+Rotterdam Centraal
+Rotterdam Fietspunt Wilhelminakade Prinsendam
+Rotterdam Fietspunt Marconiplein
+Rotterdam Zuidplein
+Rotterdam Slinge
+Spijkenisse
+Pijnacker
+Pijnacker Zuid
+Rodenrijs
+Reuver
+Ravenstein
+Soestdijk
+Schiedam
+Sliedrecht
+Schagen
+Schiphol
+Sneek
+Santpoort Noord
+Santpoort Zuid
+Sittard
+Soest Zuid
+Steenwijk
+Tilburg
+Terborg
+Tilburg Reeshof
+Tilburg West Universiteit
+Tiel
+Utrecht Centraal, Hoog Catharijne
+Utrecht Centraal West
+Utrecht Centraal Oost, Smakkelaarsveld
+Utrecht Centraal, Stationsplein
+Utrecht Vredenburg
+Utrecht P+R Westraven
+Utrecht P+R Muziektheater
+Utrecht Mariaplaats
+Utrecht Jaarbeursplein
+Utrecht Moreelsepark
+Utrecht Janskerkhof
+Utrecht Vaartsche Rijn
+Utrecht Centraal Stationsplein
+IJsselstijn UT
+Nieuwegein
+Rijnsweerd
+Utrecht P+R Papendorp
+Vianen
+Utrecht Uithof
+Uitgeest
+Utrecht Lunetten
+Utrecht Leidsche Rijn
+Utrecht Overvecht
+Utrecht Terwijde
+Utrecht Zuilen
+Voorburg
+Vlaardingen Centrum
+Veendam
+Vlaardingen Oost
+Vlaardingen West
+Vught
+Voorhout
+Vroomshoop
+Valkenburg
+Venlo
+Vierlingsbeek
+Veenendaal
+Veenendaal West
+Velp
+Venray
+Vlissingen
+Voorschoten
+Varsseveld
+Vleuten
+Vriezenveen
+Wijchen
+Woerden
+Wolfheze
+Wijhe
+Weesp
+Muiden P&R
+Winschoten
+Winsum
+Weert
+Westervoort
+Winterswijk
+Zaltbommel
+Zaandam
+Zuidhorn
+Zwolle
+Zwolle Hanzeland
+Lage Zwaluwe
+Zutphen
+Zoetermeer Stadhuis
+Zoetermeer Centrum West
+Zoetermeer Driemanspolder
+Zoetermeer Rokkeveen
+Zoetermeer Oost
+Zevenaar
+Zandvoort
+Zandvoort Zilt-Bikes
+Zwijndrecht
