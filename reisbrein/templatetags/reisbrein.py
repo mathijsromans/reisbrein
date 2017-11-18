@@ -25,7 +25,7 @@ def transport_type_color(transport_type):
     color_map = {
         TransportType.TRAIN.name: 'success',
         TransportType.BUS.name: 'bus',
-        TransportType.TRAM.name: 'warning',
+        TransportType.TRAM.name: 'tram',
         TransportType.WALK.name: 'info',
         TransportType.CAR.name: 'primary',
         TransportType.BIKE.name: 'warning',

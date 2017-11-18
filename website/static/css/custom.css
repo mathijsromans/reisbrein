@@ -42,3 +42,11 @@ body {
 .progress-bar-wait {
     background-color: #c5c9cb;
 }
+
+.progress-bar-tram {
+    background-color: #2083b7;
+}
+
+.progress-bar-bus {
+    background-color: #0a6799;
+}
