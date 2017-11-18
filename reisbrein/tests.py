@@ -41,7 +41,7 @@ class TestLocation(TestCase):
 
     def test(self):
         loc = Location('Utrecht')
-        self.assertEqual(loc.gps(), (52.08095165, 5.12768031549829))
+        self.assertEqual(loc.gps(), (52.09126, 5.12275))
         loc2 = Location('ddd-unknown-location-ddsfaasdfasdf')
         self.assertEqual(loc2.gps(), None)
 
@@ -123,4 +123,4 @@ class TestViews(TestCase):
         results = PlanView.get_results(plans)
         # print(results)
         self.assertEqual(len(plans), 3)
-        self.assertEqual(results[0]['travel_time_min'], 402)
+        self.assertEqual(results[0]['travel_time_min'], 403)

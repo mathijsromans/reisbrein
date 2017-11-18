@@ -24,8 +24,8 @@ class TestWalkGenerator(TestCase):
         self.assertEqual(segment.from_vertex.location, loc_utr)
         self.assertEqual(segment.to_vertex.location, loc_ams)
         self.assertEqual(segment.from_vertex.time, noon)
-        self.assertEqual(new_point.time, datetime(2017, 11, 17, 18, 2, 25, 755992))
-        self.assertEqual(new_point2.time, datetime(2017, 11, 17, 5, 57, 34, 244008))
+        self.assertEqual(new_point.time, datetime(2017, 11, 17, 17, 51, 29, 190191))
+        self.assertEqual(new_point2.time, datetime(2017, 11, 17, 6, 8, 30, 809809))
         self.assertEqual(segment2.to_vertex.time, noon)
 
 
