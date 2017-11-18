@@ -45,7 +45,7 @@ class PlanInputView(FormView):
         context = super().get_context_data()
         plan_history = []
         if self.request.user.is_authenticated:
-            plan_history = UserTravelPlan.objects.all()[:10]
+            plan_history = UserTravelPlan.objects.all()[:5]
         context['plan_history'] = plan_history
         return context
 
@@ -95,6 +95,7 @@ class PlanView(TemplateView):
                         'travel_time_min': int(segment.distance),
                         'travel_time_str': PlanView.format_minutes(int(segment.distance)),
                         'travel_time_percentage': 100*segment.distance / time,
+                        'delay': segment.delay,
                     })
             result.append(
             {
