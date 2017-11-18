@@ -18,9 +18,10 @@ class UserTravelPlan(models.Model):
     start = models.CharField(max_length=500)
     end = models.CharField(max_length=500)
     datetime_created = models.DateTimeField(auto_now_add=True)
+    datetime_updated = models.DateTimeField(auto_now=True)
 
     class Meta:
-        ordering = ['-datetime_created']
+        ordering = ['-datetime_updated']
 
 
 class MapQuestCache(models.Model):

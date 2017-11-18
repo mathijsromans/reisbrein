@@ -28,7 +28,7 @@ Modules - reusable parts of our design
   top: 0;
   left: 18px;
   height: 100%;
-  width: 3px;
+  width: 4px;
   background: #e95420;
 }
 
@@ -55,7 +55,7 @@ Modules - reusable parts of our design
   width: 30px;
   height: 30px;
   border-radius: 50%;
-  box-shadow: 0 0 0 3px #e95420;
+  box-shadow: 0 0 0 4px #e95420;
 }
 .cd-timeline-img.timeline-location {
   position: absolute;
