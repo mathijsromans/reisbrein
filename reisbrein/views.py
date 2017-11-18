@@ -7,11 +7,12 @@ from django.views.generic import TemplateView, UpdateView
 from django.views.generic.edit import FormView
 from django.core.exceptions import PermissionDenied
 from django.urls import reverse
-
+import logging
 from reisbrein.planner import RichPlanner
 from reisbrein.generator.generator import Generator
 from reisbrein.models import UserTravelPreferences
 
+logger = logging.getLogger(__name__)
 
 class PlanForm(forms.Form):
     start = forms.CharField(label='Van')
@@ -21,6 +22,14 @@ class PlanForm(forms.Form):
 class PlanInputView(FormView):
     template_name = 'reisbrein/plan_input.html'
     form_class = PlanForm
+
+    def get_initial(self):
+        initial = super().get_initial()
+        if not self.request.user.is_authenticated:
+            return initial
+        user_preferences, created = UserTravelPreferences.objects.get_or_create(user=self.request.user)
+        initial['start'] = user_preferences.home_address
+        return initial
 
     def form_valid(self, form):
         self.start = form.cleaned_data['start']
@@ -41,6 +50,8 @@ class PlanView(TemplateView):
             user_preferences, created = UserTravelPreferences.objects.get_or_create(user=self.request.user)
         p = RichPlanner(Generator())
         now = datetime.datetime.now()
+        now = max(now, datetime.datetime(year=2017, month=11, day=18, hour=6))
+        # logger.info(now)
         options = p.solve(start, end, now, user_preferences)
         results = self.get_results(options)
 

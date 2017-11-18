@@ -2,7 +2,7 @@ import copy
 from datetime import timedelta
 
 from geopy.geocoders import Nominatim
-
+from reisbrein.api.tomtom import TomTomApi
 from .graph import Graph, shortest_path
 from .segment import TransportType
 from .userpreference import order_by_preference
@@ -15,12 +15,13 @@ def recur_map(f, data):
 
 class Location:
     def __init__(self, loc_str):
-        geolocator = Nominatim()
+        # geolocator = Nominatim()
         self.loc_str = loc_str
-        self.location = geolocator.geocode(self.loc_str)
+        self.location = TomTomApi().search(loc_str)
+        # geolocator.geocode(self.loc_str)
 
     def gps(self):
-        return (self.location.latitude, self.location.longitude) if self.location else None
+        return self.location
 
     def __str__(self):
         return self.loc_str
@@ -56,6 +57,10 @@ class Planner(object):
             if p and p[-1].transport_type == TransportType.WAIT:
                 p.pop()
         order_by_preference(plans, user_preferences)
+        try:
+            order_by_preference(plans)
+        except ValueError:
+            pass
         return plans
 
     def make_plans(self, start, end, edges):

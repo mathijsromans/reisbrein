@@ -8,8 +8,13 @@ from numpy.random import rand
 from copy import copy
 
 
+<<<<<<< HEAD
 def order_by_preference(plans, user_preferences):
 
+=======
+
+def order_by_preference(plans):
+>>>>>>> a31ce4c41017f7b50065472a76aeb0e091a487ac
     keep_plans = []
     keep_weights = []
     weights = []

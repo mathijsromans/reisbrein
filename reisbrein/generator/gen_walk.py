@@ -22,7 +22,8 @@ class WalkGenerator:
         return segment, new_point
 
     def create_edges(self, start, end, edges):
-        train_edges = [e for e in edges if e.transport_type == TransportType.TRAIN]
+        public_types = [TransportType.TRAIN, TransportType.TRAM, TransportType.BUS]
+        train_edges = [e for e in edges if e.transport_type in public_types]
         stops_1 = set([e.from_vertex for e in train_edges])
         stops_2 = set([e.to_vertex for e in train_edges])
         for s in stops_1:
