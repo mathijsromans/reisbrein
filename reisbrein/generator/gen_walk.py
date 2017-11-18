@@ -9,7 +9,7 @@ from .gen_common import FixTime
 
 class WalkGenerator:
     SPEED_KM_H_WALK = 6
-    SPEED_KM_H_BIKE = 20
+    SPEED_KM_H_BIKE = 15
     SPEED_WALK = SPEED_KM_H_WALK / 3.6  # m/s
     SPEED_BIKE = SPEED_KM_H_BIKE / 3.6  # m/s
     OV_FIETS_API = OvFietsStations()
