@@ -54,9 +54,13 @@
 
       </div>
 
-      <div id="detail-{{ forloop.counter0 }}" class="row collapse">
-        {% include "reisbrein/result_timeline.html" %}
-        <hr/>
+      <div class="row">
+        <div class="col-md-6 col-md-offset-1">
+          <div id="detail-{{ forloop.counter0 }}" class="row collapse">
+            {% include "reisbrein/result_timeline.html" %}
+            <hr/>
+          </div>
+        </div>
       </div>
       {% endfor %}
 
