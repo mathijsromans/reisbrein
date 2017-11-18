@@ -24,7 +24,7 @@ def transport_type_icon(transport_type):
 def transport_type_color(transport_type):
     color_map = {
         TransportType.TRAIN.name: 'success',
-        TransportType.BUS.name: 'success',
+        TransportType.BUS.name: 'warning',
         TransportType.TRAM.name: 'warning',
         TransportType.WALK.name: 'info',
         TransportType.CAR.name: 'primary',
@@ -40,7 +40,7 @@ def transport_type_color(transport_type):
 def transport_type_bgcolor(transport_type):
     color_map = {
         TransportType.TRAIN.name: 'success',
-        TransportType.BUS.name: 'success',
+        TransportType.BUS.name: 'warning',
         TransportType.TRAM.name: 'warning',
         TransportType.WALK.name: 'info',
         TransportType.CAR.name: 'primary',
