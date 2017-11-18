@@ -12,8 +12,8 @@ from reisbrein.planner import recur_map
 class TestWalkGenerator(TestCase):
 
     def test(self):
-        loc_utr = Location('Utrecht Centraal')
-        loc_ams = Location('Amsterdam Centraal')
+        loc_utr = Location('Utrecht, Centraal')
+        loc_ams = Location('Amsterdam, Centraal')
         noon = datetime(year=2017, month=11, day=17, hour=12)
         start1 = Point(location=loc_utr, time=noon)
         end1 = Point(location=loc_ams, time=noon)

@@ -85,7 +85,7 @@ class WalkGenerator:
     def add_weather(self, edges):
         weather = WeatherApi()
         for e in edges:
-            words = e.from_vertex.location.loc_str.split()
+            words = e.from_vertex.location.loc_str.replace(',', '').split()
             for w in words:
                 if e.weather:
                     break
