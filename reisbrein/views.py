@@ -47,7 +47,6 @@ class PlanInputView(FormView):
         if self.request.user.is_authenticated:
             plan_history = UserTravelPlan.objects.all()[:10]
         context['plan_history'] = plan_history
-        print(plan_history)
         return context
 
 
