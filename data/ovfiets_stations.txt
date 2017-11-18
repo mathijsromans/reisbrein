@@ -227,10 +227,6 @@ Terborg
 Tilburg Reeshof
 Tilburg West Universiteit
 Tiel
-Utrecht Centraal, Hoog Catharijne
-Utrecht Centraal West
-Utrecht Centraal Oost, Smakkelaarsveld
-Utrecht Centraal, Stationsplein
 Utrecht Vredenburg
 Utrecht P+R Westraven
 Utrecht P+R Muziektheater
@@ -239,7 +235,7 @@ Utrecht Jaarbeursplein
 Utrecht Moreelsepark
 Utrecht Janskerkhof
 Utrecht Vaartsche Rijn
-Utrecht Centraal Stationsplein
+Utrecht Centraal
 IJsselstijn UT
 Nieuwegein
 Rijnsweerd

@@ -1,5 +1,6 @@
 from datetime import timedelta
 from geopy.distance import vincenty
+from reisbrein.api.ovfiets import OvFietsStations
 from reisbrein.segment import Segment, TransportType
 from reisbrein.planner import Point
 from .gen_common import FixTime
@@ -10,6 +11,7 @@ class WalkGenerator:
     SPEED_KM_H_BIKE = 20
     SPEED_WALK = SPEED_KM_H_WALK / 3.6  # m/s
     SPEED_BIKE = SPEED_KM_H_BIKE / 3.6  # m/s
+    OV_FIETS_API = OvFietsStations()
 
     def create_segment(self, start, end, fix, speed, transport_type):
         distance = vincenty(start.location.gps(), end.location.gps()).meters
@@ -60,7 +62,10 @@ class WalkGenerator:
                 edges.append(Segment(TransportType.WALK, s, new_point, (new_point.time-s.time).total_seconds()/60))
                 edges.append(Segment(TransportType.WAIT, new_point, end, (end.time-new_point.time).total_seconds()/60))
             # bike from second station
+            bike_type = TransportType.BIKE
+            if WalkGenerator.OV_FIETS_API.has_ovfiets(s.location.loc_str):
+                bike_type = TransportType.OVFIETS
             segment, new_point = self.create_segment(s, end, FixTime.START, WalkGenerator.SPEED_BIKE, TransportType.BIKE)
             if new_point.time < end.time:
-                edges.append(Segment(TransportType.BIKE, s, new_point, (new_point.time - s.time).total_seconds() / 60))
+                edges.append(Segment(bike_type, s, new_point, (new_point.time - s.time).total_seconds() / 60))
                 edges.append(Segment(TransportType.WAIT, new_point, end, (end.time - new_point.time).total_seconds() / 60))

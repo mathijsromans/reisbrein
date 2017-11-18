@@ -10,6 +10,7 @@ class TransportType(Enum):
     CAR = 4
     BUS = 5
     TRAM = 6
+    OVFIETS = 7
 
 
 class Segment(Edge):

@@ -13,6 +13,7 @@ def transport_type_icon(transport_type):
         TransportType.WALK.name: 'fa-blind',
         TransportType.CAR.name: 'fa-car',
         TransportType.BIKE.name: 'fa-bicycle',
+        TransportType.OVFIETS.name: 'fa-bicycle',
         TransportType.WAIT.name: 'fa-child',
     }
     if transport_type in icon_map:
@@ -29,6 +30,7 @@ def transport_type_color(transport_type):
         TransportType.WALK.name: 'info',
         TransportType.CAR.name: 'primary',
         TransportType.BIKE.name: 'warning',
+        TransportType.OVFIETS.name: 'ovfiets',
         TransportType.WAIT.name: 'wait',
     }
     if transport_type in color_map:
@@ -45,6 +47,7 @@ def transport_type_bgcolor(transport_type):
         TransportType.WALK.name: 'bg-info',
         TransportType.CAR.name: 'bg-primary',
         TransportType.BIKE.name: 'bg-warning',
+        TransportType.OVFIETS.name: 'bg-info',
         TransportType.WAIT.name: 'bg-danger',
     }
     if transport_type in color_map:

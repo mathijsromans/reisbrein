@@ -38,7 +38,10 @@
               <div class="progress-bar progress-bar-{{ color }}" role="progressbar" aria-valuenow="{{ segment.travel_time_percentage }}" aria-valuemin="0" aria-valuemax="100"
                    style="width: {{ segment.travel_time_percentage }}%">
                 <span style="font-size: 16px; line-height: 30px;">
-                  {% if segment.travel_time_percentage > 5 %}<span class="fa {{ icon }}"></span>{% endif %}
+                  {% if segment.travel_time_percentage > 5 %}
+                  {% if segment.type == 'OVFIETS' %}OV{% endif %}
+                  <span class="fa {{ icon }}"></span>
+                  {% endif %}
                 </span>
               </div>
             {% endfor %}
