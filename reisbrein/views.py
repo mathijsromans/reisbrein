@@ -50,7 +50,7 @@ class PlanView(TemplateView):
             user_preferences, created = UserTravelPreferences.objects.get_or_create(user=self.request.user)
         p = RichPlanner(Generator())
         now = datetime.datetime.now()
-        now = max(now, datetime.datetime(year=2017, month=11, day=18, hour=6))
+        now = max(now, datetime.datetime(year=2017, month=11, day=18, hour=9))
         # logger.info(now)
         options = p.solve(start, end, now, user_preferences)
         results = self.get_results(options)
