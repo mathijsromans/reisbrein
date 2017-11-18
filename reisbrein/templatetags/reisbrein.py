@@ -29,7 +29,7 @@ def transport_type_color(transport_type):
         TransportType.WALK.name: 'info',
         TransportType.CAR.name: 'primary',
         TransportType.BIKE.name: 'warning',
-        TransportType.WAIT.name: 'default',
+        TransportType.WAIT.name: 'wait',
     }
     if transport_type in color_map:
         return color_map[transport_type]
