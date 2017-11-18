@@ -55,7 +55,12 @@
                                     {% if segment.type == 'OVFIETS' %}<img src="{% static 'img/ovfiets.png' %}" height="20px"/> {% endif %}
                                     {{ segment.start.location }} - {{ segment.end.location }}
                                 </div>
-                                <div class="timeline-time-text text-info">{{ segment.travel_time_str }}</div>
+                                <div class="timeline-time-text text-info">
+                                    {{ segment.travel_time_str }}
+                                    {% if segment.delay_min %}
+                                    <span class="text-danger"> +{{ segment.delay_min|floatformat:0 }} min</span>
+                                    {% endif %}
+                                </div>
                             </div>
 
                         </div>
