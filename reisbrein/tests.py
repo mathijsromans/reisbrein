@@ -122,5 +122,5 @@ class TestViews(TestCase):
         plans = p.solve('Madurodam', 'Martinitoren', time)
         results = PlanView.get_results(plans)
         # print(results)
-        self.assertEqual(len(plans), 3)
-        self.assertEqual(results[0]['travel_time_min'], 403)
+        self.assertEqual(len(plans), 2)
+        self.assertEqual(results[0]['travel_time_min'], 613)

@@ -8,27 +8,19 @@ from numpy.random import rand
 from copy import copy
 
 
-<<<<<<< HEAD
 def order_by_preference(plans, user_preferences):
-
-=======
-
-def order_by_preference(plans):
->>>>>>> a31ce4c41017f7b50065472a76aeb0e091a487ac
     keep_plans = []
     keep_weights = []
     weights = []
     for p in plans:
         w, corrected_weight = weight(p, user_preferences)
         weights.append(w)
-        print(corrected_weight)
 #        if True:
         if corrected_weight > -500:
             keep_weights.append(w)
             keep_plans.append(copy(p))
     if keep_plans == []:
         aw = list((-array(weights)).argsort())
-        print(aw)
         for i in range(min(3,len(weights))):
             pi = aw.index(i)
             w, corrected_weight = weight(plans[pi], user_preferences)
@@ -36,8 +28,10 @@ def order_by_preference(plans):
             keep_plans.append(plans[pi])
         
 
-#    plans[:] = keep_plans[:]
-    plans[:] = [p for _,p in sorted(zip(keep_weights,keep_plans), reverse=True)]
+    if keep_plans != []:
+        plans[:] = [p for _,p in sorted(zip(keep_weights,keep_plans), reverse=True)]
+    else:
+        plans = []
     
 #    plans.sort(key=weight, reverse=True)
 
