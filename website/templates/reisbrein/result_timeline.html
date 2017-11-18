@@ -12,25 +12,34 @@
             {% transport_type_icon segment.type as icon %}
             {% transport_type_bgcolor segment.type as color %}
 
-            <!--<div class="cd-timeline-block">-->
-                <!--{% if forloop.first %}-->
-                <!--<div class="cd-timeline-img text-center bg-primary">-->
-                    <!--<span class="timeline-icon fa fa-map-marker"></span>-->
-                <!--</div>-->
-                <!--{% else %}-->
-                <!--<div class="cd-timeline-img timeline-location text-center bg-info">-->
-                <!--</div>-->
-                <!--{% endif %}-->
+            {% if forloop.first %}
+            <div class="cd-timeline-block">
+                <div class="cd-timeline-img text-center bg-primary">
+                    <span class="fa fa-map-marker timeline-icon"></span>
+                </div>
 
-                <!--<div class="cd-timeline-content travel-time">-->
+                <div class="panel panel-default cd-timeline-content">
 
-                    <!--<div class="timeline-text">-->
-                        <!--<div class="timeline-time-text text-info">{{ segment.travel_time_str }}</div>-->
-                    <!--</div>-->
+                    <div class="panel-heading panel-heading-timeline">
+                        <div class="row">
 
-                <!--</div>-->
-            <!--</div>-->
+                            <div class="col-xs-12" align="left">
+                                <span class="timeline-text">
+                                    {{ segment.start.location }}
+                                    {% if segment.type == 'WAIT' %}
+                                      - leave in {{ segment.travel_time_min }} minutes
+                                    {% endif %}
+                                </span>
+                            </div>
 
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            {% endif %}
+
+            {% if not segment.type == 'WAIT' %}
             <div class="cd-timeline-block">
                 <div class="cd-timeline-img text-center {{ color }}">
                     <span class="timeline-icon fa {{ icon }}"></span>
@@ -54,6 +63,7 @@
 
                 </div>
             </div>
+            {% endif %}
 
             {% if forloop.last %}
             <div class="cd-timeline-block">
