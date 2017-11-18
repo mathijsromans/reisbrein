@@ -54,7 +54,7 @@
                                 <div class="timeline-text">
                                     {% if segment.type == 'OVFIETS' %}<img src="{% static 'img/ovfiets.png' %}" height="20px"/> {% endif %}
                                     {{ segment.start.location }} - {{ segment.end.location }}
-                                    <img class="pull-right" src="{{ segment.weather_icon }}" height="40px"/>
+                                    {% if segment.type == 'WALK' %}<img class="pull-right" src="{{ segment.weather_icon }}" height="40px"/>{% endif %}
                                 </div>
                                 <div class="timeline-time-text text-info">
                                     {{ segment.travel_time_str }}

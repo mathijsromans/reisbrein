@@ -93,5 +93,5 @@ class WalkGenerator:
 
     def create_edges(self, start, end, edges):
         self.do_create_edges(start, end, edges)
-        self.add_weather(edges)
+        # self.add_weather(edges)
 
