@@ -41,8 +41,8 @@
                    style="width: {{ segment.travel_time_percentage }}%">
                 <span style="font-size: 16px; line-height: 30px;">
                   {% if segment.travel_time_percentage > 5 %}
-                  {% if segment.type == 'OVFIETS' %}OV{% endif %}
                   <span class="fa {{ icon }}"></span>
+                  {% if segment.type == 'OVFIETS' %}OV{% endif %}
                   {% endif %}
                 </span>
               </div>
