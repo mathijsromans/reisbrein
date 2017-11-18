@@ -20,16 +20,18 @@
 
       {% for result in results %}
 
+      <!--<hr style="margin: 0 0;"/>-->
+
       <div class="row result-bar">
 
         <a href="#detail-{{ forloop.counter0 }}" data-toggle="collapse">
-          <div class="col-xs-2 col-sm-1">
-            <span style="font-size: 18px; line-height: 30px;">
-              {{ result.travel_time_str }}
+          <div class="col-xs-1" style="padding-right: 0; padding-left: 6px; margin: 0;">
+            <span style="font-size: 16px; line-height: 30px;">
+              <strong>{{ result.travel_time_str }}</strong>
             </span>
           </div>
 
-          <div class="col-xs-10 col-sm-11">
+          <div class="col-xs-11">
 
             <div class="progress" style="height: 30px; margin-bottom: 5px; width: {{ result.travel_time_percentage }}%">
             {% for segment in result.segments %}
@@ -57,6 +59,8 @@
         <hr/>
       </div>
       {% endfor %}
+
+      <!--<hr style="margin: 0 0;"/>-->
 
     </div>
   </div>
