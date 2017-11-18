@@ -44,8 +44,8 @@ def load_user_preference(pref):
     preference_vec[preference_list.index('nobike')] = not(pref.has_bicycle)
     preference_vec[preference_list.index('likewalk')] = 0
     preference_vec[preference_list.index('likebike')] = pref.likes_to_bike/10.0
-    preference_vec[preference_list.index('no bike at start')] = 1
-    preference_vec[preference_list.index('no bike at end')] = 0
+    #preference_vec[preference_list.index('no bike at start')] = 1
+    #preference_vec[preference_list.index('no bike at end')] = 0
         
     return preference_vec
 

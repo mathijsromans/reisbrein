@@ -10,19 +10,6 @@ from copy import copy
 
 def order_by_preference(plans, user_preferences):
 
-    distances = []
-    for p in plans:
-        distances.append( distance(p) )
-    min_distance = min(distances)
-        
-    #reasonable_time plans
-    rt_plans = []
-    for ip, p in enumerate( plans ):
-        if distances[ip] < 1.5*min_distance:
-            rt_plans.append(p)
-    plans[:] = rt_plans[:]
-
-
     keep_plans = []
     keep_weights = []
     weights = []
@@ -48,8 +35,25 @@ def order_by_preference(plans, user_preferences):
     else:
         plans = []
     
-#    plans.sort(key=weight, reverse=True)
 
+
+    distances = []
+    for p in plans:
+        if p[0].transport_type == TransportType.CAR:
+            distances.append( 2*distance(p) )
+        else:
+            distances.append( distance(p) )
+            
+    min_distance = min(distances)
+        
+    #reasonable_time plans
+    rt_plans = []
+    for ip, p in enumerate( plans ):
+        if distances[ip] < 1.5*min_distance:
+            rt_plans.append(p)
+    plans[:] = rt_plans[:]
+
+#    plans.sort(key=weight, reverse=True)
 
 def distance(option):
     w = 0
