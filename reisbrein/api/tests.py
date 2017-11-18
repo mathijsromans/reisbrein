@@ -4,6 +4,7 @@ from website.local_settings import *
 from reisbrein.planner import Location
 from ns_api import NSAPI
 from .tomtom import TomTomApi
+from .mapquest import MapQuestApi
 from .monotchapi import MonotchApi
 import time
 
@@ -31,6 +32,14 @@ class TestTomTom(TestCase):
         end = Location('Martinitoren')
         self.assertGreater(self.tomtom.travel_time( begin, end ), 8000)
 
+class TestMapQuest(TestCase):
+
+    def setUp(self):
+        self.mapquest = MapQuestApi()
+
+    def testSearch(self):
+        location = self.mapquest.search('wassenaarsseweg 220 Den Haag')
+        location = self.mapquest.search('wassenaarsseweg 220 Den Haag')
 
 class TestMonotch(TestCase):
 

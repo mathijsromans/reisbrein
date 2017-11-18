@@ -10,24 +10,28 @@ class PublicGenerator:
 
     def create_edges(self, start, end, edges):
         translate = {
+            'WALK': TransportType.WALK,
             'RAIL': TransportType.TRAIN,
             'TRAM': TransportType.TRAM,
             'BUS': TransportType.BUS,
         }
         response = self.monotch.search(start.location, end.location, start.time)
         for it in response['itineraries']:
-            for leg in it['legs']:
+            legs = it['legs']
+            if legs:
+                s1_loc = Location(legs[0]['from']['name'])
+                s1_time = datetime.fromtimestamp(int(legs[0]['from']['departure']) / 1000)
+                prev_point = Point(s1_loc, s1_time)
+            for leg in legs:
                 transport_type = translate.get(leg['mode'])
                 if not transport_type:
                     continue
                     # print(leg)
-                s1_loc = Location(leg['from']['name'])
-                s2_loc = Location(leg['to']['name'])
-                s1_time = datetime.fromtimestamp(int(leg['from']['departure'])/1000)
-                s2_time = datetime.fromtimestamp(int(leg['to']['arrival']) / 1000)
-                s1 = Point(s1_loc, s1_time)
-                s2 = Point(s2_loc, s2_time)
-                edges.append(Segment(transport_type, s1, s2, (s2_time-s1_time).seconds/60))
+                p_loc = Location(leg['to']['name'])
+                p_time = datetime.fromtimestamp(int(leg['to']['arrival']) / 1000)
+                p = Point(p_loc, p_time)
+                edges.append(Segment(transport_type, prev_point, p, (p_time-prev_point.time).seconds/60))
+                prev_point = p
                 # print('Adding edge' + str(edges[-1]))
 
 

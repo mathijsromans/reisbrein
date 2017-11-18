@@ -2,7 +2,6 @@ import requests
 import json
 from website.local_settings import *
 
-
 class TomTomApi:
 
     BASE_URL = 'https://api.tomtom.com/'
@@ -38,6 +37,10 @@ class TomTomApi:
         return None
 
     def travel_time(self, start, end):
+
+        # LIMIT REACHED...
+
+
         start_gps = start.gps()
         end_gps = end.gps()
         arguments = { 'key': TOMTOM_APIKEY }

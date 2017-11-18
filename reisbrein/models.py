@@ -10,3 +10,9 @@ class UserTravelPreferences(models.Model):
     travel_time_importance = models.IntegerField(default=5)
     likes_to_bike = models.IntegerField(default=5)
     datetime_update = models.DateTimeField(auto_now=True)
+
+
+class MapQuestCache(models.Model):
+    search = models.CharField(max_length=80)
+    lat = models.FloatField(null=True)
+    lon = models.FloatField(null=True)

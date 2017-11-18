@@ -119,7 +119,7 @@ class TestViews(TestCase):
     def test(self):
         p = RichPlanner(Generator())
         time = datetime(year=2017, month=11, day=17, hour=22, minute=32)
-        plans = p.solve('Madurodam', 'Martinitoren', time)
+        plans = p.solve('wassenaarsseweg 220 Den Haag', 'weesperveste 19 Nieuwegein', time)
         results = PlanView.get_results(plans)
         # print(results)
         self.assertEqual(len(plans), 3)
