@@ -23,6 +23,14 @@ class PlanInputView(FormView):
     template_name = 'reisbrein/plan_input.html'
     form_class = PlanForm
 
+    def get_initial(self):
+        initial = super().get_initial()
+        if not self.request.user.is_authenticated:
+            return initial
+        user_preferences, created = UserTravelPreferences.objects.get_or_create(user=self.request.user)
+        initial['start'] = user_preferences.home_address
+        return initial
+
     def form_valid(self, form):
         self.start = form.cleaned_data['start']
         self.end = form.cleaned_data['end']

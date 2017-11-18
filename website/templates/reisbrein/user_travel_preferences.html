@@ -63,12 +63,16 @@ $( function() {
 
   $("#likes_to_bike_slider").slider({
     value: $("#id_likes_to_bike").val(),
-    stop: setLikesBikeValue
+    stop: setLikesBikeValue,
+    min: 0,
+    max: 10
   });
 
   $("#travel_time_importance_slider").slider({
   value: $("#id_travel_time_importance").val(),
-    stop: setTravelTimeImportanceValue
+    stop: setTravelTimeImportanceValue,
+    min: 0,
+    max: 10
   });
 });
 </script>
