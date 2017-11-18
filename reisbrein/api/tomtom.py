@@ -39,7 +39,7 @@ class TomTomApi:
     def travel_time(self, start, end):
 
         # LIMIT REACHED...
-        return 100
+        return 10000
 
 
         start_gps = start.gps()
