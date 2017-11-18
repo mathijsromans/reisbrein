@@ -5,27 +5,28 @@ from reisbrein.segment import TransportType
 
 from numpy import array, zeros
 from numpy.random import rand
+from copy import copy
 
 
-
-def order_by_preference(plans):
+def order_by_preference(plans, user_preferences):
 
     keep_plans = []
     keep_weights = []
     weights = []
     for p in plans:
-        w, corrected_weight = weight(p)
+        w, corrected_weight = weight(p, user_preferences)
         weights.append(w)
+        print(corrected_weight)
+#        if True:
         if corrected_weight > -500:
             keep_weights.append(w)
-            keep_plans.append(p)
-#            print(weight(p))
+            keep_plans.append(copy(p))
     if keep_plans == []:
         aw = list((-array(weights)).argsort())
         print(aw)
-        for i in range(3):
+        for i in range(min(3,len(weights))):
             pi = aw.index(i)
-            w, corrected_weight = weight(plans[pi])
+            w, corrected_weight = weight(plans[pi], user_preferences)
             keep_weights.append(w)
             keep_plans.append(plans[pi])
         
@@ -43,10 +44,12 @@ def distance(option):
     return w
 
 
-def weight(option):
+def weight(option, user_preferences):
     
-    preference_vec = load_user_preference()
+    preference_vec = load_user_preference(user_preferences)
     
+    #option[0].from_vertex == user_preferences.home_address
+    #option[-1].to_vertex == user_preferences.home_address
     
     
     Matrix, preference_list, conditions_list = load_dummy_preference_condition_matrix()

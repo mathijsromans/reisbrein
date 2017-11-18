@@ -55,7 +55,7 @@ class Planner(object):
         for p in plans:
             if p and p[-1].transport_type == TransportType.WAIT:
                 p.pop()
-        order_by_preference(plans)
+        order_by_preference(plans, user_preferences)
         return plans
 
     def make_plans(self, start, end, edges):
