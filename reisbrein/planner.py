@@ -18,7 +18,7 @@ class Location:
     def __init__(self, loc_str, location=(0,0)):
         # geolocator = Nominatim()
         self.loc_str = loc_str
-        self.location = location if location != (0,0) else MapQuestApi().search(loc_str)
+        self.location = location if location != (0,0) else TomTomApi().search(loc_str)
         # geolocator.geocode(self.loc_str)
 
     def gps(self):

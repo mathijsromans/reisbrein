@@ -21,18 +21,18 @@ class TestNSAPI(TestCase):
             self.assertGreater(len(stations), 10)
 
 
-# class TestTomTom(TestCase):
-#
-#     def setUp(self):
-#         self.tomtom = TomTomApi()
-#
-#     def testSearch(self):
-#         location = self.tomtom.search('Madurodam')
-#
-#     def testStations(self):
-#         begin = Location('Madurodam')
-#         end = Location('Martinitoren')
-#         self.assertGreater(self.tomtom.travel_time( begin, end ), 8000)
+class TestTomTom(TestCase):
+
+    def setUp(self):
+        self.tomtom = TomTomApi()
+
+    def testSearch(self):
+        location = self.tomtom.search('Madurodam')
+
+    def testStations(self):
+        begin = Location('Madurodam')
+        end = Location('Martinitoren')
+        self.assertGreater(self.tomtom.travel_time( begin, end ), 8000)
 
 class TestMapQuest(TestCase):
 

@@ -37,11 +37,6 @@ class TomTomApi:
         return None
 
     def travel_time(self, start, end):
-
-        # LIMIT REACHED...
-        return 10000
-
-
         start_gps = start.gps()
         end_gps = end.gps()
         arguments = { 'key': TOMTOM_APIKEY }
