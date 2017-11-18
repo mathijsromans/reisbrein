@@ -96,6 +96,7 @@ class PlanView(TemplateView):
                         'travel_time_str': PlanView.format_minutes(int(segment.distance)),
                         'travel_time_percentage': 100*segment.distance / time,
                         'delay_min': segment.delay,
+                        'weather_icon': segment.weather_icon,
                     })
             result.append(
             {
