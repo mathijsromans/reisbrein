@@ -11,8 +11,10 @@ import logging
 from reisbrein.planner import RichPlanner
 from reisbrein.generator.generator import Generator
 from reisbrein.models import UserTravelPreferences
+from reisbrein.models import UserTravelPlan
 
 logger = logging.getLogger(__name__)
+
 
 class PlanForm(forms.Form):
     start = forms.CharField(label='Van')
@@ -39,6 +41,15 @@ class PlanInputView(FormView):
     def get_success_url(self):
         return reverse('plan-results', args=(self.start, self.end))
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data()
+        plan_history = []
+        if self.request.user.is_authenticated:
+            plan_history = UserTravelPlan.objects.all()[:10]
+        context['plan_history'] = plan_history
+        print(plan_history)
+        return context
+
 
 class PlanView(TemplateView):
     template_name = 'reisbrein/plan_results.html'
@@ -48,6 +59,11 @@ class PlanView(TemplateView):
         user_preferences = UserTravelPreferences()
         if (self.request.user.is_authenticated):
             user_preferences, created = UserTravelPreferences.objects.get_or_create(user=self.request.user)
+            UserTravelPlan.objects.get_or_create(
+                user = self.request.user,
+                start = start,
+                end = end
+            )
         p = RichPlanner(Generator())
         now = datetime.datetime.now()
         now = max(now, datetime.datetime(year=2017, month=11, day=18, hour=9))

@@ -26,6 +26,24 @@
 
     </div>
   </div>
-</div>
 
+  <div class="vertical-spacer-20"></div>
+  <div class="vertical-spacer-20"></div>
+
+  <div class="row">
+    <div class="col-md-4 col-md-offset-4">
+      <div class="panel panel-default text-center">
+        <div class="panel-heading">
+          Previous Trips
+        </div>
+        <div class="panel-body">
+        {% for plan in plan_history %}
+          <div class="h5"><a href="{% url 'plan-results' plan.start plan.end %}">{{ plan.start }} - {{ plan.end }}</a></div>
+        {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
 {% endblock %}
