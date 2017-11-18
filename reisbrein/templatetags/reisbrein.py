@@ -24,7 +24,7 @@ def transport_type_icon(transport_type):
 def transport_type_color(transport_type):
     color_map = {
         TransportType.TRAIN.name: 'success',
-        TransportType.BUS.name: 'warning',
+        TransportType.BUS.name: 'bus',
         TransportType.TRAM.name: 'warning',
         TransportType.WALK.name: 'info',
         TransportType.CAR.name: 'primary',
@@ -39,13 +39,13 @@ def transport_type_color(transport_type):
 @register.simple_tag
 def transport_type_bgcolor(transport_type):
     color_map = {
-        TransportType.TRAIN.name: 'success',
-        TransportType.BUS.name: 'warning',
-        TransportType.TRAM.name: 'warning',
-        TransportType.WALK.name: 'info',
-        TransportType.CAR.name: 'primary',
-        TransportType.BIKE.name: 'warning',
-        TransportType.WAIT.name: 'danger',
+        TransportType.TRAIN.name: 'bg-success',
+        TransportType.BUS.name: 'bg-warning',
+        TransportType.TRAM.name: 'bg-warning',
+        TransportType.WALK.name: 'bg-info',
+        TransportType.CAR.name: 'bg-primary',
+        TransportType.BIKE.name: 'bg-warning',
+        TransportType.WAIT.name: 'bg-danger',
     }
     if transport_type in color_map:
         return color_map[transport_type]

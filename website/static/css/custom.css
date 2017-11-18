@@ -16,3 +16,30 @@ body {
     padding-top: 3px;
     padding-bottom: 3px;
 }
+
+.panel-heading-timeline {
+    padding-top: 3px;
+    padding-bottom: 3px;
+}
+
+.timeline-icon {
+    font-size: 22px;
+}
+
+.result-bar {
+    padding-top: 4px;
+}
+
+.timeline-text {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.timeline-time-text {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.progress-bar-bus {
+    background-color: #0a6799;
+}

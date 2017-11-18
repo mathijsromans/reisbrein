@@ -3,6 +3,7 @@
 {% load reisbrein %}
 
 <div class="row">
+    <div class="vertical-spacer-20"></div>
 
     <div class="col-lg-12">
         <section id="cd-timeline" class="cd-container">
@@ -10,9 +11,29 @@
             {% for segment in result.segments %}
             {% transport_type_icon segment.type as icon %}
             {% transport_type_bgcolor segment.type as color %}
+
+            <!--<div class="cd-timeline-block">-->
+                <!--{% if forloop.first %}-->
+                <!--<div class="cd-timeline-img text-center bg-primary">-->
+                    <!--<span class="timeline-icon fa fa-map-marker"></span>-->
+                <!--</div>-->
+                <!--{% else %}-->
+                <!--<div class="cd-timeline-img timeline-location text-center bg-info">-->
+                <!--</div>-->
+                <!--{% endif %}-->
+
+                <!--<div class="cd-timeline-content travel-time">-->
+
+                    <!--<div class="timeline-text">-->
+                        <!--<div class="timeline-time-text text-info">{{ segment.travel_time_str }}</div>-->
+                    <!--</div>-->
+
+                <!--</div>-->
+            <!--</div>-->
+
             <div class="cd-timeline-block">
-                <div class="cd-timeline-img text-center bg-{{ color }}">
-                    <span style="font-size:24px;" class="fa {{ icon }}"></span>
+                <div class="cd-timeline-img text-center {{ color }}">
+                    <span class="timeline-icon fa {{ icon }}"></span>
                 </div>
 
                 <div class="panel panel-default cd-timeline-content">
@@ -21,22 +42,41 @@
                         <div class="row">
 
                             <div class="col-xs-12" align="left">
-                                <h5 class="visible-xs-inline visible-sm-inline">{{ segment.travel_time_str }}</h5>
-                                <h5>{{ segment.start.location }} - {{ segment.end.location }}</h5>
+                                <div class="timeline-text">
+                                    <!--<div class="timeline-time-text text-info">{{ segment.travel_time_str }}</div>-->
+                                    {{ segment.start.location }} - {{ segment.end.location }}
+                                </div>
+                                <div class="timeline-time-text text-info">{{ segment.travel_time_str }}</div>
                             </div>
 
                         </div>
                     </div>
 
-                    <!--<div class="panel-body panel-body-timeline" align="center">-->
-                    <!--</div>-->
+                </div>
+            </div>
 
-                    <span class="hidden-xs hidden-sm cd-date">
-                        {{ segment.travel_time_str }}
-                    </span>
+            {% if forloop.last %}
+            <div class="cd-timeline-block">
+                <div class="cd-timeline-img text-center bg-primary">
+                    <span class="fa fa-map-marker timeline-icon"></span>
+                </div>
+
+                <div class="panel panel-default cd-timeline-content">
+
+                    <div class="panel-heading panel-heading-timeline">
+                        <div class="row">
+
+                            <div class="col-xs-12" align="left">
+                                <span class="timeline-text">{{ segment.end.location }}</span>
+                            </div>
+
+                        </div>
+                    </div>
 
                 </div>
             </div>
+            {% endif %}
+
             {% endfor %}
 
         </section>

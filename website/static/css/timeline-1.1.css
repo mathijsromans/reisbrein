@@ -17,9 +17,9 @@ Modules - reusable parts of our design
 
 #cd-timeline {
   position: relative;
-  padding: 2em 0;
+  padding: 0 0;
   margin-top: 0;
-  margin-bottom: 2em;
+  margin-bottom: 0;
 }
 #cd-timeline::before {
   /* this is the vertical line */
@@ -30,12 +30,6 @@ Modules - reusable parts of our design
   height: 100%;
   width: 4px;
   background: #e95420;
-}
-@media only screen and (min-width: 768px) {
-  #cd-timeline::before {
-    left: 50%;
-    margin-left: -2px;
-  }
 }
 
 .cd-timeline-block {
@@ -54,24 +48,21 @@ Modules - reusable parts of our design
   margin-bottom: 0;
 }
 
-@media only screen and (min-width: 768px) {
-  .cd-timeline-block {
-    margin: 0;
-  }
-  .cd-timeline-block:first-child {
-    margin-top: 0;
-  }
-  .cd-timeline-block:last-child {
-    margin-bottom: 0;
-  }
-}
-
 .cd-timeline-img {
   position: absolute;
   top: 0;
-  left: 0;
+  left: 0px;
   width: 40px;
   height: 40px;
+  border-radius: 50%;
+  box-shadow: 0 0 0 4px #e95420;
+}
+.cd-timeline-img.timeline-location {
+  position: absolute;
+  top: 10px;
+  left: 13px;
+  width: 14px;
+  height: 14px;
   border-radius: 50%;
   box-shadow: 0 0 0 4px #e95420;
 }
@@ -83,7 +74,7 @@ Modules - reusable parts of our design
   /*left: 50%;*/
   top: 50%;
   /*margin-left: -12px;*/
-  margin-top: -12px;
+  margin-top: -9px;
 }
 .cd-timeline-img.cd-green {
   background: green;
@@ -93,27 +84,6 @@ Modules - reusable parts of our design
 }
 .cd-timeline-img.cd-orange {
   background: #f0ca45;
-}
-
-@media only screen and (min-width: 768px) {
-  .cd-timeline-img {
-    width: 50px;
-    height: 50px;
-    left: 50%;
-    margin-left: -25px;
-    /* Force Hardware Acceleration in WebKit */
-    -webkit-transform: translateZ(0);
-    -webkit-backface-visibility: hidden;
-  }
-  .cssanimations .cd-timeline-img.is-hidden {
-    visibility: hidden;
-  }
-  .cssanimations .cd-timeline-img.bounce-in {
-    visibility: visible;
-    -webkit-animation: cd-bounce-1 0.6s;
-    -moz-animation: cd-bounce-1 0.6s;
-    animation: cd-bounce-1 0.6s;
-  }
 }
 
 @-webkit-keyframes cd-bounce-1 {
@@ -176,11 +146,16 @@ Modules - reusable parts of our design
 .cd-timeline-content {
   position: relative;
   margin-left: 60px;
-  margin-bottom: 1em;
+  margin-bottom: 2em;
   background-color: #f7f7f7;
   border-radius: 0.25em;
   padding: 0;
   box-shadow: 0 3px 0 #e95420;
+}
+.cd-timeline-content.travel-time {
+  box-shadow: 0 0px 0 #762d54;
+  background-color: #FFF;
+  margin-bottom: 2em;
 }
 .cd-timeline-content:after {
   content: "";
@@ -221,70 +196,14 @@ Modules - reusable parts of our design
 .cd-timeline-content::before {
   content: '';
   position: absolute;
-  top: 16px;
+  top: 8px;
   right: 100%;
   height: 0;
   width: 0;
-  border: 7px solid transparent;
-  border-right: 7px solid #f7f7f7;
-}
-@media only screen and (min-width: 768px) {
-  .cd-timeline-content {
-    margin-left: 0;
-    padding: 0;
-    width: 45%;
-  }
-  .cd-timeline-content::before {
-    top: 24px;
-    left: 100%;
-    border-color: transparent;
-    border-left-color: #f7f7f7;
-  }
-  .cd-timeline-content .cd-date {
-    position: absolute;
-    width: 100%;
-    left: 122%;
-    top: 6px;
-    font-size: 18px;
-    font-size: 1.4rem;
-  }
-  .cd-timeline-block:nth-child(even) .cd-timeline-content {
-    float: right;
-  }
-  .cd-timeline-block:nth-child(even) .cd-timeline-content::before {
-    top: 24px;
-    left: auto;
-    right: 100%;
-    border-color: transparent;
-    border-right-color: #f7f7f7;
-  }
-  .cd-timeline-block:nth-child(even) .cd-timeline-content {
-    float: right;
-  }
-  .cd-timeline-block:nth-child(even) .cd-timeline-content .cd-date {
-    left: auto;
-    right: 122%;
-    text-align: right;
-  }
-  .cssanimations .cd-timeline-content.is-hidden {
-    visibility: hidden;
-  }
-  .cssanimations .cd-timeline-content.bounce-in {
-    visibility: visible;
-    -webkit-animation: cd-bounce-2 0.6s;
-    -moz-animation: cd-bounce-2 0.6s;
-    animation: cd-bounce-2 0.6s;
-  }
+  border: 0px solid transparent;
+  border-right: 0px solid #bac4cb;
 }
 
-@media only screen and (min-width: 768px) {
-  /* inverse bounce effect on even content blocks */
-  .cssanimations .cd-timeline-block:nth-child(even) .cd-timeline-content.bounce-in {
-    -webkit-animation: cd-bounce-2-inverse 0.6s;
-    -moz-animation: cd-bounce-2-inverse 0.6s;
-    animation: cd-bounce-2-inverse 0.6s;
-  }
-}
 @-webkit-keyframes cd-bounce-2 {
   0% {
     opacity: 0;
