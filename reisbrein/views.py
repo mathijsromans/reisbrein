@@ -53,6 +53,7 @@ class PlanView(TemplateView):
         now = max(now, datetime.datetime(year=2017, month=11, day=18, hour=9))
         # logger.info(now)
         options = p.solve(start, end, now, user_preferences)
+        options = options[:user_preferences.show_n_results]
         results = self.get_results(options)
 
         context['start'] = start
@@ -117,6 +118,7 @@ class UserTravelPreferencesForm(forms.Form):
     has_bicycle = forms.BooleanField(label='I have a bicycle', required=False)
     likes_to_bike = forms.IntegerField()
     travel_time_importance = forms.IntegerField()
+    show_n_results = forms.IntegerField(label='Number of results')
 
 
 class UserTravelPreferencesView(FormView):
@@ -127,6 +129,7 @@ class UserTravelPreferencesView(FormView):
         user_preferences, created = UserTravelPreferences.objects.get_or_create(user=self.request.user)
         initial = super().get_initial()
         initial['home_address'] = user_preferences.home_address
+        initial['show_n_results'] = user_preferences.show_n_results
         initial['has_car'] = user_preferences.has_car
         initial['has_bicycle'] = user_preferences.has_bicycle
         initial['likes_to_bike'] = user_preferences.likes_to_bike
@@ -136,6 +139,7 @@ class UserTravelPreferencesView(FormView):
     def form_valid(self, form):
         user_preferences, created = UserTravelPreferences.objects.get_or_create(user=self.request.user)
         user_preferences.home_address = form.cleaned_data['home_address']
+        user_preferences.show_n_results = form.cleaned_data['show_n_results']
         user_preferences.has_car = form.cleaned_data['has_car']
         user_preferences.has_bicycle = form.cleaned_data['has_bicycle']
         user_preferences.likes_to_bike = form.cleaned_data['likes_to_bike']

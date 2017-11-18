@@ -25,17 +25,15 @@
         {% bootstrap_field form.likes_to_bike show_label=False %}
         {% bootstrap_field form.travel_time_importance show_label=False %}
         <div class="form-group">
-            <span>Love for bicycle</span>
+          <label class="control-label">I like to ride my bicycle</label>
+          <div id="likes_to_bike_slider"></div>
         </div>
         <div class="form-group">
-            <div id="likes_to_bike_slider"></div>
-        </div>
-        <div class="form-group">
-            <span>Travel time importance</span>
-        </div>
-        <div class="form-group">
+          <label class="control-label">Travel time importance</label>
           <div id="travel_time_importance_slider"></div>
         </div>
+        {% bootstrap_field form.show_n_results show_label=True%}
+
         {% buttons %}
         <button type="submit" class="btn btn-block btn-primary" title="Save preferences">
           Save

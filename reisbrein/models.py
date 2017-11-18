@@ -9,6 +9,7 @@ class UserTravelPreferences(models.Model):
     has_car = models.BooleanField(default=False, blank=True)
     travel_time_importance = models.IntegerField(default=5)
     likes_to_bike = models.IntegerField(default=5)
+    show_n_results = models.IntegerField(default=15)
     datetime_update = models.DateTimeField(auto_now=True)
 
 
