@@ -70,5 +70,5 @@ class TestPublicGenerator(TestCase):
         self.generator.create_edges(start, end, segments)
         # for s in segments:
         #     print(s)
-        self.assertEqual(len(segments), 5)
+        self.assertEqual(len(segments), 12)
 

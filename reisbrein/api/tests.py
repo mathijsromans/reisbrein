@@ -32,7 +32,7 @@ class TestTomTom(TestCase):
     def testStations(self):
         begin = Location('Madurodam')
         end = Location('Martinitoren')
-        self.assertGreater(self.tomtom.travel_time( begin, end ), 8000)
+        self.assertGreater(self.tomtom.travel_time( begin, end )[0], 8000)
 
 class TestMapQuest(TestCase):
 

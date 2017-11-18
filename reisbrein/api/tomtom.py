@@ -51,5 +51,7 @@ class TomTomApi:
         # print(response.json())
         result = response.json()
         # print(result['routes'][0]['summary'])
-        time = result['routes'][0]['summary']['travelTimeInSeconds']
-        return time
+        summary = result['routes'][0]['summary']
+        time = summary['travelTimeInSeconds']
+        delay = summary['trafficDelayInSeconds']
+        return time, delay

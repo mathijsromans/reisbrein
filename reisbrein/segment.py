@@ -19,6 +19,7 @@ class Segment(Edge):
         self.transport_type = transport_type
         self.weather = 0
         self.weather_icon = ''
+        self.delay = 0
 
     def __lt__(self, other):
         return self.distance < other.distance
