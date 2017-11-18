@@ -15,7 +15,8 @@ class TomTomApi:
             'key': TOMTOM_APIKEY,
             'lat': '52.8085',
             'lon': '4.4239',
-            'idxSet': 'POI,PAD,Str,Xstr,Geo,Addr'
+            'idxSet': 'POI,PAD,Str,Xstr,Geo,Addr',
+            'limit': '1'
         }
         url = TomTomApi.BASE_URL + TomTomApi.SEARCHING_URL + loc_str + '.json'
         # url = TomTomApi.BASE_URL + TomTomApi.SEARCHING_URL + 'madurodam' + '.json?key=' + TOMTOM_APIKEY + '&lat=' \
