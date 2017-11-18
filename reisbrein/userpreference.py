@@ -9,6 +9,20 @@ from copy import copy
 
 
 def order_by_preference(plans, user_preferences):
+
+    distances = []
+    for p in plans:
+        distances.append( distance(p) )
+    min_distance = min(distances)
+        
+    #reasonable_time plans
+    rt_plans = []
+    for ip, p in enumerate( plans ):
+        if distances[ip] < 1.5*min_distance:
+            rt_plans.append(p)
+    plans[:] = rt_plans[:]
+
+
     keep_plans = []
     keep_weights = []
     weights = []
@@ -16,7 +30,7 @@ def order_by_preference(plans, user_preferences):
         w, corrected_weight = weight(p, user_preferences)
         weights.append(w)
 #        if True:
-        if corrected_weight < -750:
+        if corrected_weight > -1e9:
             keep_weights.append(w)
             keep_plans.append(copy(p))
     if keep_plans == []:
@@ -47,12 +61,20 @@ def distance(option):
 def weight(option, user_preferences):
     
     preference_vec = load_user_preference(user_preferences)
-    
-    #option[0].from_vertex == user_preferences.home_address
-    #option[-1].to_vertex == user_preferences.home_address
-    
-    
     Matrix, preference_list, conditions_list = load_dummy_preference_condition_matrix()
+    
+    if option[0].from_vertex.location.loc_str == user_preferences.home_address:
+        preference_vec[preference_list.index('no bike at start')] = 0
+    else:
+        preference_vec[preference_list.index('no bike at start')] = 1
+    if option[-1].to_vertex.location.loc_str == user_preferences.home_address:
+        preference_vec[preference_list.index('no bike at end')] = 0
+    else:
+        preference_vec[preference_list.index('no bike at end')] = 1
+    
+    
+    
+    
     
     condition_dict = {}
     # starts with car, starts with bike, includes car, includes bike, total time
@@ -66,7 +88,7 @@ def weight(option, user_preferences):
         condition_dict['starts with car'] = 0
 
         # for now, since only car trips have only a single segment
-        if len(option) > 1 and option[1].transport_type == TransportType.BIKE:
+        if (len(option) > 1 and option[1].transport_type == TransportType.BIKE ) or (option[0].transport_type == TransportType.BIKE):
             condition_dict['starts with bike'] = 1
         else:
             condition_dict['starts with bike'] = 0

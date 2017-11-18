@@ -21,10 +21,10 @@ def load_dummy_preference_condition_matrix():
     M = Matrix
     
     M[pl.index('fast'), cl.index('total time')] = -3
-    M[pl.index('nocar'), cl.index('involves car')] = -1000
-    M[pl.index('nobike'), cl.index('involves bike')] = -1000
-    M[pl.index('no bike at start'), cl.index('starts with bike')] = -1000
-    M[pl.index('no bike at end'), cl.index('ends with bike')] = -1000
+    M[pl.index('nocar'), cl.index('involves car')] = -1e10
+    M[pl.index('nobike'), cl.index('involves bike')] = -1e10
+    M[pl.index('no bike at start'), cl.index('starts with bike')] = -1e10
+    M[pl.index('no bike at end'), cl.index('ends with bike')] = -1e10
     M[pl.index('likewalk'), cl.index('involves walk')] = 10
     M[pl.index('likebike'), cl.index('involves bike')] = 10
     M[pl.index('mindrain'), cl.index('rainy')] = -5
