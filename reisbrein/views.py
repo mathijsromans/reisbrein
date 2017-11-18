@@ -103,6 +103,7 @@ class PlanView(TemplateView):
             result.append(
             {
                 'travel_time_min': int(time),
+                'arrival_time': datetime.datetime.now() + datetime.timedelta(minutes=int(time)),
                 'travel_time_str': PlanView.format_minutes(int(time)),
                 'travel_time_percentage': 100*time/max_time,
                 'segments': segments

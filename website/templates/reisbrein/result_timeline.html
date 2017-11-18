@@ -27,7 +27,7 @@
                                 <span class="timeline-text">
                                     {{ segment.start.location }}
                                     {% if segment.type == 'WAIT' %}
-                                      - leave in {{ segment.travel_time_min }} minutes
+                                    - leave in <span class="text-success"><strong>{{ segment.travel_time_min }}</strong></span> minutes
                                     {% endif %}
                                 </span>
                             </div>
@@ -85,7 +85,10 @@
                         <div class="row">
 
                             <div class="col-xs-12" align="left">
-                                <span class="timeline-text">{{ segment.end.location }}</span>
+                                <span class="timeline-text">
+                                    {{ segment.end.location }} - arrive at
+                                    <span class="text-success"><strong>{{ result.arrival_time|date:"H:i" }}</strong></span>
+                                </span>
                             </div>
 
                         </div>
