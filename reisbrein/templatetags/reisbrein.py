@@ -8,6 +8,8 @@ register = template.Library()
 def transport_type_icon(transport_type):
     icon_map = {
         TransportType.TRAIN.name: 'fa-train',
+        TransportType.BUS.name: 'fa-bus',
+        TransportType.TRAM.name: 'fa-subway',
         TransportType.WALK.name: 'fa-blind',
         TransportType.CAR.name: 'fa-car',
         TransportType.BIKE.name: 'fa-bicycle',
@@ -22,6 +24,8 @@ def transport_type_icon(transport_type):
 def transport_type_color(transport_type):
     color_map = {
         TransportType.TRAIN.name: 'success',
+        TransportType.BUS.name: 'success',
+        TransportType.TRAM.name: 'warning',
         TransportType.WALK.name: 'info',
         TransportType.CAR.name: 'primary',
         TransportType.BIKE.name: 'warning',
@@ -36,6 +40,8 @@ def transport_type_color(transport_type):
 def transport_type_bgcolor(transport_type):
     color_map = {
         TransportType.TRAIN.name: 'success',
+        TransportType.BUS.name: 'success',
+        TransportType.TRAM.name: 'warning',
         TransportType.WALK.name: 'info',
         TransportType.CAR.name: 'primary',
         TransportType.BIKE.name: 'warning',
