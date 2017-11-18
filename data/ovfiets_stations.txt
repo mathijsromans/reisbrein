@@ -14,6 +14,7 @@ Appingedam
 Alphen aan den Rijn
 Amsterdam Amstel
 Amsterdam Bijlmer ArenA
+Amsterdam Centraal
 Amsterdam Centraal Oost
 Amsterdam Paradiso
 Amsterdam Centraal West
@@ -83,6 +84,7 @@ Otterlo
 Eindhoven Beukenlaan
 Eindhoven Zuidzijde
 Eindhoven Noordzijde
+Eindhoven
 Enkhuizen
 Emmen
 Enschede
