@@ -38,13 +38,16 @@ def order_by_preference(plans, user_preferences):
 
 
     distances = []
+    min_distance_search = [] #with car undervalued
+    car_distance = -1
     for p in plans:
+        distances.append( distance(p) )
+        min_distance_search.append( distance(p) )
         if p[0].transport_type == TransportType.CAR:
-            distances.append( 2*distance(p) )
-        else:
-            distances.append( distance(p) )
+            min_distance_search[-1] *= 2
             
-    min_distance = min(distances)
+
+    min_distance = min(min_distance_search)        
         
     #reasonable_time plans
     rt_plans = []
@@ -108,6 +111,7 @@ def weight(option, user_preferences):
     condition_dict['involves walk'] = 0
     condition_dict['involves bus'] = 0
     condition_dict['total time'] = 0
+    condition_dict['rainy'] = 0
     for s in option:
         if s.transport_type == TransportType.CAR:
             condition_dict['involves car'] = 1
@@ -120,11 +124,8 @@ def weight(option, user_preferences):
         if s.transport_type == TransportType.BUS:
             condition_dict['involves bus'] = 1
         condition_dict['total time'] += s.distance
-
-
-
-    # request weather API
-    condition_dict['rainy'] = 1
+        if s.weather == 'rainy':
+            condition_dict['rainy'] += 1
 
 
 
