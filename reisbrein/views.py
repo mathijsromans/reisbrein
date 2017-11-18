@@ -7,11 +7,12 @@ from django.views.generic import TemplateView, UpdateView
 from django.views.generic.edit import FormView
 from django.core.exceptions import PermissionDenied
 from django.urls import reverse
-
+import logging
 from reisbrein.planner import RichPlanner
 from reisbrein.generator.generator import Generator
 from reisbrein.models import UserTravelPreferences
 
+logger = logging.getLogger(__name__)
 
 class PlanForm(forms.Form):
     start = forms.CharField(label='Van')
@@ -41,6 +42,8 @@ class PlanView(TemplateView):
             user_preferences, created = UserTravelPreferences.objects.get_or_create(user=self.request.user)
         p = RichPlanner(Generator())
         now = datetime.datetime.now()
+        now = max(now, datetime.datetime(year=2017, month=11, day=18, hour=6))
+        # logger.info(now)
         options = p.solve(start, end, now, user_preferences)
         results = self.get_results(options)
 

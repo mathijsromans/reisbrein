@@ -9,7 +9,6 @@ from numpy.random import rand
 
 
 def order_by_preference(plans):
-
     keep_plans = []
     keep_weights = []
     weights = []
