@@ -19,15 +19,20 @@ class PublicGenerator:
         for it in response['itineraries']:
             legs = it['legs']
             if legs:
-                s1_loc = Location(legs[0]['from']['name'])
-                s1_time = datetime.fromtimestamp(int(legs[0]['from']['departure']) / 1000)
-                prev_point = Point(s1_loc, s1_time)
+                prev_point = start
             for leg in legs:
                 transport_type = translate.get(leg['mode'])
                 if not transport_type:
                     continue
                     # print(leg)
-                p_loc = Location(leg['to']['name'])
+                p_loc_name = leg['to']['name']
+                p_loc_lat = float(leg['to']['lat'])
+                p_loc_lon = float(leg['to']['lon'])
+
+                if p_loc_name == 'Destination':
+                    p_loc = end.location
+                else:
+                    p_loc = Location(p_loc_name, (p_loc_lat, p_loc_lon))
                 p_time = datetime.fromtimestamp(int(leg['to']['arrival']) / 1000)
                 p = Point(p_loc, p_time)
                 edges.append(Segment(transport_type, prev_point, p, (p_time-prev_point.time).seconds/60))

@@ -13,6 +13,7 @@ class WalkGenerator:
 
     def create_segment(self, start, end, fix, speed, transport_type):
         distance = vincenty(start.location.gps(), end.location.gps()).meters
+        # print ('distance in meters ' + str(distance))
         delta_t = timedelta(seconds=distance / speed)
         if fix == FixTime.START:
             new_point = Point(end.location, start.time + delta_t)
@@ -41,7 +42,9 @@ class WalkGenerator:
         for s in stops_2:
             # walk from second station
             segment, new_point = self.create_segment(s, end, FixTime.START, WalkGenerator.SPEED_WALK, TransportType.WALK)
+            # print('Created segment ' + str(segment) + ' new point time ' + str(new_point.time))
             if new_point.time < end.time:
+                # print('Within time ' + str(segment))
                 edges.append(Segment(TransportType.WALK, s, new_point, (new_point.time-s.time).total_seconds()/60))
                 edges.append(Segment(TransportType.WAIT, new_point, end, (end.time-new_point.time).total_seconds()/60))
             # bike from second station

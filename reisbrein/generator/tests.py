@@ -62,13 +62,13 @@ class TestPublicGenerator(TestCase):
     def setUp(self):
         self.generator = PublicGenerator()
 
-    def  test(self):
-        noon = datetime(year=2017, month=11, day=17, hour=12)
-        start = Point(Location('wassenaarsseweg 220 Den Haag'), noon)
-        end = Point(Location('weesperveste 19 Nieuwegein'), noon)
+    def test(self):
+        time = datetime(year=2017, month=11, day=18, hour=9)
+        start = Point(Location('Den Haag'), time)
+        end = Point(Location('Nieuwegein'), time)
         segments = []
         self.generator.create_edges(start, end, segments)
-        for s in segments:
-            print(s)
+        # for s in segments:
+        #     print(s)
         self.assertEqual(len(segments), 5)
 

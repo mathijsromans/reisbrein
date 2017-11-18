@@ -13,6 +13,8 @@ class MapQuestApi:
         if not created:
             # print(query.lat, query.lon)
             return (query.lat, query.lon)
+        # else:
+        #     print('found!')
         arguments = {
             'key': MAPQUEST_APIKEY,
             'location': loc_str

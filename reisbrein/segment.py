@@ -18,5 +18,5 @@ class Segment(Edge):
         self.transport_type = transport_type
 
     def __str__(self):
-        return '(['+str(self.transport_type)+']'+str(self.from_vertex)+' --> '+str(self.to_vertex)+')'
+        return '(['+str(self.transport_type)+'] '+str(self.from_vertex)+' --> '+str(self.to_vertex)+')'
 

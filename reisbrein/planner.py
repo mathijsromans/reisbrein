@@ -15,10 +15,10 @@ def recur_map(f, data):
 
 
 class Location:
-    def __init__(self, loc_str):
+    def __init__(self, loc_str, location=(0,0)):
         # geolocator = Nominatim()
         self.loc_str = loc_str
-        self.location = MapQuestApi().search(loc_str)
+        self.location = location if location != (0,0) else MapQuestApi().search(loc_str)
         # geolocator.geocode(self.loc_str)
 
     def gps(self):
@@ -53,14 +53,18 @@ class Planner(object):
         start = Point(Location(start_loc), start_time)
         end = Point(Location(end_loc), start_time + timedelta(hours=12))
         edges = self.generator.create_edges(start, end)
+        # for s in edges:
+        #     print(s)
         plans = self.make_plans(start, end, edges)
+        # for p in plans:
+        #     print(list(map(str,p)))
         for p in plans:
             if p and p[-1].transport_type == TransportType.WAIT:
                 p.pop()
-        try:
-            order_by_preference(plans, user_preferences)
-        except ValueError:
-            pass
+        # try:
+        #     order_by_preference(plans, user_preferences)
+        # except ValueError:
+        #     pass
         return plans
 
     def make_plans(self, start, end, edges):
@@ -81,7 +85,7 @@ class RichPlanner(Planner):
                 else:
                     partial_plans.append(p)
             num_changes += len(new_plans)
-            if num_changes > 100:
+            if num_changes > 1000:
                 break
             new_plans.clear()
             for p in partial_plans:
@@ -89,6 +93,7 @@ class RichPlanner(Planner):
                     new_p = copy.deepcopy(p)
                     new_p.append(e)
                     new_plans.append(new_p)
+            # print(list(recur_map(str, partial_plans)))
 
         return final_plans
 
