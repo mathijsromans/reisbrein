@@ -3,6 +3,7 @@ from datetime import timedelta
 
 from geopy.geocoders import Nominatim
 from reisbrein.api.tomtom import TomTomApi
+from reisbrein.api.mapquest import MapQuestApi
 from .graph import Graph, shortest_path
 from .segment import TransportType
 from .userpreference import order_by_preference
@@ -17,7 +18,7 @@ class Location:
     def __init__(self, loc_str):
         # geolocator = Nominatim()
         self.loc_str = loc_str
-        self.location = TomTomApi().search(loc_str)
+        self.location = MapQuestApi().search(loc_str)
         # geolocator.geocode(self.loc_str)
 
     def gps(self):
