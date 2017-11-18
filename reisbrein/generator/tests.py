@@ -12,8 +12,8 @@ from reisbrein.planner import recur_map
 class TestWalkGenerator(TestCase):
 
     def test(self):
-        loc_utr = Location('Utrecht')
-        loc_ams = Location('Amsterdam')
+        loc_utr = Location('Utrecht Centraal')
+        loc_ams = Location('Amsterdam Centraal')
         noon = datetime(year=2017, month=11, day=17, hour=12)
         start1 = Point(location=loc_utr, time=noon)
         end1 = Point(location=loc_ams, time=noon)
@@ -26,9 +26,13 @@ class TestWalkGenerator(TestCase):
         self.assertEqual(segment.from_vertex.location, loc_utr)
         self.assertEqual(segment.to_vertex.location, loc_ams)
         self.assertEqual(segment.from_vertex.time, noon)
-        self.assertEqual(new_point.time, datetime(2017, 11, 17, 17, 51, 29, 190191))
-        self.assertEqual(new_point2.time, datetime(2017, 11, 17, 6, 8, 30, 809809))
+        self.assertEqual(new_point.time, datetime(2017, 11, 17, 17, 52, 7, 217320))
+        self.assertEqual(new_point2.time, datetime(2017, 11, 17, 6, 7, 52, 782680))
         self.assertEqual(segment2.to_vertex.time, noon)
+        edges = [segment, segment2]
+        generator.add_weather(edges)
+        # print(segment)
+        # print(segment2)
 
 
 class TestTrainGenerator(TestCase):

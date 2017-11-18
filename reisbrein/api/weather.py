@@ -20,6 +20,13 @@ class WeatherApi:
         # print(response.json())
         json = response.json()
         # print(json)
-        weather = json['weather'][0]['main']
-        icon = 'http://openweathermap.org/img/w/' + json['weather'][0]['icon'] + '.png'
+        weather = ''
+        icon = ''
+        try:
+            weather = json['weather'][0]['main']
+            icon = 'http://openweathermap.org/img/w/' + json['weather'][0]['icon'] + '.png'
+        except KeyError:
+            pass
+        except IndexError:
+            pass
         return weather, icon
