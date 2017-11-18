@@ -17,6 +17,8 @@ class Segment(Edge):
     def __init__(self, transport_type, from_vertex, to_vertex, distance):
         super(Segment, self).__init__(from_vertex, to_vertex, distance)
         self.transport_type = transport_type
+        self.weather = 0
+        self.weather_icon = ''
 
     def __lt__(self, other):
         return self.distance < other.distance
