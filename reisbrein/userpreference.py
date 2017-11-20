@@ -108,6 +108,7 @@ def weight(option, user_preferences):
     
     
     condition_dict['involves bike'] = 0
+    condition_dict['involves own bike'] = 0
     condition_dict['involves car'] = 0
     condition_dict['involves train'] = 0
     condition_dict['involves walk'] = 0
@@ -121,6 +122,8 @@ def weight(option, user_preferences):
             condition_dict['involves walk'] = 1
         if s.transport_type == TransportType.BIKE or s.transport_type == TransportType.OVFIETS:
             condition_dict['involves bike'] += 0.0 + s.distance / 30.0
+        if s.transport_type == TransportType.BIKE:
+            condition_dict['involves own bike'] = 1
         if s.transport_type == TransportType.TRAIN:
             condition_dict['involves train'] = 1
         if s.transport_type == TransportType.BUS:

@@ -12,7 +12,7 @@ preference_list = ['fast', 'mindrain','nocar','nobike','likewalk', 'likebike', '
 
 def load_dummy_preference_condition_matrix():
     
-    conditions_list = ['total time','involves car','involves bike','involves walk','rainy', 'starts with bike', 'ends with bike']
+    conditions_list = ['total time','involves car','involves bike','involves own bike','involves walk','rainy', 'starts with bike', 'ends with bike']
 
     Matrix = zeros((len(preference_list),len(conditions_list)))
     
@@ -22,11 +22,12 @@ def load_dummy_preference_condition_matrix():
     
     M[pl.index('fast'), cl.index('total time')] = -3
     M[pl.index('nocar'), cl.index('involves car')] = -1e10
-    M[pl.index('nobike'), cl.index('involves bike')] = -1e10
+    M[pl.index('nobike'), cl.index('involves own bike')] = -1e10
     M[pl.index('no bike at start'), cl.index('starts with bike')] = -1e10
     M[pl.index('no bike at end'), cl.index('ends with bike')] = -1e10
     M[pl.index('likewalk'), cl.index('involves walk')] = 30
     M[pl.index('likebike'), cl.index('involves bike')] = 30
+    M[pl.index('likebike'), cl.index('involves own bike')] = 30
     M[pl.index('mindrain'), cl.index('rainy')] = -20
 
     
