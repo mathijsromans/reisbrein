@@ -122,5 +122,6 @@ class TestViews(TestCase):
         plans = p.solve('Den Haag', 'Nieuwegein', time)
         results = PlanView.get_results(plans)
         # print(results)
-        self.assertEqual(len(plans), 3)
-        self.assertEqual(results[0]['travel_time_min'], 43)
+        self.assertGreater(len(plans), 2)
+        self.assertGreater(results[0]['travel_time_min'], 20)
+        self.assertLess(results[0]['travel_time_min'], 120)

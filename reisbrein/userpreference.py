@@ -48,7 +48,7 @@ def order_by_preference(plans, user_preferences):
             min_distance_search[-1] *= 2
             
 
-    min_distance = min(min_distance_search)        
+    min_distance = min(min_distance_search) if min_distance_search else 1e10
         
     #reasonable_time plans
     rt_plans = []

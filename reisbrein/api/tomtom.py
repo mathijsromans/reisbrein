@@ -2,6 +2,7 @@ import requests
 import json
 from website.local_settings import *
 
+
 class TomTomApi:
 
     BASE_URL = 'https://api.tomtom.com/'
