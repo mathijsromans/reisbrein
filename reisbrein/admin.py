@@ -1,3 +1,5 @@
 from django.contrib import admin
+from reisbrein.models import UserTravelPlan, UserTravelPreferences
 
-# Register your models here.
+admin.site.register(UserTravelPlan)
+admin.site.register(UserTravelPreferences)
