@@ -42,9 +42,8 @@ def order_by_preference(plans, user_preferences):
     car_distance = -1
     for p in plans:
         distances.append( distance(p) )
-        min_distance_search.append( distance(p) )
-        if p[0].transport_type == TransportType.CAR:
-            min_distance_search[-1] *= 2
+        if p[0].transport_type != TransportType.CAR:
+            min_distance_search.append( distance(p) )
         if len(p)==1 and p[0].transport_type == TransportType.BIKE:
             min_distance_search[-1] *= 2
             
@@ -56,7 +55,12 @@ def order_by_preference(plans, user_preferences):
     for ip, p in enumerate( plans ):
         if distances[ip] < 1.5*min_distance:
             rt_plans.append(p)
-    plans[:] = rt_plans[:]
+    # at least 3 plans
+    if len(rt_plans) >= 3:
+        plans[:] = rt_plans[:]
+    else:
+        plans[:] = plans[:3]
+
 
 #    plans.sort(key=weight, reverse=True)
 
