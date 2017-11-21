@@ -1,5 +1,5 @@
 from django.test import TestCase
-from datetime import datetime
+from datetime import datetime, timedelta
 from reisbrein.planner import Point, Location
 from reisbrein.generator.gen_walk import WalkGenerator
 from reisbrein.generator.gen_public import PublicGenerator
@@ -20,8 +20,8 @@ class TestWalkGenerator(TestCase):
         start2 = Point(location=loc_utr, time=noon)
         end2 = Point(location=loc_ams, time=noon)
         generator = WalkGenerator()
-        segment, new_point = generator.create_segment(start1, end1, FixTime.START, WalkGenerator.SPEED_WALK, TransportType.WALK)
-        segment2, new_point2 = generator.create_segment(start2, end2, FixTime.END, WalkGenerator.SPEED_WALK, TransportType.WALK)
+        segment, new_point = generator.create_segment(start1, end1, FixTime.START, TransportType.WALK)
+        segment2, new_point2 = generator.create_segment(start2, end2, FixTime.END, TransportType.WALK)
         self.assertEqual(segment.transport_type, TransportType.WALK)
         self.assertEqual(segment.from_vertex.location, loc_utr)
         self.assertEqual(segment.to_vertex.location, loc_ams)
@@ -29,6 +29,17 @@ class TestWalkGenerator(TestCase):
         self.assertEqual(new_point.time, datetime(2017, 11, 17, 17, 52, 7, 217320))
         self.assertEqual(new_point2.time, datetime(2017, 11, 17, 6, 7, 52, 782680))
         self.assertEqual(segment2.to_vertex.time, noon)
+
+        segment, new_point = generator.create_segment(start1, end1, FixTime.START, TransportType.BIKE)
+        segment2, new_point2 = generator.create_segment(start2, end2, FixTime.END, TransportType.BIKE)
+        self.assertEqual(segment.transport_type, TransportType.BIKE)
+        self.assertEqual(segment.from_vertex.location, loc_utr)
+        self.assertEqual(segment.to_vertex.location, loc_ams)
+        self.assertEqual(segment.from_vertex.time, noon)
+        self.assertAlmostEqual(new_point.time, datetime(2017, 11, 17, 14, 2, 3), delta=timedelta(seconds=600))
+        self.assertAlmostEqual(new_point2.time, datetime(2017, 11, 17, 9, 57, 57), delta=timedelta(seconds=600))
+        self.assertEqual(segment2.to_vertex.time, noon)
+
         edges = [segment, segment2]
         generator.add_weather(edges)
         # print(segment)

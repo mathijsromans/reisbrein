@@ -61,6 +61,7 @@ class Planner(object):
         for p in plans:
             if p and p[-1].transport_type == TransportType.WAIT:
                 p.pop()
+            # print(list(map(str, p)))
         # try:
         order_by_preference(plans, user_preferences)
         # except ValueError:

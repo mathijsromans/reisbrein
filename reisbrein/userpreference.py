@@ -9,7 +9,6 @@ from copy import copy
 
 
 def order_by_preference(plans, user_preferences):
-
     keep_plans = []
     keep_weights = []
     weights = []

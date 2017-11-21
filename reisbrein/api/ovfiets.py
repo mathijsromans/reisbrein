@@ -9,7 +9,7 @@ class OvFietsStations(object):
 
     @staticmethod
     def load_ovfiets_stations():
-        print('load')
+        # print('load')
         stations = []
         with open('data/ovfiets_stations.txt') as f:
             lines = f.readlines()

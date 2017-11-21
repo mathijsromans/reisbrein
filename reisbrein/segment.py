@@ -25,5 +25,5 @@ class Segment(Edge):
         return self.distance < other.distance
 
     def __str__(self):
-        return '(['+str(self.transport_type)+ ' ' + self.weather + '] '+str(self.from_vertex)+' --> '+str(self.to_vertex)+')'
+        return '(['+str(self.transport_type)+ ' ' + str(self.weather) + '] '+str(self.from_vertex)+' --> '+str(self.to_vertex)+')'
 
