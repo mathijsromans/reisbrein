@@ -14,7 +14,7 @@ class UserTravelPreferences(models.Model):
 
 
 class UserTravelPlan(models.Model):
-    user = models.ForeignKey(User)
+    user = models.ForeignKey(User, blank=True, null=True)
     start = models.CharField(max_length=500)
     end = models.CharField(max_length=500)
     datetime_created = models.DateTimeField(auto_now_add=True)

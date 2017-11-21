@@ -56,15 +56,17 @@ class PlanView(TemplateView):
     def get_context_data(self, start, end, **kwargs):
         context = super().get_context_data()
         user_preferences = UserTravelPreferences()
-        if (self.request.user.is_authenticated):
-            user_preferences, created = UserTravelPreferences.objects.get_or_create(user=self.request.user)
-            plan, created = UserTravelPlan.objects.get_or_create(
-                user = self.request.user,
-                start = start,
-                end = end
-            )
-            if not created:
-                plan.save()  # update datetime updated
+        user = None
+        if self.request.user.is_authenticated:
+            user = self.request.user
+            user_preferences, created = UserTravelPreferences.objects.get_or_create(user=user)
+        plan, created = UserTravelPlan.objects.get_or_create(
+            user=user,
+            start=start,
+            end=end
+        )
+        if not created:
+            plan.save()  # update datetime updated
         p = RichPlanner(Generator())
         now = datetime.datetime.now()
         now = max(now, datetime.datetime(year=2017, month=11, day=18, hour=9))
