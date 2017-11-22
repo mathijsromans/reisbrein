@@ -20,6 +20,7 @@ class Segment(Edge):
         self.weather = 0
         self.weather_icon = ''
         self.delay = 0
+        self.map_url = ''
 
     def __lt__(self, other):
         return self.distance < other.distance

@@ -53,6 +53,7 @@ class Planner(object):
         start = Point(Location(start_loc), start_time)
         end = Point(Location(end_loc), start_time + timedelta(hours=12))
         edges = self.generator.create_edges(start, end)
+
         # for s in edges:
         #     print(s)
         plans = self.make_plans(start, end, edges)

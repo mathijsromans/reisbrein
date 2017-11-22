@@ -12,6 +12,7 @@ from reisbrein.planner import RichPlanner
 from reisbrein.generator.generator import Generator
 from reisbrein.models import UserTravelPreferences
 from reisbrein.models import UserTravelPlan
+import reisbrein.segment
 
 logger = logging.getLogger(__name__)
 
@@ -101,6 +102,7 @@ class PlanView(TemplateView):
                         'travel_time_percentage': 100*segment.distance / time,
                         'delay_min': segment.delay,
                         'weather_icon': segment.weather_icon,
+                        'map_url': segment.map_url,
                     })
             result.append(
             {

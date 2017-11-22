@@ -38,18 +38,14 @@
                 </div>
             </div>
             {% endif %}
-
             {% if not segment.type == 'WAIT' %}
             <div class="cd-timeline-block">
                 <div class="cd-timeline-img text-center {{ color }}">
                     <span class="timeline-icon fa {{ icon }}"></span>
                 </div>
-
                 <div class="panel panel-default cd-timeline-content">
-
                     <div class="panel-heading panel-heading-timeline">
                         <div class="row">
-
                             <div class="col-xs-12" align="left">
                                 <div class="timeline-text">
                                     {% if segment.type == 'OVFIETS' %}<img src="{% static 'img/ovfiets.png' %}" height="20px"/> {% endif %}
@@ -63,16 +59,18 @@
                                     {% elif segment.type == 'CAR' %}
                                     <span class="text-danger"> +0 min</span>
                                     {% endif %}
+                                    {% if segment.map_url %}
+                                    <a href="{{ segment.map_url }}" target="_blank">
+                                        <span class="fa fa-pull-right fa-map-o timeline-icon"></span>
+                                    </a>
+                                    {% endif %}
                                 </div>
                             </div>
-
                         </div>
                     </div>
-
                 </div>
             </div>
             {% endif %}
-
             {% if forloop.last %}
             <div class="cd-timeline-block">
                 <div class="cd-timeline-img text-center bg-primary">
@@ -97,12 +95,9 @@
                 </div>
             </div>
             {% endif %}
-
             {% endfor %}
-
         </section>
     </div>
-
 </div>
 
 <script src="{% static 'js/timeline.js' %}"></script>

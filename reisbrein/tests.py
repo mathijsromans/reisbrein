@@ -4,6 +4,7 @@ from .graph import Graph, shortest_path, Edge
 from .planner import DijkstraPlanner, RichPlanner, Location, recur_map
 from reisbrein.generator.generator import TestGenerator, Generator
 from .views import PlanView
+from reisbrein import segment
 
 
 class TestTest(TestCase):
@@ -125,3 +126,8 @@ class TestViews(TestCase):
         self.assertGreater(len(plans), 2)
         self.assertGreater(results[0]['travel_time_min'], 20)
         self.assertLess(results[0]['travel_time_min'], 120)
+        for p in plans:
+            for s in p:
+                if s.transport_type == segment.TransportType.BIKE:
+                    self.assertNotEqual(s.map_url, '')
+

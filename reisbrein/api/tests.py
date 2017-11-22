@@ -41,7 +41,7 @@ class TestTomTom(TestCase):
 
 class TestYours(TestCase):
 
-    def testRouting(self):
+    def test_routing(self):
         begin = Location('Madurodam')
         end = Location('Martinitoren')
         travel1 = yoursapi.travel_time(begin, end, yoursapi.Mode.CAR)
@@ -56,6 +56,18 @@ class TestYours(TestCase):
         # print(travel3)
         # self.assertGreater(travel3, 10 * 3600)
         # self.assertLess(travel3, 15 * 3600)
+
+    def test_map_url(self):
+        begin = Location('Madurodam')
+        end = Location('Martinitoren')
+        url = yoursapi.map_url(begin, end, yoursapi.Mode.CAR)
+        url=url.replace('&', '?')
+        words = sorted(url.split('?'))
+        self.assertEqual(words, ['fast=1','flat=52.0993','flon=4.2986','http://yournavigation.org/','layer=mapnik','tlat=53.21934','tlon=6.56817','v=motorcar'])
+        url = yoursapi.map_url(begin, end, yoursapi.Mode.BIKE)
+        url=url.replace('&', '?')
+        words = sorted(url.split('?'))
+        self.assertEqual(words, ['fast=1','flat=52.0993','flon=4.2986','http://yournavigation.org/','layer=mapnik','tlat=53.21934','tlon=6.56817','v=bicycle'])
 
 
 # class TestMapQuest(TestCase):
@@ -89,7 +101,7 @@ class TestMonotch(TestCase):
         result = self.monotch.search(begin, end, start_time)
         # print(result)
         self.assertNotEqual(result, [])
-        self.assertEqual(len(result['itineraries']), 1)
+        self.assertEqual(len(result['itineraries']), 2)
         self.assertEqual(len(result['itineraries'][0]['legs']), 8)
         self.assertEqual(result['itineraries'][0]['legs'][3]['mode'], 'RAIL')
         self.assertEqual(result['itineraries'][0]['legs'][3]['from']['name'], 'Den Haag Centraal')
