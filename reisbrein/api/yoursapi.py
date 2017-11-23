@@ -17,21 +17,20 @@ class Mode(enum.Enum):
 def get_common_args(start, end, mode):
     start_gps = start.gps()
     end_gps = end.gps()
-    return {
-        'flat': start_gps[0],
-        'flon': start_gps[1],
-        'tlat': end_gps[0],
-        'tlon': end_gps[1],
-        'v': mode.value,
-        'fast': 1,
-        'layer': 'mapnik'  # Provide 'cn' for using bicycle routing using cycle route networks only.
-    }
+    # note that yournavigation.org DOES care about order: lat must come before lon, therefore use a list, not dict
+    return [
+        ('flat', start_gps[0]),
+        ('flon', start_gps[1]),
+        ('tlat', end_gps[0]),
+        ('tlon', end_gps[1]),
+        ('v', mode.value),
+        ('fast', 1),
+        ('layer', 'mapnik'),  # Provide 'cn' for using bicycle routing using cycle route networks only.
+    ]
 
 def travel_time(start, end, mode):
     arguments = get_common_args( start, end, mode)
-    arguments.update({
-        'format': 'geojson',
-    })
+    arguments.append(('format', 'geojson'))
 
     # as requested by http://wiki.openstreetmap.org/wiki/YOURS#Version_1.0
     headers = {'X-Yours-client': 'www.reisbrein.nl'}
