@@ -1,69 +1,14 @@
 import copy
 from datetime import timedelta
-
-from geopy.geocoders import Nominatim
-from reisbrein.api.tomtom import TomTomApi
-from reisbrein.api.mapquest import MapQuestApi
+from reisbrein.generator.generator import Generator
 from .graph import Graph, shortest_path
-from .segment import TransportType
+from .primitives import Point, Location, TransportType
 from .userpreference import order_by_preference
 from .models import UserTravelPreferences
 
 
 def recur_map(f, data):
     return [not hasattr(x, "__iter__") and f(x) or recur_map(f, x) for x in data]
-
-
-class Location:
-    def __init__(self, loc_str, location=(0,0)):
-        # geolocator = Nominatim()
-        self.loc_str = loc_str
-        self.location = location if location != (0,0) else TomTomApi().search(loc_str)
-        # geolocator.geocode(self.loc_str)
-
-    def gps(self):
-        return self.location
-
-    def __str__(self):
-        return self.loc_str
-
-    @property
-    def latitude(self):
-        return self.location.latitude
-
-    @property
-    def longitude(self):
-        return self.location.longitude
-
-
-class Point:
-    def __init__(self, location, time):
-        self.location = location
-        self.time = time
-
-    def __str__(self):
-        return str(self.location) + ' @ ' + str(self.time)
-
-
-class Planner(object):
-    def __init__(self, generator, router):
-        self.generator = generator
-        self.router = router
-
-    def solve(self, start_loc, end_loc, start_time, user_preferences=UserTravelPreferences()):
-        start = Point(Location(start_loc), start_time)
-        end = Point(Location(end_loc), start_time + timedelta(hours=12))
-        edges = self.generator.create_edges(start, end)
-        routes = self.router.make_routes(start, end, edges)
-        for p in routes:
-            if p and p[-1].transport_type == TransportType.WAIT:
-                p.pop()
-        # print(list(map(str, p)))
-        order_by_preference(routes, user_preferences)
-        return routes
-
-    def routes(self, start, end, edges):
-        raise NotImplementedError()
 
 
 class RichRouter(object):
@@ -129,3 +74,24 @@ class DijkstraRouter(object):
             G.add_edge(e)
 
         return G
+
+
+class Planner(object):
+    def __init__(self, generator=Generator, router=RichRouter):
+        self.generator = generator()
+        self.router = router()
+
+    def solve(self, start_loc, end_loc, start_time, user_preferences=UserTravelPreferences()):
+        start = Point(Location(start_loc), start_time)
+        end = Point(Location(end_loc), start_time + timedelta(hours=12))
+        edges = self.generator.create_edges(start, end)
+        routes = self.router.make_routes(start, end, edges)
+        for p in routes:
+            if p and p[-1].transport_type == TransportType.WAIT:
+                p.pop()
+        # print(list(map(str, p)))
+        order_by_preference(routes, user_preferences)
+        return routes
+
+    def routes(self, start, end, edges):
+        raise NotImplementedError()

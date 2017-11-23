@@ -1,7 +1,6 @@
 from datetime import timedelta
 from reisbrein.api.tomtom import TomTomApi
-from reisbrein.planner import Point
-from reisbrein.segment import Segment, TransportType
+from reisbrein.primitives import Segment, TransportType, Point
 from .gen_common import FixTime
 
 

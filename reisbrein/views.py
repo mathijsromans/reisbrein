@@ -8,11 +8,10 @@ from django.views.generic.edit import FormView
 from django.core.exceptions import PermissionDenied
 from django.urls import reverse
 import logging
-from reisbrein.planner import Planner, RichRouter
+from reisbrein.planner import Planner
 from reisbrein.generator.generator import Generator
 from reisbrein.models import UserTravelPreferences
 from reisbrein.models import UserTravelPlan
-import reisbrein.segment
 
 logger = logging.getLogger(__name__)
 
@@ -68,7 +67,7 @@ class PlanView(TemplateView):
         )
         if not created:
             plan.save()  # update datetime updated
-        p = Planner(Generator(), RichRouter())
+        p = Planner()
         now = datetime.datetime.now()
         now = max(now, datetime.datetime(year=2017, month=11, day=18, hour=9))
         # logger.info(now)

@@ -1,10 +1,9 @@
 from django.test import TestCase
 from datetime import datetime, timedelta
-from reisbrein.planner import Point, Location
 from reisbrein.generator.gen_walk import WalkGenerator
 from reisbrein.generator.gen_public import PublicGenerator
 from reisbrein.generator.gen_train import TrainGenerator, skip_first
-from reisbrein.segment import TransportType
+from reisbrein.primitives import TransportType, Point, Location
 from .gen_common import FixTime
 from reisbrein.planner import recur_map
 

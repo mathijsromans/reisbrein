@@ -1,9 +1,9 @@
 import datetime
-from reisbrein.segment import Segment, TransportType
+from reisbrein.primitives import Segment, TransportType, Point
 from reisbrein.generator.gen_public import PublicGenerator
 from reisbrein.generator.gen_walk import WalkGenerator
 from reisbrein.generator.gen_car import CarGenerator
-from reisbrein.planner import Point
+
 
 class Generator:
     def __init__(self):

@@ -1,7 +1,7 @@
 
 
 from reisbrein.load_preference import *
-from reisbrein.segment import TransportType
+from reisbrein.primitives import TransportType
 
 from numpy import array, zeros
 from numpy.random import rand

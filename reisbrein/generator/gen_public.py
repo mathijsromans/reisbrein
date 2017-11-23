@@ -1,6 +1,5 @@
 from datetime import timedelta, datetime
-from reisbrein.segment import Segment, TransportType
-from reisbrein.planner import Point, Location
+from reisbrein.primitives import Segment, TransportType, Point, Location
 from reisbrein.api.monotchapi import MonotchApi
 
 

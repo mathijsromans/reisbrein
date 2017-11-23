@@ -2,7 +2,7 @@ import datetime
 from reisbrein.api import yoursapi
 from django.test import TestCase
 from website.local_settings import *
-from reisbrein.planner import Location
+from reisbrein.primitives import Location
 from ns_api import NSAPI
 from .tomtom import TomTomApi
 # from .mapquest import MapQuestApi

@@ -1,5 +1,5 @@
 from django import template
-from reisbrein.segment import TransportType
+from reisbrein.primitives import TransportType
 
 register = template.Library()
 

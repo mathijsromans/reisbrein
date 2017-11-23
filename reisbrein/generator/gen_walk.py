@@ -1,8 +1,7 @@
 from datetime import timedelta
 from geopy.distance import vincenty
 from reisbrein.api.ovfiets import OvFietsStations
-from reisbrein.segment import Segment, TransportType
-from reisbrein.planner import Point
+from reisbrein.primitives import Segment, TransportType, Point
 from reisbrein.api.weather import WeatherApi
 from reisbrein.api import yoursapi
 from .gen_common import FixTime

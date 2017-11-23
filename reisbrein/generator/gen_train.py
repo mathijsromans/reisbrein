@@ -2,8 +2,7 @@ import csv
 import heapq
 from datetime import timedelta
 from geopy.distance import vincenty
-from reisbrein.segment import Segment, TransportType
-from reisbrein.planner import Point
+from reisbrein.primitives import Segment, TransportType, Point
 
 
 def skip_first(iterable):
