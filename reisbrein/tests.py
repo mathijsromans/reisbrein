@@ -148,15 +148,16 @@ class TestUserPreference(TestCase):
             'a2': Point('a', t0 + timedelta(hours=12)),
             'c2': Point('c', t0 + timedelta(hours=13)),
             'z4': Point('z', t0 + timedelta(hours=14)),
+            'z5': Point('z', t0 + timedelta(hours=6)),
         }
         carplan = Plan(
             [
-                Segment(TransportType.BIKE, points['a'], points['z1']),
+                Segment(TransportType.CAR, points['a'], points['z1']),
             ]
         )
         bikeplan = Plan(
             [
-                Segment(TransportType.CAR, points['a'], points['z2']),
+                Segment(TransportType.BIKE, points['a'], points['z2']),
             ]
         )
         publicplan1 = Plan(
@@ -172,25 +173,38 @@ class TestUserPreference(TestCase):
                 Segment(TransportType.TRAIN, points['c2'], points['z4']),
             ]
         )
-        return bikeplan, carplan, publicplan1, publicplan2
+        walkplan = Plan(
+            [
+                Segment(TransportType.WALK, points['a'], points['z5']),
+            ]
+        )
+        return bikeplan, carplan, publicplan1, publicplan2, walkplan
 
     def test_simple(self):
-        bikeplan, carplan, publicplan1, publicplan2 = self.get_plans()
+        bikeplan, carplan, publicplan1, publicplan2, walkplan = self.get_plans()
         plans = [bikeplan, carplan, publicplan1]
         order_and_select(plans, UserTravelPreferences())
-        self.assertEqual(plans, [bikeplan, publicplan1, carplan])
+        self.assertEqual(plans, [carplan, publicplan1, bikeplan])
+
+        # quick biking is better than long walking
+        plans = [walkplan, bikeplan]
+        # print(str(bikeplan) + ' has a2 score ' + str(bikeplan.score))
+        order_and_select(plans, UserTravelPreferences())
+        # self.assertEqual(plans, [bikeplan, walkplan])
+        # print(str(bikeplan) + ' has a3 score ' + str(bikeplan.score))
+
 
     def test_short_plans(self):
         # publicplan2 is too long
-        bikeplan, carplan, publicplan1, publicplan2 = self.get_plans()
+        bikeplan, carplan, publicplan1, publicplan2, walkplan = self.get_plans()
         plans = [bikeplan, carplan, publicplan1, publicplan2]
         order_and_select(plans, UserTravelPreferences())
-        self.assertEqual(plans, [bikeplan, publicplan1, carplan])
+        self.assertEqual(plans, [carplan, publicplan1, bikeplan])
 
         # not enough plans, so keep publicplan2
-        plans = [publicplan2, bikeplan, publicplan1]
+        plans = [publicplan2, carplan, publicplan1]
         order_and_select(plans, UserTravelPreferences())
-        self.assertEqual(plans, [bikeplan, publicplan1, publicplan2])
+        self.assertEqual(plans, [carplan, publicplan1, publicplan2])
 
 
 

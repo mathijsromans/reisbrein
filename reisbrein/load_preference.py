@@ -28,15 +28,11 @@ def load_dummy_preference_condition_matrix():
     M[pl.index('likewalk'), cl.index('involves walk')] = 30
     M[pl.index('likebike'), cl.index('involves bike')] = 30
     M[pl.index('mindrain'), cl.index('rainy')] = -20
-
-    
-
     M = array(M)
     return M, preference_list, conditions_list
 
 
-def load_user_preference(pref):
-
+def load_user_preference(pref, option):
     preference_vec = zeros(len(preference_list))
     preference_vec[preference_list.index('fast')] = pref.travel_time_importance/10.0+0.1
     preference_vec[preference_list.index('mindrain')] = 1
@@ -44,8 +40,13 @@ def load_user_preference(pref):
     preference_vec[preference_list.index('nobike')] = not(pref.has_bicycle)
     preference_vec[preference_list.index('likewalk')] = 0
     preference_vec[preference_list.index('likebike')] = pref.likes_to_bike/10.0
-    #preference_vec[preference_list.index('no bike at start')] = 1
-    #preference_vec[preference_list.index('no bike at end')] = 0
-        
+    if str(option[0].from_vertex.location) == pref.home_address:
+        preference_vec[preference_list.index('no bike at start')] = 0
+    else:
+        preference_vec[preference_list.index('no bike at start')] = 1
+    if str(option[-1].to_vertex.location) == pref.home_address:
+        preference_vec[preference_list.index('no bike at end')] = 0
+    else:
+        preference_vec[preference_list.index('no bike at end')] = 1
     return preference_vec
 
