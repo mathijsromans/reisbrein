@@ -14,8 +14,8 @@ class TransportType(Enum):
 
 
 class Segment(Edge):
-    def __init__(self, transport_type, from_vertex, to_vertex, distance):
-        super(Segment, self).__init__(from_vertex, to_vertex, distance)
+    def __init__(self, transport_type, start, end):
+        super(Segment, self).__init__(start, end, (end.time - start.time).total_seconds() / 60)
         self.transport_type = transport_type
         self.weather = 0
         self.weather_icon = ''
@@ -26,5 +26,5 @@ class Segment(Edge):
         return self.distance < other.distance
 
     def __str__(self):
-        return '(['+str(self.transport_type)+ ' ' + str(self.weather) + '] '+str(self.from_vertex)+' --> '+str(self.to_vertex)+')'
+        return '['+str(self.transport_type)+ ' ' + str(self.weather) + '] '+str(self.from_vertex)+' --> '+str(self.to_vertex)
 

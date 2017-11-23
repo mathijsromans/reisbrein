@@ -52,5 +52,5 @@ class TrainGenerator:
         for s1 in stops_1:
             for s2 in stops_2:
                 # take the train
-                edges.append(Segment(TransportType.TRAIN, s1, s2, 30))
+                edges.append(Segment(TransportType.TRAIN, s1, s2))
 

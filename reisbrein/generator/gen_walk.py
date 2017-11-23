@@ -28,9 +28,10 @@ class WalkGenerator:
         delta_t = timedelta(seconds=time_sec)
         if fix == FixTime.START:
             new_point = Point(end.location, start.time + delta_t)
+            segment = Segment(transport_type, start, new_point)
         else:
             new_point = Point(start.location, end.time - delta_t)
-        segment = Segment(transport_type, start, end, delta_t.total_seconds()/60)
+            segment = Segment(transport_type, new_point, end)
         segment.map_url = map_url
         return segment, new_point
 
@@ -38,17 +39,13 @@ class WalkGenerator:
         # walk begin to end
         segment, new_point = self.create_segment(start, end, FixTime.START, TransportType.WALK)
         if new_point.time < end.time:
-            segment.to_vertex = new_point
-            segment.distance = (new_point.time - start.time).total_seconds() / 60
             edges.append(segment)
-            edges.append(Segment(TransportType.WAIT, new_point, end, (end.time - new_point.time).total_seconds() / 60))
+            edges.append(Segment(TransportType.WAIT, new_point, end))
         # bike begin to end
         segment, new_point = self.create_segment(start, end, FixTime.START, TransportType.BIKE)
         if new_point.time < end.time:
-            segment.to_vertex = new_point
-            segment.distance = (new_point.time - start.time).total_seconds() / 60
             edges.append(segment)
-            edges.append(Segment(TransportType.WAIT, new_point, end, (end.time - new_point.time).total_seconds() / 60))
+            edges.append(Segment(TransportType.WAIT, new_point, end))
 
         public_types = [TransportType.TRAIN, TransportType.TRAM, TransportType.BUS]
         train_edges = [e for e in edges if e.transport_type in public_types]
@@ -58,37 +55,29 @@ class WalkGenerator:
             # walk to first station
             segment, new_point = self.create_segment(start, s, FixTime.END, TransportType.WALK)
             if new_point.time > start.time:
-                segment.from_vertex = new_point
-                segment.distance = (s.time - new_point.time).total_seconds() / 60
-                edges.append(Segment(TransportType.WAIT, start, new_point, (new_point.time - start.time).total_seconds() / 60))
+                edges.append(Segment(TransportType.WAIT, start, new_point))
                 edges.append(segment)
 
             # bike to first station
             segment, new_point = self.create_segment(start, s, FixTime.END, TransportType.BIKE)
             if new_point.time > start.time:
-                segment.from_vertex = new_point
-                segment.distance = (s.time - new_point.time).total_seconds() / 60
-                edges.append(Segment(TransportType.WAIT, start, new_point, (new_point.time - start.time).total_seconds() / 60))
+                edges.append(Segment(TransportType.WAIT, start, new_point))
                 edges.append(segment)
 
         for s in stops_2:
             # walk from second station
             segment, new_point = self.create_segment(s, end, FixTime.START, TransportType.WALK)
             if new_point.time < end.time:
-                segment.to_vertex = new_point
-                segment.distance = (new_point.time - s.time).total_seconds() / 60
                 edges.append(segment)
-                edges.append(Segment(TransportType.WAIT, new_point, end, (end.time - new_point.time).total_seconds() / 60))
+                edges.append(Segment(TransportType.WAIT, new_point, end))
             # bike from second station
             bike_type = TransportType.BIKE
             if WalkGenerator.OV_FIETS_API.has_ovfiets(s.location.loc_str):
                 bike_type = TransportType.OVFIETS
             segment, new_point = self.create_segment(s, end, FixTime.START, TransportType.BIKE)
             if new_point.time < end.time:
-                segment.to_vertex = new_point
-                segment.distance = (new_point.time - s.time).total_seconds() / 60
                 edges.append(segment)
-                edges.append(Segment(TransportType.WAIT, new_point, end, (end.time - new_point.time).total_seconds() / 60))
+                edges.append(Segment(TransportType.WAIT, new_point, end))
 
     @staticmethod
     def add_weather(edges):

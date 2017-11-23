@@ -17,7 +17,7 @@ class CarGenerator:
             new_point = Point(end.location, start.time + delta_t)
         else:
             new_point = Point(start.location, end.time - delta_t)
-        segment = Segment(TransportType.CAR, start, new_point, delta_t.total_seconds()/60)
+        segment = Segment(TransportType.CAR, start, new_point)
         segment.delay = delay/60
         return segment, new_point
 
@@ -25,4 +25,4 @@ class CarGenerator:
         segment, new_point = self.create_segment(start, end, FixTime.START)
         if new_point.time < end.time:
             edges.append(segment)
-            edges.append(Segment(TransportType.WAIT, new_point, end, (end.time - new_point.time).total_seconds() / 60))
+            edges.append(Segment(TransportType.WAIT, new_point, end))

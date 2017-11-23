@@ -104,7 +104,7 @@ class TestMonotch(TestCase):
         result = self.monotch.search(begin, end, start_time)
         # print(result)
         self.assertNotEqual(result, [])
-        self.assertEqual(len(result['itineraries']), 2)
+        self.assertEqual(len(result['itineraries']), 1)
         self.assertEqual(len(result['itineraries'][0]['legs']), 8)
         self.assertEqual(result['itineraries'][0]['legs'][3]['mode'], 'RAIL')
         self.assertEqual(result['itineraries'][0]['legs'][3]['from']['name'], 'Den Haag Centraal')

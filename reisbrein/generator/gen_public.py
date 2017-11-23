@@ -36,7 +36,7 @@ class PublicGenerator:
                 p_time = datetime.fromtimestamp(int(leg['to']['arrival']) / 1000)
                 p = Point(p_loc, p_time)
                 if index != 0:  # walk to first stop will be added later
-                    edges.append(Segment(transport_type, prev_point, p, (p_time-prev_point.time).seconds/60))
+                    edges.append(Segment(transport_type, prev_point, p))
                 prev_point = p
                 # print('Adding edge' + str(edges[-1]))
 

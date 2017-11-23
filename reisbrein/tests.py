@@ -122,7 +122,8 @@ class TestViews(TestCase):
         time = datetime(year=2017, month=11, day=18, hour=9)
         plans = p.solve('Den Haag', 'Nieuwegein', time)
         results = PlanView.get_results(plans)
-        # print(results)
+        # for p in plans:
+        #     print (list(map(str,p)))
         self.assertGreater(len(plans), 2)
         self.assertGreater(results[0]['travel_time_min'], 20)
         self.assertLess(results[0]['travel_time_min'], 120)
