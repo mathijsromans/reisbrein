@@ -15,8 +15,8 @@ def order_by_preference(plans, user_preferences):
     for p in plans:
         w, corrected_weight = weight(p, user_preferences)
         weights.append(w)
-#        if True:
-        if corrected_weight > -1e9:
+        if True:
+        # if corrected_weight > -1e9:
             keep_weights.append(w)
             keep_plans.append(copy(p))
     if keep_plans == []:

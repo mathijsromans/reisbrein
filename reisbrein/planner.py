@@ -46,67 +46,60 @@ class Point:
 
 
 class Planner(object):
-    def __init__(self, generator):
+    def __init__(self, generator, router):
         self.generator = generator
+        self.router = router
 
     def solve(self, start_loc, end_loc, start_time, user_preferences=UserTravelPreferences()):
         start = Point(Location(start_loc), start_time)
         end = Point(Location(end_loc), start_time + timedelta(hours=12))
         edges = self.generator.create_edges(start, end)
-
-        # for s in edges:
-        #     print(s)
-        plans = self.make_plans(start, end, edges)
-        # for p in plans:
-        #     print(list(map(str,p)))
-        for p in plans:
+        routes = self.router.make_routes(start, end, edges)
+        for p in routes:
             if p and p[-1].transport_type == TransportType.WAIT:
                 p.pop()
-            # print(list(map(str, p)))
-        # try:
-        order_by_preference(plans, user_preferences)
-        # except ValueError:
-        #     pass
-        return plans
+        # print(list(map(str, p)))
+        order_by_preference(routes, user_preferences)
+        return routes
 
-    def make_plans(self, start, end, edges):
+    def routes(self, start, end, edges):
         raise NotImplementedError()
 
 
-class RichPlanner(Planner):
+class RichRouter(object):
 
-    def make_plans(self, start, end, edges):
-        new_plans = [[edge] for edge in self.edges_starting_at(start, edges)]
+    def make_routes(self, start, end, edges):
+        new_routes = [[edge] for edge in self.edges_starting_at(start, edges)]
         num_changes = 0
-        final_plans = []
-        while new_plans:
-            partial_plans = []
-            for p in new_plans:
+        final_routes = []
+        while new_routes:
+            partial_routes = []
+            for p in new_routes:
                 if p[-1].to_vertex == end:
-                    final_plans.append(p)
+                    final_routes.append(p)
                 else:
-                    partial_plans.append(p)
-            num_changes += len(new_plans)
+                    partial_routes.append(p)
+            num_changes += len(new_routes)
             if num_changes > 1000:
                 break
-            new_plans.clear()
-            for p in partial_plans:
+            new_routes.clear()
+            for p in partial_routes:
                 for e in self.edges_starting_at(p[-1].to_vertex, edges):
                     new_p = copy.deepcopy(p)
                     new_p.append(e)
-                    new_plans.append(new_p)
-            # print(list(recur_map(str, partial_plans)))
+                    new_routes.append(new_p)
+            # print(list(recur_map(str, partial_routes)))
 
-        return final_plans
+        return final_routes
 
     @staticmethod
     def edges_starting_at(point, edges):
         return filter(lambda x: x.from_vertex == point, edges)
 
 
-class DijkstraPlanner(Planner):
+class DijkstraRouter(object):
 
-    def make_plans(self, start, end, edges):
+    def make_routes(self, start, end, edges):
         graphs = [
             self.create_graph(edges),
             self.create_graph(self.exclude(edges, TransportType.BIKE)),

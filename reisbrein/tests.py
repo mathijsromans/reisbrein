@@ -1,7 +1,7 @@
 from datetime import datetime
 from django.test import TestCase
 from .graph import Graph, shortest_path, Edge
-from .planner import DijkstraPlanner, RichPlanner, Location, recur_map
+from .planner import Planner, DijkstraRouter, RichRouter, Location, recur_map
 from reisbrein.generator.generator import TestGenerator, Generator
 from .views import PlanView
 from reisbrein import segment
@@ -47,10 +47,10 @@ class TestLocation(TestCase):
         self.assertEqual(loc2.gps(), None)
 
 
-class TestDijkstraPlanner(TestCase):
+class TestDijkstraRouter(TestCase):
 
     def test_fixed_generator(self):
-        p = DijkstraPlanner(TestGenerator())
+        p = Planner(TestGenerator(), DijkstraRouter())
 
         vertices = []
         noon = datetime(year=2017, month=11, day=17, hour=12)
@@ -68,7 +68,7 @@ class TestDijkstraPlanner(TestCase):
         # self.assertEqual(vertices[0][2].location.loc_str, 'e')
 
     def test_planner(self):
-        p = DijkstraPlanner(Generator())
+        p = Planner(Generator(), DijkstraRouter())
         vertices = []
         noon = datetime(year=2017, month=11, day=17, hour=12)
         for plan in p.solve('Madurodam', 'Martinitoren', noon):
@@ -85,10 +85,10 @@ class TestDijkstraPlanner(TestCase):
         # self.assertEqual(len(vertices[2]), 1)
 
 
-class TestRichPlanner(TestCase):
+class TestRichRouter(TestCase):
 
     def test_fixed_generator(self):
-        p = RichPlanner(TestGenerator())
+        p = Planner(TestGenerator(), RichRouter())
 
         vertices = []
         noon = datetime(year=2017, month=11, day=17, hour=12)
@@ -102,7 +102,7 @@ class TestRichPlanner(TestCase):
         # self.assertEqual(len(plans[1]), 2)
 
     def test_planner(self):
-        p = RichPlanner(Generator())
+        p = Planner(Generator(), RichRouter())
         vertices = []
         noon = datetime(year=2017, month=11, day=17, hour=12)
         plans = p.solve('Madurodam', 'Martinitoren', noon)
@@ -118,7 +118,7 @@ class TestRichPlanner(TestCase):
 class TestViews(TestCase):
 
     def test(self):
-        p = RichPlanner(Generator())
+        p = Planner(Generator(), RichRouter())
         time = datetime(year=2017, month=11, day=18, hour=9)
         plans = p.solve('Den Haag', 'Nieuwegein', time)
         results = PlanView.get_results(plans)
@@ -131,4 +131,9 @@ class TestViews(TestCase):
             for s in p:
                 if s.transport_type == segment.TransportType.BIKE:
                     self.assertNotEqual(s.map_url, '')
+
+# class TestUserPreference(TestCase):
+#
+#     def test(self):
+
 
