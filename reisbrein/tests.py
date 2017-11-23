@@ -1,10 +1,13 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from django.test import TestCase
 from .graph import Graph, shortest_path, Edge
-from .planner import Planner, DijkstraRouter, recur_map
+from .planner import Planner, DijkstraRouter, recur_map, Plan
 from reisbrein.generator.generator import TestGenerator
 from .views import PlanView
-from reisbrein.primitives import Location, TransportType
+from reisbrein.primitives import Location, Point, TransportType, Segment
+from .userpreference import order_by_preference
+from .models import UserTravelPreferences
+
 
 class TestTest(TestCase):
     """ Example test case. """
@@ -131,10 +134,39 @@ class TestViews(TestCase):
                 if s.transport_type == TransportType.BIKE:
                     self.assertNotEqual(s.map_url, '')
 
-#
-# class TestUserPreference(TestCase):
-#
-#     def test(self):
+
+class TestUserPreference(TestCase):
+
+    def test(self):
+        t0 = datetime(year=2000, month=1, day=1)
+        points = [
+            Point('a', t0),
+            Point('z', t0 + timedelta(hours=3)),
+            Point('z', t0 + timedelta(hours=4)),
+            Point('c', t0 + timedelta(hours=2)),
+            Point('z', t0 + timedelta(hours=5)),
+        ]
+        bikeplan = Plan(
+            [
+                Segment(TransportType.CAR, points[0], points[1]),
+            ]
+        )
+        carplan = Plan(
+            [
+                Segment(TransportType.BIKE, points[0], points[2]),
+            ]
+        )
+        publicplan = Plan(
+            [
+                Segment(TransportType.WALK, points[0], points[3]),
+                Segment(TransportType.TRAIN, points[3], points[4]),
+            ]
+        )
+        plans = [bikeplan, carplan, publicplan]
+        # print(plans)
+        order_by_preference(plans, UserTravelPreferences())
+        # print(plans)
+        self.assertEqual(plans, [bikeplan, publicplan])
 
 
 

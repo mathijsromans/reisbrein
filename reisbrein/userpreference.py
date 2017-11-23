@@ -5,7 +5,6 @@ from reisbrein.primitives import TransportType
 
 from numpy import array, zeros
 from numpy.random import rand
-from copy import copy
 
 
 def order_by_preference(plans, user_preferences):
@@ -18,7 +17,7 @@ def order_by_preference(plans, user_preferences):
         # if True:
         if corrected_weight > -1e9:
             keep_weights.append(w)
-            keep_plans.append(copy(p))
+            keep_plans.append(p)
     if keep_plans == []:
         aw = list((-array(weights)).argsort())
         for i in range(min(3,len(weights))):
@@ -75,11 +74,11 @@ def weight(option, user_preferences):
     preference_vec = load_user_preference(user_preferences)
     Matrix, preference_list, conditions_list = load_dummy_preference_condition_matrix()
     
-    if option[0].from_vertex.location.loc_str == user_preferences.home_address:
+    if str(option[0].from_vertex.location) == user_preferences.home_address:
         preference_vec[preference_list.index('no bike at start')] = 0
     else:
         preference_vec[preference_list.index('no bike at start')] = 1
-    if option[-1].to_vertex.location.loc_str == user_preferences.home_address:
+    if str(option[-1].to_vertex.location) == user_preferences.home_address:
         preference_vec[preference_list.index('no bike at end')] = 0
     else:
         preference_vec[preference_list.index('no bike at end')] = 1
