@@ -15,7 +15,7 @@ class TransportType(Enum):
 
 class Segment(Edge):
     def __init__(self, transport_type, start, end):
-        super(Segment, self).__init__(start, end, (end.time - start.time).total_seconds() / 60)
+        super(Segment, self).__init__(start, end, (end.time - start.time).total_seconds())
         self.transport_type = transport_type
         self.weather = 0
         self.weather_icon = ''
