@@ -54,7 +54,7 @@ class TestDijkstraRouter(TestCase):
         vertices = []
         noon = datetime(year=2017, month=11, day=17, hour=12)
         for plan in p.solve('a', 'e', noon):
-            vertices.append([edge.to_vertex for edge in plan])
+            vertices.append([edge.to_vertex for edge in plan.route])
 
         # [['b', 'c', <reisbrein.planner.Point object at 0x7f8eee966630>],
         #  [<reisbrein.planner.Point object at 0x7f8eee966630>],
@@ -71,7 +71,7 @@ class TestDijkstraRouter(TestCase):
         vertices = []
         noon = datetime(year=2017, month=11, day=17, hour=12)
         for plan in p.solve('Madurodam', 'Martinitoren', noon):
-            vertices.append([edge.to_vertex for edge in plan])
+            vertices.append([edge.to_vertex for edge in plan.route])
 
         # print(list(recur_map(str, vertices)))
         # [['Station: Den Haag HS @ 2017-11-17 12:10:00', 'Station: Groningen Noord @ 2017-11-17 12:40:00',
@@ -93,7 +93,7 @@ class TestRichRouter(TestCase):
         noon = datetime(year=2017, month=11, day=17, hour=12)
         plans = p.solve('a', 'e', noon)
         for plan in plans:
-            vertices.append([edge.to_vertex for edge in plan])
+            vertices.append([edge.to_vertex for edge in plan.route])
         # print(list(recur_map(str, plans)))
 
         # self.assertEqual(len(plans), 4)
@@ -106,7 +106,7 @@ class TestRichRouter(TestCase):
         noon = datetime(year=2017, month=11, day=17, hour=12)
         plans = p.solve('Madurodam', 'Martinitoren', noon)
         for plan in plans:
-            vertices.append([edge.to_vertex for edge in plan])
+            vertices.append([edge.to_vertex for edge in plan.route])
         # print(list(recur_map(str, vertices)))
 
         # self.assertEqual(len(plans), 4)
@@ -127,12 +127,14 @@ class TestViews(TestCase):
         self.assertGreater(results[0]['travel_time_min'], 20)
         self.assertLess(results[0]['travel_time_min'], 120)
         for p in plans:
-            for s in p:
+            for s in p.route:
                 if s.transport_type == TransportType.BIKE:
                     self.assertNotEqual(s.map_url, '')
 
+#
 # class TestUserPreference(TestCase):
 #
 #     def test(self):
+
 
 

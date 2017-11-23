@@ -76,22 +76,35 @@ class DijkstraRouter(object):
         return G
 
 
-class Planner(object):
+class Plan():
+    def __init__(self, route):
+        self.route = route
+        self.score = 0
+
+    def __lt__(self, other):
+        return self.route < other.route
+
+    def __str__(self):
+        return str(list(map(str, self.route)))
+
+
+class Planner():
     def __init__(self, generator=Generator, router=RichRouter):
         self.generator = generator()
         self.router = router()
+
+    @staticmethod
+    def remove_waiting_at_end(routes):
+        for r in routes:
+            if r and r[-1].transport_type == TransportType.WAIT:
+                r.pop()
 
     def solve(self, start_loc, end_loc, start_time, user_preferences=UserTravelPreferences()):
         start = Point(Location(start_loc), start_time)
         end = Point(Location(end_loc), start_time + timedelta(hours=12))
         edges = self.generator.create_edges(start, end)
         routes = self.router.make_routes(start, end, edges)
-        for p in routes:
-            if p and p[-1].transport_type == TransportType.WAIT:
-                p.pop()
-        # print(list(map(str, p)))
-        order_by_preference(routes, user_preferences)
-        return routes
-
-    def routes(self, start, end, edges):
-        raise NotImplementedError()
+        self.remove_waiting_at_end(routes)
+        plans = [Plan(r) for r in routes]
+        order_by_preference(plans, user_preferences)
+        return plans

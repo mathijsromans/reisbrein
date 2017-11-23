@@ -13,17 +13,17 @@ def order_by_preference(plans, user_preferences):
     keep_weights = []
     weights = []
     for p in plans:
-        w, corrected_weight = weight(p, user_preferences)
+        w, corrected_weight = weight(p.route, user_preferences)
         weights.append(w)
-        if True:
-        # if corrected_weight > -1e9:
+        # if True:
+        if corrected_weight > -1e9:
             keep_weights.append(w)
             keep_plans.append(copy(p))
     if keep_plans == []:
         aw = list((-array(weights)).argsort())
         for i in range(min(3,len(weights))):
             pi = aw.index(i)
-            w, corrected_weight = weight(plans[pi], user_preferences)
+            w, corrected_weight = weight(plans[pi].route, user_preferences)
             keep_weights.append(w)
             keep_plans.append(plans[pi])
         
@@ -40,10 +40,10 @@ def order_by_preference(plans, user_preferences):
     min_distance_search = [] #with car undervalued
     car_distance = -1
     for p in plans:
-        distances.append( distance(p) )
-        if p[0].transport_type != TransportType.CAR:
-            min_distance_search.append( distance(p) )
-        if len(p)==1 and p[0].transport_type == TransportType.BIKE:
+        distances.append( distance(p.route) )
+        if p.route[0].transport_type != TransportType.CAR:
+            min_distance_search.append( distance(p.route) )
+        if len(p.route)==1 and p.route[0].transport_type == TransportType.BIKE:
             min_distance_search[-1] *= 2
             
 

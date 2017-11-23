@@ -71,9 +71,9 @@ class PlanView(TemplateView):
         now = datetime.datetime.now()
         now = max(now, datetime.datetime(year=2017, month=11, day=18, hour=9))
         # logger.info(now)
-        options = p.solve(start, end, now, user_preferences)
-        options = options[:user_preferences.show_n_results]
-        results = self.get_results(options)
+        plans = p.solve(start, end, now, user_preferences)
+        plans = plans[:user_preferences.show_n_results]
+        results = self.get_results(plans)
 
         context['start'] = start
         context['end'] = end
@@ -81,16 +81,16 @@ class PlanView(TemplateView):
         return context
 
     @staticmethod
-    def get_results(options):
-        max_time = PlanView.max_travel_time(options)
+    def get_results(plans):
+        max_time = PlanView.max_travel_time(plans)
         if max_time == 0:
             return []
 
         result = []
-        for option in options:
-            time = PlanView.travel_time(option)
+        for plan in plans:
+            time = PlanView.travel_time(plan)
             segments = []
-            for segment in option:
+            for segment in plan.route:
                 segments.append(
                     {
                         'start': segment.from_vertex,
@@ -123,16 +123,16 @@ class PlanView(TemplateView):
 
 
     @staticmethod
-    def max_travel_time(options):
+    def max_travel_time(plans):
         max_travel_time = 0
-        for option in options:
-            max_travel_time = max(max_travel_time, PlanView.travel_time(option))
+        for plan in plans:
+            max_travel_time = max(max_travel_time, PlanView.travel_time(plan))
         return max_travel_time
 
     @staticmethod
-    def travel_time(option):
+    def travel_time(plan):
         time = 0
-        for segment in option:
+        for segment in plan.route:
             time += segment.distance
         return time
 
