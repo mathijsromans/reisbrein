@@ -5,7 +5,7 @@ from .planner import Planner, DijkstraRouter, recur_map, Plan
 from reisbrein.generator.generator import TestGenerator
 from .views import PlanView
 from reisbrein.primitives import Location, Point, TransportType, Segment
-from .userpreference import order_by_preference
+from .userpreference import order_and_select
 from .models import UserTravelPreferences
 
 
@@ -137,36 +137,60 @@ class TestViews(TestCase):
 
 class TestUserPreference(TestCase):
 
-    def test(self):
+    def get_plans(self):
         t0 = datetime(year=2000, month=1, day=1)
-        points = [
-            Point('a', t0),
-            Point('z', t0 + timedelta(hours=3)),
-            Point('z', t0 + timedelta(hours=4)),
-            Point('c', t0 + timedelta(hours=2)),
-            Point('z', t0 + timedelta(hours=5)),
-        ]
+        points = {
+            'a':  Point('a', t0),
+            'z1': Point('z', t0 + timedelta(hours=3)),
+            'z2': Point('z', t0 + timedelta(hours=4)),
+            'c':  Point('c', t0 + timedelta(hours=2)),
+            'z3': Point('z', t0 + timedelta(hours=5)),
+            'a2': Point('a', t0 + timedelta(hours=12)),
+            'c2': Point('c', t0 + timedelta(hours=13)),
+            'z4': Point('z', t0 + timedelta(hours=14)),
+        }
         carplan = Plan(
             [
-                Segment(TransportType.BIKE, points[0], points[1]),
+                Segment(TransportType.BIKE, points['a'], points['z1']),
             ]
         )
         bikeplan = Plan(
             [
-                Segment(TransportType.CAR, points[0], points[2]),
+                Segment(TransportType.CAR, points['a'], points['z2']),
             ]
         )
-        publicplan = Plan(
+        publicplan1 = Plan(
             [
-                Segment(TransportType.WALK, points[0], points[3]),
-                Segment(TransportType.TRAIN, points[3], points[4]),
+                Segment(TransportType.WALK, points['a'], points['c']),
+                Segment(TransportType.TRAIN, points['c'], points['z3']),
             ]
         )
-        plans = [bikeplan, carplan, publicplan]
-        # print(plans)
-        order_by_preference(plans, UserTravelPreferences())
-        # print(plans)
-        self.assertEqual(plans, [bikeplan, publicplan, carplan])
+        publicplan2 = Plan(
+            [
+                Segment(TransportType.WAIT, points['a'], points['a2']),
+                Segment(TransportType.WALK, points['a2'], points['c2']),
+                Segment(TransportType.TRAIN, points['c2'], points['z4']),
+            ]
+        )
+        return bikeplan, carplan, publicplan1, publicplan2
+
+    def test_simple(self):
+        bikeplan, carplan, publicplan1, publicplan2 = self.get_plans()
+        plans = [bikeplan, carplan, publicplan1]
+        order_and_select(plans, UserTravelPreferences())
+        self.assertEqual(plans, [bikeplan, publicplan1, carplan])
+
+    def test_short_plans(self):
+        # publicplan2 is too long
+        bikeplan, carplan, publicplan1, publicplan2 = self.get_plans()
+        plans = [bikeplan, carplan, publicplan1, publicplan2]
+        order_and_select(plans, UserTravelPreferences())
+        self.assertEqual(plans, [bikeplan, publicplan1, carplan])
+
+        # not enough plans, so keep publicplan2
+        plans = [publicplan2, bikeplan, publicplan1]
+        order_and_select(plans, UserTravelPreferences())
+        self.assertEqual(plans, [bikeplan, publicplan1, publicplan2])
 
 
 

@@ -1,18 +1,30 @@
-
-
 from reisbrein.load_preference import *
 from reisbrein.primitives import TransportType
-
 from numpy import array, zeros
-from numpy.random import rand
+import heapq
 
+MIN_SHORT_PLANS = 3
 
-def order_by_preference(plans, user_preferences):
+def remove_long_plans(plans):
+    """Remove plans that are too long to make sure we keep a good resolution on the good plans."""
+    complex_plans = [p for p in plans if len(p.route) > 1]
+    if complex_plans:
+        shortest_time = min(complex_plans, key=lambda x: x.travel_time).travel_time
+        short_plans = [p for p in plans if p.travel_time < 2 * shortest_time]
+
+        # keep at least MIN_SHORT_PLANS plans
+        if len(short_plans) < MIN_SHORT_PLANS:
+            short_plans = heapq.nsmallest(MIN_SHORT_PLANS, plans, lambda x: x.travel_time)
+
+        plans[:] = short_plans
+
+def order_and_select(plans, user_preferences):
     for p in plans:
         p.score, corrected_weight = score(p.route, user_preferences)
 
-    plans.sort(key=lambda plan: plan.score, reverse=True)
+    remove_long_plans(plans)
 
+    plans.sort(key=lambda plan: plan.score, reverse=True)
 
     #     weights.append(p.score)
     #     # if True:
@@ -62,27 +74,7 @@ def order_by_preference(plans, user_preferences):
 
 #    plans.sort(key=weight, reverse=True)
 
-def distance(option):
-    w = 0
-    for segment in option:
-        w += segment.distance
-    return w
-
-
-def score(option, user_preferences):
-    
-    preference_vec = load_user_preference(user_preferences)
-    Matrix, preference_list, conditions_list = load_dummy_preference_condition_matrix()
-    
-    if str(option[0].from_vertex.location) == user_preferences.home_address:
-        preference_vec[preference_list.index('no bike at start')] = 0
-    else:
-        preference_vec[preference_list.index('no bike at start')] = 1
-    if str(option[-1].to_vertex.location) == user_preferences.home_address:
-        preference_vec[preference_list.index('no bike at end')] = 0
-    else:
-        preference_vec[preference_list.index('no bike at end')] = 1
-
+def get_conditions(option):
     condition_dict = {}
     # starts with car, starts with bike, includes car, includes bike, total time
 
@@ -103,7 +95,7 @@ def score(option, user_preferences):
             condition_dict['ends with bike'] = 1
         else:
             condition_dict['ends with bike'] = 0
-    
+
     condition_dict['involves bike'] = 0
     condition_dict['involves own bike'] = 0
     condition_dict['involves car'] = 0
@@ -128,14 +120,23 @@ def score(option, user_preferences):
         condition_dict['total time'] += s.distance
         if s.weather == 'rainy':
             condition_dict['rainy'] += 1
+    return condition_dict
 
+def score(option, user_preferences):
+    preference_vec = load_user_preference(user_preferences)
+    Matrix, preference_list, conditions_list = load_dummy_preference_condition_matrix()
+    if str(option[0].from_vertex.location) == user_preferences.home_address:
+        preference_vec[preference_list.index('no bike at start')] = 0
+    else:
+        preference_vec[preference_list.index('no bike at start')] = 1
+    if str(option[-1].to_vertex.location) == user_preferences.home_address:
+        preference_vec[preference_list.index('no bike at end')] = 0
+    else:
+        preference_vec[preference_list.index('no bike at end')] = 1
 
-
-    cd = condition_dict
+    cd = get_conditions(option)
     conditions = array( [cd[cond] for cond in conditions_list] )
     conditions_vector = Matrix.dot(conditions)
-    
-    
     preference = conditions_vector.dot(preference_vec)
     corrected_weight = preference - conditions_vector[0]
     return preference, corrected_weight

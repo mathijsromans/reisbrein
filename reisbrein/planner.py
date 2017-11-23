@@ -3,7 +3,7 @@ from datetime import timedelta
 from reisbrein.generator.generator import Generator
 from .graph import Graph, shortest_path
 from .primitives import Point, Location, TransportType
-from .userpreference import order_by_preference
+from .userpreference import order_and_select
 from .models import UserTravelPreferences
 
 
@@ -80,6 +80,9 @@ class Plan():
     def __init__(self, route):
         self.route = route
         self.score = 0
+        self.travel_time = 0
+        for segment in route:
+            self.travel_time += segment.distance
 
     def __str__(self):
         return str(list(map(str, self.route)))
@@ -103,5 +106,5 @@ class Planner():
         routes = self.router.make_routes(start, end, edges)
         self.remove_waiting_at_end(routes)
         plans = [Plan(r) for r in routes]
-        order_by_preference(plans, user_preferences)
+        order_and_select(plans, user_preferences)
         return plans
