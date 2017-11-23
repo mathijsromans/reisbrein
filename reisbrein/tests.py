@@ -146,14 +146,14 @@ class TestUserPreference(TestCase):
             Point('c', t0 + timedelta(hours=2)),
             Point('z', t0 + timedelta(hours=5)),
         ]
-        bikeplan = Plan(
-            [
-                Segment(TransportType.CAR, points[0], points[1]),
-            ]
-        )
         carplan = Plan(
             [
-                Segment(TransportType.BIKE, points[0], points[2]),
+                Segment(TransportType.BIKE, points[0], points[1]),
+            ]
+        )
+        bikeplan = Plan(
+            [
+                Segment(TransportType.CAR, points[0], points[2]),
             ]
         )
         publicplan = Plan(
@@ -166,7 +166,7 @@ class TestUserPreference(TestCase):
         # print(plans)
         order_by_preference(plans, UserTravelPreferences())
         # print(plans)
-        self.assertEqual(plans, [bikeplan, publicplan])
+        self.assertEqual(plans, [bikeplan, publicplan, carplan])
 
 
 

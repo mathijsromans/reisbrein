@@ -8,56 +8,56 @@ from numpy.random import rand
 
 
 def order_by_preference(plans, user_preferences):
-    keep_plans = []
-    keep_weights = []
-    weights = []
     for p in plans:
-        w, corrected_weight = weight(p.route, user_preferences)
-        weights.append(w)
-        # if True:
-        if corrected_weight > -1e9:
-            keep_weights.append(w)
-            keep_plans.append(p)
-    if keep_plans == []:
-        aw = list((-array(weights)).argsort())
-        for i in range(min(3,len(weights))):
-            pi = aw.index(i)
-            w, corrected_weight = weight(plans[pi].route, user_preferences)
-            keep_weights.append(w)
-            keep_plans.append(plans[pi])
-        
+        p.score, corrected_weight = score(p.route, user_preferences)
 
-    if keep_plans != []:
-        zipped = list(zip(keep_weights, keep_plans))
-        plans[:] = [p for _,p in sorted(zipped, reverse=True)]
-    else:
-        plans = []
-    
+    plans.sort(key=lambda plan: plan.score, reverse=True)
 
 
-    distances = []
-    min_distance_search = [] #with car undervalued
-    car_distance = -1
-    for p in plans:
-        distances.append( distance(p.route) )
-        if p.route[0].transport_type != TransportType.CAR:
-            min_distance_search.append( distance(p.route) )
-        if len(p.route)==1 and p.route[0].transport_type == TransportType.BIKE:
-            min_distance_search[-1] *= 2
-            
-
-    min_distance = min(min_distance_search) if min_distance_search else 1e10
-        
-    #reasonable_time plans
-    rt_plans = []
-    for ip, p in enumerate( plans ):
-        if distances[ip] < 1.5*min_distance:
-            rt_plans.append(p)
-    # at least 3 plans
-    if len(rt_plans) >= 3:
-        plans[:] = rt_plans[:]
-    else:
-        plans[:] = plans[:3]
+    #     weights.append(p.score)
+    #     # if True:
+    #     if corrected_weight > -1e9:
+    #         keep_weights.append(p.score)
+    #         keep_plans.append(p)
+    # if not keep_plans:
+    #     aw = list((-array(weights)).argsort())
+    #     for i in range(min(3,len(weights))):
+    #         pi = aw.index(i)
+    #         keep_weights.append(p.score)
+    #         keep_plans.append(plans[pi])
+    #
+    #
+    # if keep_plans != []:
+    #     zipped = list(zip(keep_weights, keep_plans))
+    #     plans[:] = [p for _,p in sorted(zipped, reverse=True)]
+    # else:
+    #     plans = []
+    #
+    #
+    #
+    # distances = []
+    # min_distance_search = [] #with car undervalued
+    # car_distance = -1
+    # for p in plans:
+    #     distances.append( distance(p.route) )
+    #     if p.route[0].transport_type != TransportType.CAR:
+    #         min_distance_search.append( distance(p.route) )
+    #     if len(p.route)==1 and p.route[0].transport_type == TransportType.BIKE:
+    #         min_distance_search[-1] *= 2
+    #
+    #
+    # min_distance = min(min_distance_search) if min_distance_search else 1e10
+    #
+    # #reasonable_time plans
+    # rt_plans = []
+    # for ip, p in enumerate( plans ):
+    #     if distances[ip] < 1.5*min_distance:
+    #         rt_plans.append(p)
+    # # at least 3 plans
+    # if len(rt_plans) >= 3:
+    #     plans[:] = rt_plans[:]
+    # else:
+    #     plans[:] = plans[:3]
 
 
 #    plans.sort(key=weight, reverse=True)
@@ -69,7 +69,7 @@ def distance(option):
     return w
 
 
-def weight(option, user_preferences):
+def score(option, user_preferences):
     
     preference_vec = load_user_preference(user_preferences)
     Matrix, preference_list, conditions_list = load_dummy_preference_condition_matrix()
@@ -82,11 +82,7 @@ def weight(option, user_preferences):
         preference_vec[preference_list.index('no bike at end')] = 0
     else:
         preference_vec[preference_list.index('no bike at end')] = 1
-    
-    
-    
-    
-    
+
     condition_dict = {}
     # starts with car, starts with bike, includes car, includes bike, total time
 
@@ -107,7 +103,6 @@ def weight(option, user_preferences):
             condition_dict['ends with bike'] = 1
         else:
             condition_dict['ends with bike'] = 0
-    
     
     condition_dict['involves bike'] = 0
     condition_dict['involves own bike'] = 0

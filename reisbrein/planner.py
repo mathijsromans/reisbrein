@@ -81,9 +81,6 @@ class Plan():
         self.route = route
         self.score = 0
 
-    def __lt__(self, other):
-        return self.route < other.route
-
     def __str__(self):
         return str(list(map(str, self.route)))
 
