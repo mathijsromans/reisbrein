@@ -4,7 +4,7 @@ from .graph import Graph, shortest_path, Edge
 from .planner import Planner, DijkstraRouter, recur_map, Plan
 from reisbrein.generator.generator import TestGenerator
 from .views import PlanView
-from reisbrein.primitives import Location, Point, TransportType, Segment
+from reisbrein.primitives import Location, Point, TransportType, Segment, noon_today
 from .userpreference import order_and_select
 from .models import UserTravelPreferences
 
@@ -55,7 +55,7 @@ class TestDijkstraRouter(TestCase):
         p = Planner(TestGenerator, DijkstraRouter)
 
         vertices = []
-        noon = datetime(year=2017, month=11, day=17, hour=12)
+        noon = noon_today()
         for plan in p.solve('a', 'e', noon):
             vertices.append([edge.to_vertex for edge in plan.route])
 
@@ -72,7 +72,7 @@ class TestDijkstraRouter(TestCase):
     def test_planner(self):
         p = Planner(router=DijkstraRouter)
         vertices = []
-        noon = datetime(year=2017, month=11, day=17, hour=12)
+        noon = noon_today()
         for plan in p.solve('Madurodam', 'Martinitoren', noon):
             vertices.append([edge.to_vertex for edge in plan.route])
 
@@ -93,7 +93,7 @@ class TestRichRouter(TestCase):
         p = Planner(generator=TestGenerator)
 
         vertices = []
-        noon = datetime(year=2017, month=11, day=17, hour=12)
+        noon = noon_today()
         plans = p.solve('a', 'e', noon)
         for plan in plans:
             vertices.append([edge.to_vertex for edge in plan.route])
@@ -106,7 +106,7 @@ class TestRichRouter(TestCase):
     def test_planner(self):
         p = Planner()
         vertices = []
-        noon = datetime(year=2017, month=11, day=17, hour=12)
+        noon = noon_today()
         plans = p.solve('Madurodam', 'Martinitoren', noon)
         for plan in plans:
             vertices.append([edge.to_vertex for edge in plan.route])
@@ -121,7 +121,7 @@ class TestViews(TestCase):
 
     def test(self):
         p = Planner()
-        time = datetime(year=2017, month=11, day=18, hour=9)
+        time = noon_today()
         plans = p.solve('Den Haag', 'Nieuwegein', time)
         results = PlanView.get_results(plans)
         # for p in plans:

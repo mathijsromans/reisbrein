@@ -1,3 +1,4 @@
+import heapq
 from datetime import timedelta, datetime
 from reisbrein.primitives import Segment, TransportType, Point, Location
 from reisbrein.api.monotchapi import MonotchApi

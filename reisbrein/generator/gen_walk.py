@@ -4,7 +4,7 @@ from reisbrein.api.ovfiets import OvFietsStations
 from reisbrein.primitives import Segment, TransportType, Point
 from reisbrein.api.weather import WeatherApi
 from reisbrein.api import yoursapi
-from .gen_common import FixTime
+from .gen_common import FixTime, create_wait_and_move_segments
 
 
 class WalkGenerator:
@@ -21,7 +21,7 @@ class WalkGenerator:
         if transport_type == TransportType.WALK:
             time_sec = distance/WalkGenerator.SPEED_WALK
             map_url = ''
-        else:  # transport_type == TransportType.BIKE:
+        else:  # transport_type == TransportType.BIKE or transport_type == TransportType.OVFIETS:
             time_sec = yoursapi.travel_time(start.location, end.location, yoursapi.Mode.BIKE)
             map_url = yoursapi.map_url(start.location, end.location, yoursapi.Mode.BIKE)
         delta_t = timedelta(seconds=time_sec)
@@ -35,48 +35,23 @@ class WalkGenerator:
         return segment, new_point
 
     def do_create_edges(self, start, end, edges):
-        # walk begin to end
-        segment, new_point = self.create_segment(start, end, FixTime.START, TransportType.WALK)
-        if new_point.time < end.time:
-            edges.append(segment)
-            edges.append(Segment(TransportType.WAIT, new_point, end))
-        # bike begin to end
-        segment, new_point = self.create_segment(start, end, FixTime.START, TransportType.BIKE)
-        if new_point.time < end.time:
-            edges.append(segment)
-            edges.append(Segment(TransportType.WAIT, new_point, end))
+        edges += create_wait_and_move_segments(self, start, end, FixTime.START, TransportType.WALK)
+        edges += create_wait_and_move_segments(self, start, end, FixTime.START, TransportType.BIKE)
 
         public_types = [TransportType.TRAIN, TransportType.TRAM, TransportType.BUS]
         train_edges = [e for e in edges if e.transport_type in public_types]
         stops_1 = set([e.from_vertex for e in train_edges])
         stops_2 = set([e.to_vertex for e in train_edges])
         for s in stops_1:
-            # walk to first station
-            segment, new_point = self.create_segment(start, s, FixTime.END, TransportType.WALK)
-            if new_point.time > start.time:
-                edges.append(Segment(TransportType.WAIT, start, new_point))
-                edges.append(segment)
-
-            # bike to first station
-            segment, new_point = self.create_segment(start, s, FixTime.END, TransportType.BIKE)
-            if new_point.time > start.time:
-                edges.append(Segment(TransportType.WAIT, start, new_point))
-                edges.append(segment)
+            edges += create_wait_and_move_segments(self, start, s, FixTime.END, TransportType.WALK)
+            edges += create_wait_and_move_segments(self, start, s, FixTime.END, TransportType.BIKE)
 
         for s in stops_2:
-            # walk from second station
-            segment, new_point = self.create_segment(s, end, FixTime.START, TransportType.WALK)
-            if new_point.time < end.time:
-                edges.append(segment)
-                edges.append(Segment(TransportType.WAIT, new_point, end))
-            # bike from second station
+            edges += create_wait_and_move_segments(self, s, end, FixTime.START, TransportType.WALK)
             bike_type = TransportType.BIKE
             if WalkGenerator.OV_FIETS_API.has_ovfiets(s.location.loc_str):
                 bike_type = TransportType.OVFIETS
-            segment, new_point = self.create_segment(s, end, FixTime.START, TransportType.BIKE)
-            if new_point.time < end.time:
-                edges.append(segment)
-                edges.append(Segment(TransportType.WAIT, new_point, end))
+            edges += create_wait_and_move_segments(self, s, end, FixTime.START, bike_type)
 
     @staticmethod
     def add_weather(edges):

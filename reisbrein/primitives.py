@@ -1,7 +1,10 @@
 from .graph import Edge
 from enum import Enum
 from reisbrein.api.tomtom import TomTomApi
+import datetime
 
+def noon_today():
+    return datetime.datetime.combine(datetime.date.today(), datetime.time(12))
 
 class TransportType(Enum):
     WAIT = 0
@@ -19,6 +22,7 @@ class Location:
         # geolocator = Nominatim()
         self.loc_str = loc_str
         self.location = location if location != (0,0) else TomTomApi().search(loc_str)
+        self.has_parking = False
         # geolocator.geocode(self.loc_str)
 
     def gps(self):
@@ -49,7 +53,7 @@ class Segment(Edge):
     def __init__(self, transport_type, start, end):
         super(Segment, self).__init__(start, end, (end.time - start.time).total_seconds())
         self.transport_type = transport_type
-        self.weather = 0
+        self.weather = ''
         self.weather_icon = ''
         self.delay = 0
         self.map_url = ''

@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 from reisbrein.generator.gen_walk import WalkGenerator
 from reisbrein.generator.gen_public import PublicGenerator
 from reisbrein.generator.gen_train import TrainGenerator, skip_first
-from reisbrein.primitives import TransportType, Point, Location
+from reisbrein.primitives import TransportType, Point, Location, noon_today
 from .gen_common import FixTime
 from reisbrein.planner import recur_map
 
@@ -64,7 +64,7 @@ class TestTrainGenerator(TestCase):
         self.assertEqual(closest, expected)
 
     def test(self):
-        noon = datetime(year=2017, month=11, day=17, hour=12)
+        noon = noon_today()
         start = Point(Location('Madurodam'), noon)
         end = Point(Location('Martinitoren'), noon)
         segments = []
@@ -77,12 +77,12 @@ class TestPublicGenerator(TestCase):
         self.generator = PublicGenerator()
 
     def test(self):
-        time = datetime(year=2017, month=11, day=18, hour=9)
+        time = noon_today()
         start = Point(Location('Den Haag'), time)
         end = Point(Location('Nieuwegein'), time)
         segments = []
         self.generator.create_edges(start, end, segments)
         # for s in segments:
         #     print(s)
-        self.assertEqual(len(segments), 12)
+        self.assertEqual(len(segments), 16)
 

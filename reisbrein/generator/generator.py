@@ -3,6 +3,7 @@ from reisbrein.primitives import Segment, TransportType, Point
 from reisbrein.generator.gen_public import PublicGenerator
 from reisbrein.generator.gen_walk import WalkGenerator
 from reisbrein.generator.gen_car import CarGenerator
+from reisbrein.generator.gen_parkride import ParkRideGenerator
 
 
 class Generator:
@@ -10,12 +11,16 @@ class Generator:
         self.walk_generator = WalkGenerator()
         self.public_generator = PublicGenerator()
         self.car_generator = CarGenerator()
+        self.parkride_generator = ParkRideGenerator()
 
     def create_edges(self, start, end):
         edges = []
         self.public_generator.create_edges(start, end, edges)
+        self.parkride_generator.create_edges(start, end, edges)
         self.walk_generator.create_edges(start, end, edges)
         self.car_generator.create_edges(start, end, edges)
+        # for e in edges:
+        #     print(e)
         return edges
 
 
