@@ -18,9 +18,13 @@ def remove_long_plans(plans):
 
         plans[:] = short_plans
 
+def remove_really_bad_plans(plans):
+    plans[:] = [p for p in plans if p.score > -1e8]
+
 def order_and_select(plans, user_preferences):
     for p in plans:
         p.score = score(p.route, user_preferences)
+    remove_really_bad_plans(plans)
     remove_long_plans(plans)
     plans.sort(key=lambda plan: plan.score, reverse=True)
 
