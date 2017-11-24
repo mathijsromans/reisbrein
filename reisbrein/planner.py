@@ -94,6 +94,14 @@ class Planner():
         self.router = router()
 
     @staticmethod
+    def has_no_double_biking(route):
+        for index, segment in enumerate(route[:-1]):
+            if route[index].transport_type == TransportType.BIKE and \
+               route[index+1].transport_type == TransportType.BIKE:
+                return False
+        return True
+
+    @staticmethod
     def remove_waiting_at_end(routes):
         for r in routes:
             if r and r[-1].transport_type == TransportType.WAIT:
@@ -104,6 +112,7 @@ class Planner():
         end = Point(Location(end_loc), start_time + timedelta(hours=12))
         edges = self.generator.create_edges(start, end)
         routes = self.router.make_routes(start, end, edges)
+        routes = list(filter(self.has_no_double_biking, routes))
         self.remove_waiting_at_end(routes)
         plans = [Plan(r) for r in routes]
         order_and_select(plans, user_preferences)
