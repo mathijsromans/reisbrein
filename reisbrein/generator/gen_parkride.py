@@ -18,18 +18,20 @@ class ParkRideGenerator:
         return min(parkings, key=lambda x: vincenty(location.gps(), x.gps()).meters, default=None)
 
     def create_edges(self, start, end, edges):
-        park1_loc = self.closest_parking(start.location)
-        if park1_loc:
-            stop1 = Point(park1_loc, end.time)
-            segment, new_point = self.cargenerator.create_segment(start, stop1, FixTime.START)
-            public_edges = []
-            self.publicgenerator.create_edges(new_point, end, public_edges)
-            if public_edges:
-                first_vertex = min(public_edges, key=lambda x: x.from_vertex.time, default=None)
+        for loc in (start.location, end.location):
+            park_loc = self.closest_parking(loc)
+            if park_loc:
+                park = Point(park_loc, end.time)
+                segment, new_point = self.cargenerator.create_segment(start, park, FixTime.START)
+                public_edges = []
+                self.publicgenerator.create_edges(new_point, end, public_edges)
+                if public_edges:
+                    first_vertex = min(public_edges, key=lambda x: x.from_vertex.time)
 
-                # walk from P+R to first public transport
-                walk_segment, new_point = self.walkgenerator.create_segment(stop1, first_vertex.from_vertex, FixTime.END, TransportType.WALK)
+                    # walk from P+R to first public transport
+                    walk_segment, new_point = self.walkgenerator.create_segment(park, first_vertex.from_vertex, FixTime.END, TransportType.WALK)
 
-                edges += public_edges
-                edges.append(walk_segment)
-                # transportation to parking will be added later...
+                    edges += public_edges
+                    edges.append(walk_segment)
+                    # transportation to parking will be added later...
+

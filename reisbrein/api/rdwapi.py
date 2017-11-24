@@ -51,7 +51,8 @@ class RdwApi:
                 # area['areageometryastext'] = 'POINT (4.382199252 51.884720263)'
                 geo_text = area['areageometryastext'].translate(str.maketrans('','','()')).split()
                 if geo_text[0] == 'POINT':
-                    parking = Location(item['areadesc'], (float(geo_text[2]), float(geo_text[1])))  # reversed!
+                    loc_name = item['areadesc'].replace('&amp;', '&')  # unfortunately there are xml-escapes in the json...
+                    parking = Location(loc_name, (float(geo_text[2]), float(geo_text[1])))  # reversed!
                     parking.has_parking = True
                     RdwApi.parkings.append(parking)
                 else:
