@@ -69,7 +69,7 @@ class PlanView(TemplateView):
             plan.save()  # update datetime updated
         p = Planner()
         now = datetime.datetime.now()
-        # now = max(now, datetime.datetime(year=2017, month=11, day=18, hour=9))
+        now = datetime.datetime(year=2017, month=11, day=27, hour=9)
         # logger.info(now)
         plans = p.solve(start, end, now, user_preferences)
         plans = plans[:user_preferences.show_n_results]
