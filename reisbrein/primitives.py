@@ -46,7 +46,7 @@ class Point:
         self.time = time
 
     def __str__(self):
-        return str(self.location) + ' @ ' + str(self.time)
+        return str(self.location) + ' @ ' + str(self.time_sec)
 
 
 class Segment(Edge):
@@ -59,7 +59,7 @@ class Segment(Edge):
         self.map_url = ''
 
     def __lt__(self, other):
-        return self.distance < other.distance
+        return self.time < other.time_sec
 
     def __str__(self):
         return '['+str(self.transport_type)+ ' ' + str(self.weather) + '] '+str(self.from_vertex)+' --> '+str(self.to_vertex)

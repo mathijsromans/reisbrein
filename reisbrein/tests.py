@@ -119,10 +119,12 @@ class TestRichRouter(TestCase):
 
 class TestViews(TestCase):
 
+    def setUp(self):
+        self.planner = Planner()
+
     def test(self):
-        p = Planner()
         time = noon_today()
-        plans = p.solve('Den Haag', 'Nieuwegein', time)
+        plans = self.planner.solve('Den Haag', 'Nieuwegein', time)
         results = PlanView.get_results(plans)
         # for p in plans:
         #     print (list(map(str,p)))
@@ -133,6 +135,14 @@ class TestViews(TestCase):
             for s in p.route:
                 if s.transport_type == TransportType.BIKE:
                     self.assertNotEqual(s.map_url, '')
+
+    def test_no_short_bike_rides(self):
+        time = noon_today()
+        plans = self.planner.solve('Centraal Museum', 'Oldambt utrecht', time)
+        for p in plans:
+            for s in p.route:
+                if s.transport_type in (TransportType.BIKE, TransportType.OVFIETS):
+                    self.assertGreater(s.to_vertex.time-s.from_vertex.time, timedelta(minutes=1, seconds=55))
 
 
 class TestUserPreference(TestCase):

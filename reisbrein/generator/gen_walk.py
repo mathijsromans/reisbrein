@@ -18,6 +18,8 @@ class WalkGenerator:
     SPEED_WALK = SPEED_KM_H_WALK / 3.6  # m/s
     SPEED_BIKE = SPEED_KM_H_BIKE / 3.6  # m/s
     MAX_SPEED_BIKE = MAX_SPEED_KM_H_BIKE / 3.6  # m/s
+    MIN_BIKE_TIME_SEC = 120
+
     OV_FIETS_API = OvFietsStations()
     weather = WeatherApi()
 
@@ -50,7 +52,8 @@ class WalkGenerator:
 
     def do_create_edges(self, start, end, edges):
         edges += create_wait_and_move_segments(self, start, end, FixTime.START, TransportType.WALK)
-        edges += create_wait_and_move_segments(self, start, end, FixTime.START, TransportType.BIKE)
+        edges += create_wait_and_move_segments(self, start, end, FixTime.START, TransportType.BIKE,
+                                               WalkGenerator.MIN_BIKE_TIME_SEC)
 
         public_types = [TransportType.TRAIN, TransportType.TRAM, TransportType.BUS]
         train_edges = [e for e in edges if e.transport_type in public_types]
@@ -58,14 +61,16 @@ class WalkGenerator:
         stops_2 = set([e.to_vertex for e in train_edges])
         for s in stops_1:
             edges += create_wait_and_move_segments(self, start, s, FixTime.END, TransportType.WALK)
-            edges += create_wait_and_move_segments(self, start, s, FixTime.END, TransportType.BIKE)
+            edges += create_wait_and_move_segments(self, start, s, FixTime.END, TransportType.BIKE,
+                                                   WalkGenerator.MIN_BIKE_TIME_SEC)
 
         for s in stops_2:
             edges += create_wait_and_move_segments(self, s, end, FixTime.START, TransportType.WALK)
             bike_type = TransportType.BIKE
             if WalkGenerator.OV_FIETS_API.has_ovfiets(s.location.loc_str):
                 bike_type = TransportType.OVFIETS
-            edges += create_wait_and_move_segments(self, s, end, FixTime.START, bike_type)
+            edges += create_wait_and_move_segments(self, s, end, FixTime.START, bike_type,
+                                                   WalkGenerator.MIN_BIKE_TIME_SEC)
 
     @staticmethod
     def add_weather(edges):

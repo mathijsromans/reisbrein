@@ -82,7 +82,7 @@ class Plan():
         self.score = 0
         self.travel_time = 0
         for segment in route:
-            self.travel_time += segment.distance
+            self.travel_time += segment.time_sec
 
     def __str__(self):
         return str(list(map(str, self.route)))

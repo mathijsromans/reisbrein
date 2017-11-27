@@ -96,9 +96,9 @@ class PlanView(TemplateView):
                         'start': segment.from_vertex,
                         'end': segment.to_vertex,
                         'type': segment.transport_type.name,
-                        'travel_time_min': int(segment.distance/60),
-                        'travel_time_str': PlanView.format_minutes(int(segment.distance/60)),
-                        'travel_time_percentage': 100*segment.distance / time,
+                        'travel_time_min': int(segment.time_sec/60),
+                        'travel_time_str': PlanView.format_minutes(int(segment.time_sec/60)),
+                        'travel_time_percentage': 100*segment.time_sec / time,
                         'delay_min': segment.delay,
                         'weather_icon': segment.weather_icon,
                         'map_url': segment.map_url,
@@ -133,7 +133,7 @@ class PlanView(TemplateView):
     def travel_time(plan):
         time = 0
         for segment in plan.route:
-            time += segment.distance
+            time += segment.time_sec
         return time
 
 

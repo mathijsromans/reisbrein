@@ -63,14 +63,14 @@ def get_conditions(option):
         if s.transport_type == TransportType.WALK:
             condition_dict['involves walk'] = 1
         if s.transport_type == TransportType.BIKE or s.transport_type == TransportType.OVFIETS:
-            condition_dict['involves bike'] += 0.0 + s.distance / 30.0
+            condition_dict['involves bike'] += 0.0 + s.time_sec / 30.0
         if s.transport_type == TransportType.BIKE:
             condition_dict['involves own bike'] = 1
         if s.transport_type == TransportType.TRAIN:
             condition_dict['involves train'] = 1
         if s.transport_type == TransportType.BUS:
             condition_dict['involves bus'] = 1
-        condition_dict['total time'] += s.distance
+        condition_dict['total time'] += s.time_sec
         if s.weather == 'rainy':
             condition_dict['rainy'] += 1
     return condition_dict

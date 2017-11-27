@@ -2,10 +2,10 @@ import collections
 
 
 class Edge(object):
-    def __init__(self, from_vertex, to_vertex, distance):
+    def __init__(self, from_vertex, to_vertex, time_sec):
         self.from_vertex = from_vertex
         self.to_vertex = to_vertex
-        self.distance = distance
+        self.time_sec = time_sec
 
 
 class Graph:
@@ -53,7 +53,7 @@ def dijkstra(graph, start):
         # for each neighbor of v not in S
         for neighbor in set(graph.neighbors[v]) - S:
             edge = graph.edges[v, neighbor]
-            new_path = delta[v] + edge.distance
+            new_path = delta[v] + edge.time_sec
  
             # is the new path from neighbor through 
             if new_path < delta[neighbor]:
