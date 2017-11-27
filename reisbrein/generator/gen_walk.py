@@ -7,6 +7,7 @@ from reisbrein.api import yoursapi
 from .gen_common import FixTime, create_wait_and_move_segments
 import logging
 
+
 logger = logging.getLogger(__name__)
 
 
@@ -31,10 +32,11 @@ class WalkGenerator:
             time_sec = yoursapi.travel_time(start.location, end.location, yoursapi.Mode.BIKE)
             time_sec_min = distance/WalkGenerator.MAX_SPEED_BIKE
             if time_sec < time_sec_min:
-                logger.error('Error: yoursapi gives unrealistic bike timing of ' +
+                logger.error('Yoursapi gives unrealistic bike timing of ' +
                              str(timedelta(seconds=time_sec)) + ' from: ' +
-                             str(start.location) + ' to: ' + str(end.location))
-                time_sec = time_sec_min
+                             str(start.location) + ' at ' + str(start.location.gps()) + ' to: ' +
+                             str(end.location) + ' at ' + str(end.location.gps()))
+                time_sec = distance/WalkGenerator.SPEED_BIKE
             map_url = yoursapi.map_url(start.location, end.location, yoursapi.Mode.BIKE)
         delta_t = timedelta(seconds=time_sec)
         if fix == FixTime.START:

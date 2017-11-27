@@ -39,11 +39,28 @@ class TestWalkGenerator(TestCase):
         self.assertAlmostEqual(new_point2.time, datetime(2017, 11, 17, 9, 57, 57), delta=timedelta(seconds=600))
         self.assertEqual(segment2.to_vertex.time, noon)
 
-        edges = [segment, segment2]
-        generator.add_weather(edges)
-        # print(segment)
-        # print(segment2)
+        loc_bhd  = Location('sloterweg 183, badhoevedorp', (52.33668,4.77682))
+        loc_mee = Location('Station Meerssen', (51.1923957995,5.99421143532))
+        start = Point(location=loc_bhd, time=noon)
+        end = Point(location=loc_mee, time=noon)
+        segment, new_point = generator.create_segment(start, end, FixTime.START, TransportType.BIKE)
+        self.assertEqual(segment.transport_type, TransportType.BIKE)
+        self.assertEqual(segment.from_vertex.location, loc_bhd)
+        self.assertEqual(segment.to_vertex.location, loc_mee)
+        self.assertGreater(segment.to_vertex.time - segment.from_vertex.time, timedelta(hours=4))
+        self.assertLess(segment.to_vertex.time - segment.from_vertex.time, timedelta(hours=14))
 
+
+        loc_bhd  = Location('parkzichtlaan', (52.10073, 5.03322))
+        loc_mee = Location('Utrecht Centraal', (52.089820488, 5.10957062244))
+        start = Point(location=loc_bhd, time=noon)
+        end = Point(location=loc_mee, time=noon)
+        segment, new_point = generator.create_segment(start, end, FixTime.START, TransportType.BIKE)
+        self.assertEqual(segment.transport_type, TransportType.BIKE)
+        self.assertEqual(segment.from_vertex.location, loc_bhd)
+        self.assertEqual(segment.to_vertex.location, loc_mee)
+        self.assertGreater(segment.to_vertex.time - segment.from_vertex.time, timedelta(minutes=10))
+        self.assertLess(segment.to_vertex.time - segment.from_vertex.time, timedelta(minutes=30))
 
 class TestTrainGenerator(TestCase):
 
@@ -84,5 +101,5 @@ class TestPublicGenerator(TestCase):
         self.generator.create_edges(start, end, segments)
         # for s in segments:
         #     print(s)
-        self.assertEqual(len(segments), 16)
+        self.assertGreater(len(segments), 8)
 

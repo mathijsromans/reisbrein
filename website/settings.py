@@ -118,7 +118,7 @@ LOGFILE_BACKUP_COUNT = 3
 
 LOGGING = {
     'version': 1,
-    'disable_existing_loggers': True,
+    'disable_existing_loggers': False,
     'formatters': {
         'verbose': {
             'format': "[%(asctime)s] %(levelname)s [%(name)s::%(funcName)s() (%(lineno)s)]: %(message)s",
@@ -137,7 +137,7 @@ LOGGING = {
         'console': {
             'level': 'DEBUG',
             'class': 'logging.StreamHandler',
-            'filters': ['require_debug_true'],
+            'filters': [],  # ['require_debug_true'],
             'formatter': 'verbose'
         },
         'file_django': {

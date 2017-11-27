@@ -34,7 +34,7 @@ class Station:
 class TrainGenerator:
     def __init__(self):
         self.stations=[]
-        with open('data/stations-nl-2015-08_from_openov_nl.csv', 'rt') as stations_file:
+        with open('data/stations-nl-2015-08_from_openov_nl.csv', 'rt', encoding='utf-8') as stations_file:
             reader = csv.reader(stations_file, delimiter=';', quotechar='|')
             for row in skip_first(reader):
                 self.stations.append(Station(row))
