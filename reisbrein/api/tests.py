@@ -72,6 +72,8 @@ class TestYours(TestCase):
         url=url.replace('&', '?')
         words = sorted(url.split('?'))
         self.assertEqual(words, ['fast=1','flat=52.0993','flon=4.2986','http://yournavigation.org/','layer=mapnik','tlat=53.21934','tlon=6.56817','v=bicycle'])
+        url = yoursapi.map_url(begin, end, yoursapi.Mode.WALK)
+        self.assertEqual(url,'http://yournavigation.org/?flat=52.0993&flon=4.2986&tlat=53.21934&tlon=6.56817&v=foot&fast=1&layer=mapnik')
 
 
 # class TestMapQuest(TestCase):
