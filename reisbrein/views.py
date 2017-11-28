@@ -93,15 +93,10 @@ class PlanView(TemplateView):
             for segment in plan.route:
                 segments.append(
                     {
-                        'start': segment.from_vertex,
-                        'end': segment.to_vertex,
-                        'type': segment.transport_type.name,
+                        'obj': segment,
                         'travel_time_min': int(segment.time_sec/60),
                         'travel_time_str': PlanView.format_minutes(int(segment.time_sec/60)),
                         'travel_time_percentage': 100*segment.time_sec / time,
-                        'delay_min': segment.delay,
-                        'weather_icon': segment.weather_icon,
-                        'map_url': segment.map_url,
                     })
             result.append(
             {

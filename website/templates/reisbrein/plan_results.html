@@ -17,31 +17,25 @@
 
   <div class="row">
     <div class="col-md-10 col-md-offset-1">
-
       {% for result in results %}
-
       <!--<hr style="margin: 0 0;"/>-->
-
       <div class="row result-bar">
-
         <a href="#detail-{{ forloop.counter0 }}" data-toggle="collapse">
           <div class="col-xs-1" style="padding-right: 0; padding-left: 6px; margin: 0;">
             <span style="font-size: 16px; line-height: 30px;">
               <strong>{{ result.travel_time_str }}</strong>
             </span>
           </div>
-
           <div class="col-xs-11">
-
             <div class="progress" style="height: 30px; margin-bottom: 5px; width: {{ result.travel_time_percentage }}%">
             {% for segment in result.segments %}
-              {% transport_type_icon segment.type as icon %}
-              {% transport_type_color segment.type as color %}
+              {% transport_type_icon segment.obj.transport_type.name as icon %}
+              {% transport_type_color segment.obj.transport_type.name as color %}
               <div class="progress-bar progress-bar-{{ color }}" role="progressbar" aria-valuenow="{{ segment.travel_time_percentage }}" aria-valuemin="0" aria-valuemax="100"
                    style="width: {{ segment.travel_time_percentage }}%">
                 <span style="font-size: 16px; line-height: 30px;">
                   {% if segment.travel_time_percentage > 5 %}
-                    {% if segment.type == 'OVFIETS' %}
+                    {% if segment.obj.transport_type.name == 'OVFIETS' %}
                     <img src="{% static 'img/ovfiets.png' %}" height="18px"/>
                     {% else %}
                     <span class="fa {{ icon }}"></span>
@@ -51,12 +45,9 @@
               </div>
             {% endfor %}
             </div>
-
           </div>
         </a>
-
       </div>
-
       <div class="row">
         <div class="col-md-8 col-md-offset-1">
           <div id="detail-{{ forloop.counter0 }}" class="row collapse">
@@ -66,12 +57,9 @@
         </div>
       </div>
       {% endfor %}
-
       <!--<hr style="margin: 0 0;"/>-->
-
     </div>
   </div>
-
 </div>
 
 {% endblock %}

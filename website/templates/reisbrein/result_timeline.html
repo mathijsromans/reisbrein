@@ -4,41 +4,33 @@
 
 <div class="row">
     <div class="vertical-spacer-20"></div>
-
     <div class="col-lg-12">
         <section id="cd-timeline" class="cd-container">
-
             {% for segment in result.segments %}
-            {% transport_type_icon segment.type as icon %}
-            {% transport_type_bgcolor segment.type as color %}
-
+            {% transport_type_icon segment.obj.transport_type.name as icon %}
+            {% transport_type_bgcolor segment.obj.transport_type.name as color %}
             {% if forloop.first %}
             <div class="cd-timeline-block">
                 <div class="cd-timeline-img text-center bg-primary">
                     <span class="fa fa-map-marker timeline-icon"></span>
                 </div>
-
                 <div class="panel panel-default cd-timeline-content">
-
                     <div class="panel-heading panel-heading-timeline">
                         <div class="row">
-
                             <div class="col-xs-12" align="left">
                                 <span class="timeline-text">
-                                    {{ segment.start.location }}
-                                    {% if segment.type == 'WAIT' %}
+                                    {{ segment.obj.from_vertex.location }}
+                                    {% if segment.obj.transport_type.name == 'WAIT' %}
                                     - leave in <span class="text-success"><strong>{{ segment.travel_time_min }}</strong></span> minutes
                                     {% endif %}
                                 </span>
                             </div>
-
                         </div>
                     </div>
-
                 </div>
             </div>
             {% endif %}
-            {% if not segment.type == 'WAIT' %}
+            {% if not segment.obj.transport_type.name == 'WAIT' %}
             <div class="cd-timeline-block">
                 <div class="cd-timeline-img text-center {{ color }}">
                     <span class="timeline-icon fa {{ icon }}"></span>
@@ -48,19 +40,19 @@
                         <div class="row">
                             <div class="col-xs-12" align="left">
                                 <div class="timeline-text">
-                                    {% if segment.type == 'OVFIETS' %}<img src="{% static 'img/ovfiets.png' %}" height="20px"/> {% endif %}
-                                    {{ segment.start.location }} - {{ segment.end.location }}
-                                    {% if segment.type == 'WALK' %}<img class="pull-right" src="{{ segment.weather_icon }}" height="40px"/>{% endif %}
+                                    {% if segment.obj.transport_type.name == 'OVFIETS' %}<img src="{% static 'img/ovfiets.png' %}" height="20px"/> {% endif %}
+                                    {{ segment.obj.from_vertex.location }} - {{ segment.obj.to_vertex.location }}
+                                    {% if segment.obj.transport_type.name == 'WALK' %}<img class="pull-right" src="{{ segment.obj.weather_icon }}" height="40px"/>{% endif %}
                                 </div>
                                 <div class="timeline-time-text text-info">
                                     {{ segment.travel_time_str }}
-                                    {% if segment.delay_min %}
-                                    <span class="text-danger"> +{{ segment.delay_min|floatformat:0 }} min</span>
-                                    {% elif segment.type == 'CAR' %}
+                                    {% if segment.obj.delay %}
+                                    <span class="text-danger"> +{{ segment.obj.delay|floatformat:0 }} min</span>
+                                    {% elif segment.obj.transport_type.name == 'CAR' %}
                                     <span class="text-danger"> +0 min</span>
                                     {% endif %}
-                                    {% if segment.map_url %}
-                                    <a href="{{ segment.map_url }}" target="_blank">
+                                    {% if segment.obj.map_url %}
+                                    <a href="{{ segment.obj.map_url }}" target="_blank">
                                         <span class="fa fa-pull-right fa-map-o timeline-icon"></span>
                                     </a>
                                     {% endif %}
@@ -76,22 +68,18 @@
                 <div class="cd-timeline-img text-center bg-primary">
                     <span class="fa fa-map-marker timeline-icon"></span>
                 </div>
-
                 <div class="panel panel-default cd-timeline-content">
-
                     <div class="panel-heading panel-heading-timeline">
                         <div class="row">
-
                             <div class="col-xs-12" align="left">
                                 <span class="timeline-text">
-                                    {{ segment.end.location }} - arrive at
+                                    {{ segment.obj.to_vertex.location }} - arrive at
                                     <span class="text-success"><strong>{{ result.arrival_time|date:"H:i" }}</strong></span>
                                 </span>
                             </div>
 
                         </div>
                     </div>
-
                 </div>
             </div>
             {% endif %}
