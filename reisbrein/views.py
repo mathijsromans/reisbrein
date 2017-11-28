@@ -11,7 +11,7 @@ import logging
 from reisbrein.planner import Planner
 from reisbrein.generator.generator import Generator
 from reisbrein.models import UserTravelPreferences
-from reisbrein.models import UserTravelPlan
+from reisbrein.models import UserTravelPlan, Request
 
 logger = logging.getLogger(__name__)
 
@@ -60,6 +60,11 @@ class PlanView(TemplateView):
         if self.request.user.is_authenticated:
             user = self.request.user
             user_preferences, created = UserTravelPreferences.objects.get_or_create(user=user)
+        Request.objects.create(
+            user=user,
+            start=start,
+            end=end
+        )
         plan, created = UserTravelPlan.objects.get_or_create(
             user=user,
             start=start,

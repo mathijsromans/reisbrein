@@ -24,6 +24,13 @@ class UserTravelPlan(models.Model):
         ordering = ['-datetime_updated']
 
 
+class Request(models.Model):
+    user = models.ForeignKey(User, blank=True, null=True)
+    start = models.CharField(max_length=500)
+    end = models.CharField(max_length=500)
+    datetime_created = models.DateTimeField(auto_now_add=True)
+
+
 class MapQuestCache(models.Model):
     search = models.CharField(max_length=80)
     lat = models.FloatField(null=True)
