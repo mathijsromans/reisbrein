@@ -26,6 +26,7 @@ class WalkGenerator:
     TRANSLATE_MODE = {
         TransportType.CAR: yoursapi.Mode.CAR,
         TransportType.BIKE: yoursapi.Mode.BIKE,
+        TransportType.OVFIETS: yoursapi.Mode.BIKE,
         TransportType.WALK: yoursapi.Mode.WALK,
     }
 
