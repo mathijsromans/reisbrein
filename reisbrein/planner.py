@@ -1,10 +1,14 @@
 import copy
+import logging
+import time
 from datetime import timedelta
 from reisbrein.generator.generator import Generator
 from .graph import Graph, shortest_path
 from .primitives import Point, Location, TransportType
 from .userpreference import order_and_select
 from .models import UserTravelPreferences
+
+logger = logging.getLogger(__name__)
 
 
 def recur_map(f, data):
@@ -108,6 +112,8 @@ class Planner():
                 r.pop()
 
     def solve(self, start_loc, end_loc, start_time, user_preferences=UserTravelPreferences()):
+        logger.info('BEGIN')
+        log_start = time.time()
         start = Point(Location(start_loc), start_time)
         end = Point(Location(end_loc), start_time + timedelta(hours=12))
         edges = self.generator.create_edges(start, end)
@@ -116,4 +122,6 @@ class Planner():
         self.remove_waiting_at_end(routes)
         plans = [Plan(r) for r in routes]
         order_and_select(plans, user_preferences)
+        log_end = time.time()
+        logger.info('END - time: ' + str(log_end - log_start))
         return plans

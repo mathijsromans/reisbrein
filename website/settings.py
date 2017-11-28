@@ -3,6 +3,10 @@ Django settings for website project.
 """
 
 import os
+from logging import Filter
+import sys
+
+TESTING_FROM_CMD_LINE = sys.argv[1:2] == ['test']
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -116,6 +120,11 @@ LOGFILE_MAXSIZE = 10 * 1024 * 1024
 # see https://docs.python.org/3/library/logging.handlers.html#rotatingfilehandler
 LOGFILE_BACKUP_COUNT = 3
 
+class NotInTestingFilter(Filter):
+
+    def filter(self, record):
+        return not TESTING_FROM_CMD_LINE
+
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -132,12 +141,15 @@ LOGGING = {
         'require_debug_false': {
             '()': 'django.utils.log.RequireDebugFalse',
         },
+        'testing': {
+            '()': NotInTestingFilter
+        },
     },
     'handlers': {
         'console': {
             'level': 'DEBUG',
             'class': 'logging.StreamHandler',
-            'filters': [],  # ['require_debug_true'],
+            'filters': ['testing'],  # ['require_debug_true'],
             'formatter': 'verbose'
         },
         'file_django': {

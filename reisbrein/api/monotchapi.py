@@ -1,9 +1,13 @@
 import requests
 import json
+import logging
+import time
 from website.local_settings import *
 
 # BASE_URL + ?fromPlace=51.923943445544715%2C4.4659423828125&toPlace=52.38901106223458%2C4.9658203125&arriveBy=false&
 # maxWalkDistance=3000&mode=TRANSIT%2CWALK&api_key=dnjttz9xhbdsm89ba6wpymwu
+
+logger = logging.getLogger(__name__)
 
 
 class MonotchApi:
@@ -11,6 +15,8 @@ class MonotchApi:
     BASE_URL = 'https://api.monotch.com/plannerstack/v1/routers/default/plan/'
 
     def search(self, start, end, start_time):
+        logger.info('BEGIN')
+        log_start = time.time()
         start_gps = start.gps()
         end_gps = end.gps()
         arguments = {
@@ -30,5 +36,7 @@ class MonotchApi:
         # print(response.json())
         foo = json.dumps(response.json())
         result = json.loads(foo)
+        log_end = time.time()
+        logger.info('END - time: ' + str(log_end - log_start))
         return result['plan']
 

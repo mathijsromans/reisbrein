@@ -8,15 +8,14 @@ import datetime
 BASE_URL = 'http://yournavigation.org/'
 API_PATH = 'api/1.0/gosmore.php'
 
+cache = {}  # global variable is it ok?
 
 class Mode(enum.Enum):
     CAR = 'motorcar'
     BIKE = 'bicycle'
     WALK = 'foot'  # currently not working?
 
-def get_common_args(start, end, mode):
-    start_gps = start.gps()
-    end_gps = end.gps()
+def get_common_args(start_gps, end_gps, mode):
     # note that yournavigation.org DOES care about order: lat must come before lon, therefore use a list, not dict
     return [
         ('flat', start_gps[0]),
@@ -28,9 +27,9 @@ def get_common_args(start, end, mode):
         ('layer', 'mapnik'),  # Provide 'cn' for using bicycle routing using cycle route networks only.
     ]
 
-def travel_time(start, end, mode):
+def do_travel_time(start_gps, end_gps, mode):
     try:
-        arguments = get_common_args( start, end, mode)
+        arguments = get_common_args(start_gps, end_gps, mode)
         arguments.append(('format', 'geojson'))
 
         # as requested by http://wiki.openstreetmap.org/wiki/YOURS#Version_1.0
@@ -48,7 +47,18 @@ def travel_time(start, end, mode):
         raise ValueError
 
 
+def travel_time(start, end, mode):
+    start_gps = start.gps()
+    end_gps = end.gps()
+    try:
+        return cache[(start_gps, end_gps, mode)]
+    except KeyError:
+        result = do_travel_time(start_gps, end_gps, mode)
+        cache[(start_gps, end_gps, mode)] = result
+        return result
+
+
 def map_url(start, end, mode):
-    arguments = get_common_args( start, end, mode)
+    arguments = get_common_args( start.gps(), end.gps(), mode)
     p = requests.Request('GET', BASE_URL, params=arguments).prepare()
     return p.url

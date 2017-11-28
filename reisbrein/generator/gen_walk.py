@@ -6,6 +6,7 @@ from reisbrein.api.weather import WeatherApi
 from reisbrein.api import yoursapi
 from .gen_common import FixTime, create_wait_and_move_segments
 import logging
+import time
 
 
 logger = logging.getLogger(__name__)
@@ -37,6 +38,7 @@ class WalkGenerator:
         if transport_type == TransportType.WALK:
             time_sec = distance/WalkGenerator.SPEED_WALK
         else:  # transport_type == TransportType.BIKE or transport_type == TransportType.OVFIETS:
+            logger.info('Yoursapi bike request from: ' + str(start) + ' to: ' + str(end))
             time_sec = yoursapi.travel_time(start.location, end.location, yoursapi.Mode.BIKE)
             time_sec_min = distance/WalkGenerator.MAX_SPEED_BIKE
             if time_sec < time_sec_min:
@@ -55,6 +57,9 @@ class WalkGenerator:
             new_point = Point(start.location, end.time - delta_t)
             segment = Segment(transport_type, new_point, end)
         segment.map_url = map_url
+
+
+
         return segment, new_point
 
     def do_create_edges(self, start, end, edges):
@@ -89,6 +94,10 @@ class WalkGenerator:
                 e.weather, e.weather_icon = WalkGenerator.weather.search(w)
 
     def create_edges(self, start, end, edges):
+        logger.info('BEGIN')
+        log_start = time.time()
         self.do_create_edges(start, end, edges)
         # self.add_weather(edges)
+        log_end = time.time()
+        logger.info('END - time: ' + str(log_end - log_start))
 
