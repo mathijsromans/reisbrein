@@ -45,11 +45,11 @@ class TestYours(TestCase):
     def test_routing(self):
         begin = Location('Madurodam')
         end = Location('Martinitoren')
-        travel1 = yoursapi.travel_time(begin, end, TransportType.CAR)
+        travel1 = yoursapi.travel_time(begin.gps(), end.gps(), TransportType.CAR)
         # print(travel1)
         self.assertGreater(travel1, 2 * 3600)
         self.assertLess(travel1, 3 * 3600)
-        travel2 = yoursapi.travel_time(begin, end, TransportType.BIKE)
+        travel2 = yoursapi.travel_time(begin.gps(), end.gps(), TransportType.BIKE)
         # print(travel2)
         self.assertGreater(travel2, 10 * 3600)
         self.assertLess(travel2, 15 * 3600)

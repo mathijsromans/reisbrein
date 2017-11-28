@@ -4,6 +4,7 @@ from reisbrein.api.ovfiets import OvFietsStations
 from reisbrein.primitives import Segment, TransportType, Point
 from reisbrein.api.weather import WeatherApi
 from reisbrein.api import yoursapi
+from reisbrein.models import TravelTime
 from .gen_common import FixTime, create_wait_and_move_segments
 import logging
 import time
@@ -25,21 +26,42 @@ class WalkGenerator:
     weather = WeatherApi()
 
     @staticmethod
-    def create_segment(start, end, fix, transport_type):
-        distance = vincenty(start.location.gps(), end.location.gps()).meters
+    def get_bike_travel_time(start_loc, end_loc, transport_type):
+        if transport_type == TransportType.OVFIETS:
+            transport_type = TransportType.BIKE
+        start_gps = start_loc.gps()
+        end_gps = end_loc.gps()
+        distance = vincenty(start_gps, end_gps).meters
         # print ('distance in meters ' + str(distance))
         if transport_type == TransportType.WALK:
             time_sec = distance/WalkGenerator.SPEED_WALK
         else:  # transport_type == TransportType.BIKE or transport_type == TransportType.OVFIETS:
-            logger.info('Yoursapi bike request from: ' + str(start) + ' to: ' + str(end))
-            time_sec = yoursapi.travel_time(start.location, end.location, TransportType.BIKE)
+            # logger.info('Yoursapi bike request from: ' + str(start_loc) + ' to: ' + str(end_loc))
             time_sec_min = distance/WalkGenerator.MAX_SPEED_BIKE
+            time_sec = yoursapi.travel_time(start_gps, end_gps, TransportType.BIKE)
             if time_sec < time_sec_min:
                 logger.error('Yoursapi gives unrealistic bike timing of ' +
                              str(timedelta(seconds=time_sec)) + ' from: ' +
-                             str(start.location) + ' at ' + str(start.location.gps()) + ' to: ' +
-                             str(end.location) + ' at ' + str(end.location.gps()))
+                             str(start_loc) + ' at ' + str(start_loc.gps()) + ' to: ' +
+                             str(end_loc) + ' at ' + str(end_loc.gps()))
                 time_sec = distance/WalkGenerator.SPEED_BIKE
+            else:
+                TravelTime.objects.get_or_create(
+                    flat = start_gps[0],
+                    flon = start_gps[1],
+                    tlat = end_gps[0],
+                    tlon = end_gps[1],
+                    transport_type = transport_type.value,
+                    defaults = {
+                        'distance': distance,
+                        'time_sec': time_sec
+                    }
+                )
+        return time_sec
+
+    @staticmethod
+    def create_segment(start, end, fix, transport_type):
+        time_sec = WalkGenerator.get_bike_travel_time(start.location, end.location, transport_type)
         map_url = yoursapi.map_url(start.location, end.location, transport_type)
         delta_t = timedelta(seconds=time_sec)
         if fix == FixTime.START:

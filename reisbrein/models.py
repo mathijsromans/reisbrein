@@ -31,7 +31,24 @@ class Request(models.Model):
     datetime_created = models.DateTimeField(auto_now_add=True)
 
 
+class TravelTime(models.Model):
+    flat = models.FloatField()
+    flon = models.FloatField()
+    tlat = models.FloatField()
+    tlon = models.FloatField()
+    distance = models.IntegerField()
+    transport_type = models.IntegerField()
+    time_sec = models.IntegerField()
+    datetime_created = models.DateTimeField(auto_now_add=True)
+
+    @property
+    def speed(self):
+        return self.distance/self.time_sec
+
+
 class MapQuestCache(models.Model):
     search = models.CharField(max_length=80)
     lat = models.FloatField(null=True)
     lon = models.FloatField(null=True)
+
+

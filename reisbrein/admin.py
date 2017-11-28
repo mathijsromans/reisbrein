@@ -1,5 +1,5 @@
 from django.contrib import admin
-from reisbrein.models import UserTravelPlan, UserTravelPreferences, Request
+from reisbrein.models import UserTravelPlan, UserTravelPreferences, Request, TravelTime
 from django.conf.locale.en import formats as en_formats
 en_formats.DATETIME_FORMAT = "d M Y H:i:s"
 
@@ -18,6 +18,12 @@ class RequestAdmin(admin.ModelAdmin):
     list_display = ('user', 'start', 'end', 'datetime_created')
 
 
+class TravelTimeAdmin(admin.ModelAdmin):
+    model = TravelTime
+    list_display = ('flat', 'flon', 'tlat', 'tlon', 'transport_type', 'distance', 'time_sec', 'speed', 'datetime_created')
+
+
 admin.site.register(UserTravelPlan, UserTravelPlanAdmin)
 admin.site.register(UserTravelPreferences, UserTravelPreferencesAdmin)
 admin.site.register(Request, RequestAdmin)
+admin.site.register(TravelTime, TravelTimeAdmin)

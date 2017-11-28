@@ -1,6 +1,4 @@
 import requests
-import enum
-import datetime
 from reisbrein.primitives import TransportType
 
 # see: http://wiki.openstreetmap.org/wiki/YOURS
@@ -35,7 +33,7 @@ def get_common_args(start_gps, end_gps, mode):
         ('layer', 'mapnik'),  # Provide 'cn' for using bicycle routing using cycle route networks only.
     ]
 
-def do_travel_time(start_gps, end_gps, mode):
+def do_travel_time_sec(start_gps, end_gps, mode):
     try:
         arguments = get_common_args(start_gps, end_gps, mode)
         arguments.append(('format', 'geojson'))
@@ -48,22 +46,20 @@ def do_travel_time(start_gps, end_gps, mode):
         # print(response.json())
         result = response.json()
         # print(result['routes'][0]['summary'])
-        time = int(result['properties']['traveltime'])
-        # print('yoursapi.travel_time ' + str(start) + ' -> ' + str(end) + ': ' + str(datetime.timedelta(seconds=time)))
-        return time
+        time_sec = int(result['properties']['traveltime'])
+        # print('yoursapi.travel_time ' + str(start) + ' -> ' + str(end) + ': ' + str(datetime.timedelta(seconds=time_sec)))
+        return time_sec
     except (KeyError, IndexError) as error:
         raise ValueError
 
 
-def travel_time(start, end, mode):
-    start_gps = start.gps()
-    end_gps = end.gps()
+def travel_time(start_gps, end_gps, mode):
     try:
         return cache[(start_gps, end_gps, mode)]
     except KeyError:
-        result = do_travel_time(start_gps, end_gps, mode)
-        cache[(start_gps, end_gps, mode)] = result
-        return result
+        time_sec = do_travel_time_sec(start_gps, end_gps, mode)
+        cache[(start_gps, end_gps, mode)] = time_sec
+        return time_sec
 
 
 def map_url(start, end, mode):
