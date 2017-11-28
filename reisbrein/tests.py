@@ -19,6 +19,61 @@ class TestTest(TestCase):
         self.assertNotEqual(True, False)
 
 
+class TestPrimitives(TestCase):
+    """ Example test case. """
+
+    def test_points(self):
+        # location and point are value classes
+        l1 = Location('a', (2,3))
+        l2 = Location('a', (2,3))
+        l3 = Location('b', (2,3))
+        l4 = Location('a', (3,3))
+        t0 = datetime(year=2000, month=1, day=1)
+        t1 = t0 + timedelta(seconds=60)
+        p1 = Point(l1, t0)
+        p2 = Point(l2, t0)
+        p3 = Point(l3, t0)
+        p4 = Point(l4, t0)
+        p5 = Point(l1, t1)
+        p6 = Point(l2, t1)
+
+        self.assertFalse(l1 is l2)
+        self.assertTrue(l1 == l2)
+        self.assertFalse(p1 is p2)
+        self.assertTrue(p1 == p2)
+        self.assertFalse(l1 == l3)
+        self.assertFalse(l1 == l4)
+        self.assertFalse(p1 == p3)
+        self.assertFalse(p1 == p4)
+        self.assertTrue(p1.location == p5.location)
+        self.assertTrue(p2.location == p6.location)
+        self.assertFalse(p1 == p5)
+        self.assertFalse(p2 == p6)
+
+        ll = [l1, l3]
+        lp = [p1, p3]
+
+        self.assertTrue(l1 in ll)
+        self.assertTrue(l2 in ll)
+        self.assertTrue(l3 in ll)
+        self.assertFalse(l4 in ll)
+        self.assertTrue(p1 in lp)
+        self.assertTrue(p2 in lp)
+        self.assertTrue(p3 in lp)
+        self.assertFalse(p4 in lp)
+
+        sl = set([l1, l2, l3, l4])
+        sp = set([p1, p2, p3, p4, p5, p6])
+
+        self.assertEqual(len(sl), 3)
+        self.assertEqual(len(sp), 4)
+
+        self.assertTrue(Location('a', (2,3)) in sl)
+        self.assertTrue(Point(l1, t0) in sp)
+        self.assertFalse(Location('b', (3,3)) in sl)
+        self.assertFalse(Point(l3, t1) in sp)
+
+
 class TestGraph(TestCase):
 
     def test(self):
@@ -143,6 +198,19 @@ class TestViews(TestCase):
             for s in p.route:
                 if s.transport_type in (TransportType.BIKE, TransportType.OVFIETS):
                     self.assertGreater(s.to_vertex.time-s.from_vertex.time, timedelta(minutes=1, seconds=55))
+
+    def test_doubles(self):
+        time = noon_today()
+        plans = self.planner.solve('Den haag centraal', 'Utrecht centraal', time)
+        segments = set()
+        for p in plans:
+            segments.update(p.route)
+        for s1 in segments:
+            for s2 in segments:
+                if not s1 is s2:
+                    self.assertFalse(s1.from_vertex == s2.from_vertex and
+                                     s1.to_vertex == s2.to_vertex and
+                                     s1.transport_type == s2.transport_type)
 
 
 class TestUserPreference(TestCase):
