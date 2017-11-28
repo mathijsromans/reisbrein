@@ -24,13 +24,6 @@ class WalkGenerator:
     OV_FIETS_API = OvFietsStations()
     weather = WeatherApi()
 
-    TRANSLATE_MODE = {
-        TransportType.CAR: yoursapi.Mode.CAR,
-        TransportType.BIKE: yoursapi.Mode.BIKE,
-        TransportType.OVFIETS: yoursapi.Mode.BIKE,
-        TransportType.WALK: yoursapi.Mode.WALK,
-    }
-
     @staticmethod
     def create_segment(start, end, fix, transport_type):
         distance = vincenty(start.location.gps(), end.location.gps()).meters
@@ -39,7 +32,7 @@ class WalkGenerator:
             time_sec = distance/WalkGenerator.SPEED_WALK
         else:  # transport_type == TransportType.BIKE or transport_type == TransportType.OVFIETS:
             logger.info('Yoursapi bike request from: ' + str(start) + ' to: ' + str(end))
-            time_sec = yoursapi.travel_time(start.location, end.location, yoursapi.Mode.BIKE)
+            time_sec = yoursapi.travel_time(start.location, end.location, TransportType.BIKE)
             time_sec_min = distance/WalkGenerator.MAX_SPEED_BIKE
             if time_sec < time_sec_min:
                 logger.error('Yoursapi gives unrealistic bike timing of ' +
@@ -47,8 +40,7 @@ class WalkGenerator:
                              str(start.location) + ' at ' + str(start.location.gps()) + ' to: ' +
                              str(end.location) + ' at ' + str(end.location.gps()))
                 time_sec = distance/WalkGenerator.SPEED_BIKE
-        yours_mode = WalkGenerator.TRANSLATE_MODE[transport_type]
-        map_url = yoursapi.map_url(start.location, end.location, yours_mode)
+        map_url = yoursapi.map_url(start.location, end.location, transport_type)
         delta_t = timedelta(seconds=time_sec)
         if fix == FixTime.START:
             new_point = Point(end.location, start.time + delta_t)

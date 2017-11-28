@@ -1,6 +1,7 @@
 import requests
 import enum
 import datetime
+from reisbrein.primitives import TransportType
 
 # see: http://wiki.openstreetmap.org/wiki/YOURS
 # http://yournavigation.org/api/1.0/gosmore.php?format=geojson&flat=52.215676&flon=5.963946&tlat=52.2573&tlon=6.1799&v=motorcar&fast=1&layer=mapnik
@@ -10,10 +11,17 @@ API_PATH = 'api/1.0/gosmore.php'
 
 cache = {}  # global variable is it ok?
 
-class Mode(enum.Enum):
-    CAR = 'motorcar'
-    BIKE = 'bicycle'
-    WALK = 'foot'  # currently not working?
+translate_mode = {
+    # TransportType.WAIT: '',
+    TransportType.WALK: 'foot',
+    # TransportType.TRAIN: '',
+    TransportType.BIKE: 'bicycle',
+    TransportType.CAR: 'motorcar',
+    # TransportType.BUS: '',
+    # TransportType.TRAM: '',
+    TransportType.OVFIETS: 'bicycle',
+}
+
 
 def get_common_args(start_gps, end_gps, mode):
     # note that yournavigation.org DOES care about order: lat must come before lon, therefore use a list, not dict
@@ -22,7 +30,7 @@ def get_common_args(start_gps, end_gps, mode):
         ('flon', start_gps[1]),
         ('tlat', end_gps[0]),
         ('tlon', end_gps[1]),
-        ('v', mode.value),
+        ('v', translate_mode[mode]),
         ('fast', 1),
         ('layer', 'mapnik'),  # Provide 'cn' for using bicycle routing using cycle route networks only.
     ]
