@@ -71,9 +71,6 @@ class WalkGenerator:
             new_point = Point(start.location, end.time - delta_t)
             segment = Segment(transport_type, new_point, end)
         segment.map_url = map_url
-
-
-
         return segment, new_point
 
     def do_create_edges(self, start, end, edges):

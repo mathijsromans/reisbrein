@@ -188,7 +188,7 @@ class TestViews(TestCase):
         self.assertLess(results[0]['travel_time_min'], 120)
         for p in plans:
             for s in p.route:
-                if s.transport_type == TransportType.BIKE:
+                if s.transport_type in (TransportType.BIKE, TransportType.CAR):
                     self.assertNotEqual(s.map_url, '')
 
     def test_no_short_bike_rides(self):

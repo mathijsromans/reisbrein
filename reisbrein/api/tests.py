@@ -32,24 +32,30 @@ class TestTomTom(TestCase):
         location = self.tomtom.search('Madurodam')
 
     def testRouting(self):
-        begin = Location('Madurodam')
+        start = Location('Madurodam')
         end = Location('Martinitoren')
-        travel1 = self.tomtom.travel_time(begin, end)[0]
+        travel1 = self.tomtom.travel_time(start, end)[0]
         # print(travel1)
         self.assertGreater(travel1, 2 * 3600)
         self.assertLess(travel1, 4 * 3600)
+
+    def test_map_url(self):
+        start = Location('Utrecht')
+        end = Location('Amsterdam')
+        url = self.tomtom.map_url(start, end)
+        self.assertEqual(url,'https://mydrive.tomtom.com/nl_nl/#mode=routes+routes={"departure":true,"traffic":true,"routeType":"FASTEST","travelMode":"CAR","points":["hw~52.09126,5.12275","hw~52.37317,4.89066"],"avoidCriteria":[]}+ver=3')
 
 
 class TestYours(TestCase):
 
     def test_routing(self):
-        begin = Location('Madurodam')
+        start = Location('Madurodam')
         end = Location('Martinitoren')
-        travel1 = yoursapi.travel_time(begin.gps(), end.gps(), TransportType.CAR)
+        travel1 = yoursapi.travel_time(start.gps(), end.gps(), TransportType.CAR)
         # print(travel1)
         self.assertGreater(travel1, 2 * 3600)
         self.assertLess(travel1, 3 * 3600)
-        travel2 = yoursapi.travel_time(begin.gps(), end.gps(), TransportType.BIKE)
+        travel2 = yoursapi.travel_time(start.gps(), end.gps(), TransportType.BIKE)
         # print(travel2)
         self.assertGreater(travel2, 10 * 3600)
         self.assertLess(travel2, 15 * 3600)
@@ -59,20 +65,20 @@ class TestYours(TestCase):
         # self.assertLess(travel3, 15 * 3600)
 
     def test_map_url(self):
-        begin = Location('Madurodam')
+        start = Location('Madurodam')
         end = Location('Martinitoren')
-        url = yoursapi.map_url(begin, end, TransportType.CAR)
+        url = yoursapi.map_url(start, end, TransportType.CAR)
         # note that yournavigation.org DOES care about order: lat must come before lon
         self.assertEqual(url,'http://yournavigation.org/?flat=52.0993&flon=4.2986&tlat=53.21934&tlon=6.56817&v=motorcar&fast=1&layer=mapnik')
         url=url.replace('&', '?')
         words = sorted(url.split('?'))
         self.assertEqual(words, ['fast=1','flat=52.0993','flon=4.2986','http://yournavigation.org/','layer=mapnik','tlat=53.21934','tlon=6.56817','v=motorcar'])
-        url = yoursapi.map_url(begin, end, TransportType.BIKE)
+        url = yoursapi.map_url(start, end, TransportType.BIKE)
         self.assertEqual(url,'http://yournavigation.org/?flat=52.0993&flon=4.2986&tlat=53.21934&tlon=6.56817&v=bicycle&fast=1&layer=mapnik')
         url=url.replace('&', '?')
         words = sorted(url.split('?'))
         self.assertEqual(words, ['fast=1','flat=52.0993','flon=4.2986','http://yournavigation.org/','layer=mapnik','tlat=53.21934','tlon=6.56817','v=bicycle'])
-        url = yoursapi.map_url(begin, end, TransportType.WALK)
+        url = yoursapi.map_url(start, end, TransportType.WALK)
         self.assertEqual(url,'http://yournavigation.org/?flat=52.0993&flon=4.2986&tlat=53.21934&tlon=6.56817&v=foot&fast=1&layer=mapnik')
 
 

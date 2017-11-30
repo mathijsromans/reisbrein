@@ -7,8 +7,13 @@ class TomTomApi:
     BASE_URL = 'https://api.tomtom.com/'
     ROUTING_URL = 'routing/1/calculateRoute/'
     SEARCHING_URL = 'search/2/geocode/'
+    MAP_URL_START = 'https://mydrive.tomtom.com/nl_nl/#mode=routes+routes={"departure":true,"traffic":true,"routeType":"FASTEST","travelMode":"CAR","points":["hw~'
+    MAP_URL_END = '"],"avoidCriteria":[]}+ver=3'
 
     # https://api.tomtom.com/search/2/geocode/madurodam.json?&lat=52.8085&lon=4.4239&idxSet=POI,PAD,Str,Xstr,Geo,Addr
+    # https://api.tomtom.com/routing/1/calculateRoute/52.09126,5.12275:52.37317,4.89066/json?key=xxx
+    # https://mydrive.tomtom.com/nl_nl/#mode=routes+routes={"departure":true,"traffic":true,"routeType":"FASTEST","travelMode":"CAR","points":["hw~52.09126,5.12275","hw~52.37317,4.89066"],"avoidCriteria":[]}+ver=3
+
     def search(self, loc_str):
         arguments = {
             'key': TOMTOM_APIKEY,
@@ -55,3 +60,10 @@ class TomTomApi:
         time = summary['travelTimeInSeconds']
         delay = summary['trafficDelayInSeconds']
         return time, delay
+
+    @staticmethod
+    def map_url(start, end):
+        start_gps = start.gps()
+        end_gps = end.gps()
+        return TomTomApi.MAP_URL_START + str(start_gps[0]) + ',' + str(start_gps[1]) + '","hw~' +\
+                                         str(end_gps[0]) + ',' + str(end_gps[1]) + TomTomApi.MAP_URL_END

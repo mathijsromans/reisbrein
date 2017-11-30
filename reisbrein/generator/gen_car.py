@@ -12,6 +12,7 @@ class CarGenerator:
     def create_segment(self, start, end, fix, transport_type=TransportType.CAR):
         travel_time, delay = self.tomtom.travel_time(start.location, end.location)
         delta_t = timedelta(seconds=travel_time)
+        map_url = self.tomtom.map_url(start.location, end.location)
         if fix == FixTime.START:
             new_point = Point(end.location, start.time + delta_t)
             segment = Segment(transport_type, start, new_point)
@@ -19,6 +20,7 @@ class CarGenerator:
             new_point = Point(start.location, end.time - delta_t)
             segment = Segment(transport_type, new_point, end)
         segment.delay = delay/60
+        segment.map_url = map_url
         return segment, new_point
 
     def create_edges(self, start, end, edges):
