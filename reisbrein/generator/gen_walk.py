@@ -89,10 +89,9 @@ class WalkGenerator:
 
         for s in stops_2:
             edges += create_wait_and_move_segments(self, s, end, FixTime.START, TransportType.WALK)
-            bike_type = TransportType.BIKE
             if WalkGenerator.OV_FIETS_API.has_ovfiets(s.location.loc_str):
                 bike_type = TransportType.OVFIETS
-            edges += create_wait_and_move_segments(self, s, end, FixTime.START, bike_type,
+                edges += create_wait_and_move_segments(self, s, end, FixTime.START, bike_type,
                                                    WalkGenerator.MIN_BIKE_TIME_SEC)
 
     @staticmethod
