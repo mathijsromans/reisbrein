@@ -1,5 +1,7 @@
 import requests
+import datetime
 from reisbrein.primitives import TransportType
+from reisbrein.api import cache
 
 # see: http://wiki.openstreetmap.org/wiki/YOURS
 # http://yournavigation.org/api/1.0/gosmore.php?format=geojson&flat=52.215676&flon=5.963946&tlat=52.2573&tlon=6.1799&v=motorcar&fast=1&layer=mapnik
@@ -7,7 +9,7 @@ from reisbrein.primitives import TransportType
 BASE_URL = 'http://yournavigation.org/'
 API_PATH = 'api/1.0/gosmore.php'
 
-cache = {}  # global variable is it ok?
+travel_time_cache = {}  # global variable is it ok?
 
 translate_mode = {
     # TransportType.WAIT: '',
@@ -38,13 +40,14 @@ def do_travel_time_sec(start_gps, end_gps, mode):
         arguments = get_common_args(start_gps, end_gps, mode)
         arguments.append(('format', 'geojson'))
 
+
         # as requested by http://wiki.openstreetmap.org/wiki/YOURS#Version_1.0
         headers = {'X-Yours-client': 'www.reisbrein.nl'}
 
-        response = requests.get(BASE_URL + API_PATH, arguments, headers=headers)
+        result = cache.query(BASE_URL + API_PATH, arguments, headers, expiry=datetime.timedelta(days=7))
+        # response = requests.get(BASE_URL + API_PATH, arguments, headers=headers)
         # print(response.url)
         # print(response.json())
-        result = response.json()
         # print(result['routes'][0]['summary'])
         time_sec = int(result['properties']['traveltime'])
         # print('yoursapi.travel_time ' + str(start) + ' -> ' + str(end) + ': ' + str(datetime.timedelta(seconds=time_sec)))
@@ -55,10 +58,10 @@ def do_travel_time_sec(start_gps, end_gps, mode):
 
 def travel_time(start_gps, end_gps, mode):
     try:
-        return cache[(start_gps, end_gps, mode)]
+        return travel_time_cache[(start_gps, end_gps, mode)]
     except KeyError:
         time_sec = do_travel_time_sec(start_gps, end_gps, mode)
-        cache[(start_gps, end_gps, mode)] = time_sec
+        travel_time_cache[(start_gps, end_gps, mode)] = time_sec
         return time_sec
 
 

@@ -46,9 +46,11 @@ class TravelTime(models.Model):
         return self.distance/self.time_sec
 
 
-class MapQuestCache(models.Model):
-    search = models.CharField(max_length=80)
-    lat = models.FloatField(null=True)
-    lon = models.FloatField(null=True)
+class ApiCache(models.Model):
+    url = models.CharField(max_length=250)
+    params = models.CharField(max_length=250)
+    headers = models.CharField(max_length=250)
+    result = models.TextField()
+    datetime_updated = models.DateTimeField(auto_now=True)
 
 

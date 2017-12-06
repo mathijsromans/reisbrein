@@ -1,5 +1,7 @@
 import requests
+import datetime
 from website.local_settings import *
+from reisbrein.api import cache
 
 
 class TomTomApi:
@@ -51,10 +53,7 @@ class TomTomApi:
                 str(start_gps[1]) + ':' + \
                 str(end_gps[0]) + ',' + \
                 str(end_gps[1]) + '/json'
-        response = requests.get(url, arguments)
-        # print(response.url)
-        # print(response.json())
-        result = response.json()
+        result = cache.query(url, arguments, headers='', expiry=datetime.timedelta(minutes=5))
         # print(result['routes'][0]['summary'])
         summary = result['routes'][0]['summary']
         time = summary['travelTimeInSeconds']

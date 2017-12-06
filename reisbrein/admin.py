@@ -1,5 +1,5 @@
 from django.contrib import admin
-from reisbrein.models import UserTravelPlan, UserTravelPreferences, Request, TravelTime
+from reisbrein.models import UserTravelPlan, UserTravelPreferences, Request, TravelTime, ApiCache
 from django.conf.locale.en import formats as en_formats
 en_formats.DATETIME_FORMAT = "d M Y H:i:s"
 
@@ -27,3 +27,4 @@ admin.site.register(UserTravelPlan, UserTravelPlanAdmin)
 admin.site.register(UserTravelPreferences, UserTravelPreferencesAdmin)
 admin.site.register(Request, RequestAdmin)
 admin.site.register(TravelTime, TravelTimeAdmin)
+admin.site.register(ApiCache)
