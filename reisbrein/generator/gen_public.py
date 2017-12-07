@@ -67,7 +67,7 @@ class PublicGenerator:
 
         for s in new_edges:
             if not any(se.has_same_points_and_type(s) for se in edges):
-                logger.info('Adding segment ' + str(s))
+                # logger.info('Adding segment ' + str(s))
                 edges.append(s)
 
 

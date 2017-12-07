@@ -59,24 +59,26 @@ def get_conditions(option):
     condition_dict['total time'] = 0
     condition_dict['rainy'] = 0
     condition_dict['time at home'] = 0
+    condition_dict['num transfers'] = 0
 
     if option[0].transport_type == TransportType.WAIT:
-        condition_dict['time at home'] = option[0].time_sec
+        condition_dict['time at home'] = option[0].time_sec / 60
 
     for s in option:
+        condition_dict['num transfers'] += 1
         if s.transport_type == TransportType.CAR:
             condition_dict['involves car'] = 1
         if s.transport_type == TransportType.WALK:
             condition_dict['involves walk'] = 1
         if s.transport_type == TransportType.BIKE or s.transport_type == TransportType.OVFIETS:
-            condition_dict['involves bike'] += 0.0 + s.time_sec / 30.0
+            condition_dict['involves bike'] += 0.0 + s.time_sec / 60.0
         if s.transport_type == TransportType.BIKE:
             condition_dict['involves own bike'] = 1
         if s.transport_type == TransportType.TRAIN:
             condition_dict['involves train'] = 1
         if s.transport_type == TransportType.BUS:
             condition_dict['involves bus'] = 1
-        condition_dict['total time'] += s.time_sec
+        condition_dict['total time'] += s.time_sec / 60
         if s.weather == 'rainy':
             condition_dict['rainy'] += 1
     return condition_dict

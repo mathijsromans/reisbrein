@@ -9,6 +9,9 @@ logger = logging.getLogger(__name__)
 
 def query(url, params, headers, expiry):
     headers_str = json.dumps(headers)
+    logger.info('Query url=' + url)
+    logger.info('Query params=' + str(params))
+    logger.info('Query headers=' + headers_str)
     cache, created = ApiCache.objects.get_or_create(url=url, params=params, headers=headers_str)
     now = datetime.now(timezone.utc)
     if not created and now - cache.datetime_updated < expiry:
