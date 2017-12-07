@@ -3,12 +3,14 @@ from datetime import timedelta, datetime
 from reisbrein.primitives import Segment, TransportType, Point, Location, get_equivalent
 from reisbrein.api.monotchapi import MonotchApi
 
+
 def get_or_add(container, item):
     existing = get_equivalent(container, item)
     if existing:
         return existing
     container.add(item)
     return item
+
 
 class PublicGenerator:
     def __init__(self):

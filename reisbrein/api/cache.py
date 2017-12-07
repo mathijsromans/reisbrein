@@ -16,6 +16,7 @@ def query(url, params, headers, expiry):
         return json.loads(cache.result)
     logger.info('New query ' + url)
     response = requests.get(url, params, headers=headers)
+    logger.info(response.url)
     result = response.json()
     cache.result = json.dumps(result)
     cache.save()
