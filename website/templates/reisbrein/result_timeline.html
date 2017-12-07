@@ -30,7 +30,7 @@
                 </div>
             </div>
             {% endif %}
-            {% if not segment.obj.transport_type.name == 'WAIT' %}
+            {% if not forloop.first or not segment.obj.transport_type.name == 'WAIT' %}
             <div class="cd-timeline-block">
                 <div class="cd-timeline-img text-center {{ color }}">
                     <span class="timeline-icon fa {{ icon }}"></span>
