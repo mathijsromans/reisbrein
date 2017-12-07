@@ -41,6 +41,10 @@ class PublicGenerator:
                     # print(leg)
                 start_time = datetime.fromtimestamp(int(leg['startTime']) / 1000)
                 end_time = datetime.fromtimestamp(int(leg['endTime']) / 1000)
+                if 'departure' in leg['to']:  # plannerstack can include 1 second of waiting, which we want to ignore
+                    end_dep_time = datetime.fromtimestamp(int(leg['to']['departure']) / 1000)
+                    if end_dep_time - end_time <= timedelta(seconds=1):
+                        end_time = end_dep_time
                 p_loc_name = leg['to']['name']
                 if p_loc_name == 'Destination':
                     loc = end.location
@@ -53,7 +57,7 @@ class PublicGenerator:
                     prev_point = p_end
                     continue
                 # logger.info('Arrival time ' + str(int(leg['to']['arrival'])) + ' ' + str(start_time))
-                if start_time - prev_point.time > timedelta(seconds=1):
+                if start_time > prev_point.time:
                     p_start = get_or_add(points, Point(prev_point.location, start_time))
                     new_edges.append(Segment(TransportType.WAIT, prev_point, p_start))
                 else:

@@ -1,9 +1,12 @@
 import datetime
+import logging
 from reisbrein.primitives import Segment, TransportType, Point
 from reisbrein.generator.gen_public import PublicGenerator
 from reisbrein.generator.gen_walk import WalkGenerator
 from reisbrein.generator.gen_car import CarGenerator
 from reisbrein.generator.gen_parkride import ParkRideGenerator
+
+logger = logging.getLogger(__name__)
 
 
 class Generator:
@@ -56,7 +59,7 @@ class Generator:
         self.car_generator.create_edges(start, end, edges)
         self.remove_duplicates(edges)
         # for e in edges:
-        #     print(e)
+        #     logger.info(e)
         return edges
 
 
