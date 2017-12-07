@@ -54,7 +54,7 @@ class PublicGenerator:
                     continue
                 # logger.info('Arrival time ' + str(int(leg['to']['arrival'])) + ' ' + str(start_time))
                 if start_time - prev_point.time > timedelta(seconds=1):
-                    p_start = get_or_add(points, Point(loc, start_time))
+                    p_start = get_or_add(points, Point(prev_point.location, start_time))
                     new_edges.append(Segment(TransportType.WAIT, prev_point, p_start))
                 else:
                     p_start = prev_point
