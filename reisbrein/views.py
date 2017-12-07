@@ -74,7 +74,7 @@ class PlanView(TemplateView):
             plan.save()  # update datetime updated
         p = Planner()
         now = datetime.datetime.now()
-        now = datetime.datetime(year=2017, month=12, day=9, hour=20, minute=40, second=1)
+        # now = datetime.datetime(year=2017, month=12, day=9, hour=20, minute=40, second=1)
         # logger.info(now)
         plans = p.solve(start, end, now, user_preferences)
         plans = plans[:user_preferences.show_n_results]
@@ -100,7 +100,7 @@ class PlanView(TemplateView):
                     {
                         'obj': segment,
                         'travel_time_min': int(segment.time_sec/60),
-                        'travel_time_str': str(segment.from_vertex.time), # PlanView.format_minutes(int(segment.time_sec/60)),
+                        'travel_time_str': PlanView.format_minutes(int(segment.time_sec/60)),
                         'travel_time_percentage': 100*segment.time_sec / time,
                     })
             result.append(

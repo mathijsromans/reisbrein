@@ -1,7 +1,10 @@
 import heapq
+import logging
 from datetime import timedelta, datetime
 from reisbrein.primitives import Segment, TransportType, Point, Location, get_equivalent
 from reisbrein.api.monotchapi import MonotchApi
+
+logger = logging.getLogger(__name__)
 
 
 def get_or_add(container, item):
@@ -28,32 +31,39 @@ class PublicGenerator:
         points.update(s.from_vertex for s in edges)
         points.update(s.to_vertex for s in edges)
         locations = set(p.location for p in points)
+        new_edges = []
         for it in response['itineraries']:
-            legs = it['legs']
-            if legs:
-                prev_point = start
-            for index, leg in enumerate(legs):
+            prev_point = start
+            for index, leg in enumerate(it['legs']):
                 transport_type = translate.get(leg['mode'])
                 if not transport_type:
                     continue
                     # print(leg)
+                start_time = datetime.fromtimestamp(int(leg['startTime']) / 1000)
+                end_time = datetime.fromtimestamp(int(leg['endTime']) / 1000)
                 p_loc_name = leg['to']['name']
-                p_loc_lat = float(leg['to']['lat'])
-                p_loc_lon = float(leg['to']['lon'])
-
                 if p_loc_name == 'Destination':
                     loc = end.location
                 else:
-                    loc_new = Location(p_loc_name, (p_loc_lat, p_loc_lon))
-                    loc = get_or_add(locations, loc_new)
-                p_time = datetime.fromtimestamp(int(leg['to']['arrival']) / 1000)
-                p_new = Point(loc, p_time)
-                p = get_or_add(points, p_new)
-                if index != 0:  # walk to first stop will be added later
-                    s1 = Segment(transport_type, prev_point, p)
-                    if not any(s1.has_same_points_and_type(s) for s in edges):
-                        edges.append(s1)
-                prev_point = p
-                # print('Adding edge' + str(edges[-1]))
+                    p_loc_lat = float(leg['to']['lat'])
+                    p_loc_lon = float(leg['to']['lon'])
+                    loc = get_or_add(locations, Location(p_loc_name, (p_loc_lat, p_loc_lon)))
+                p_end = get_or_add(points, Point(loc, end_time))
+                if index == 0:  # walk to first stop will be added later
+                    prev_point = p_end
+                    continue
+                # logger.info('Arrival time ' + str(int(leg['to']['arrival'])) + ' ' + str(start_time))
+                if start_time - prev_point.time > timedelta(seconds=1):
+                    p_start = get_or_add(points, Point(loc, start_time))
+                    new_edges.append(Segment(TransportType.WAIT, prev_point, p_start))
+                else:
+                    p_start = prev_point
+                new_edges.append(Segment(transport_type, p_start, p_end))
+                prev_point = p_end
+
+        for s in new_edges:
+            if not any(se.has_same_points_and_type(s) for se in edges):
+                logger.info('Adding segment ' + str(s))
+                edges.append(s)
 
 
