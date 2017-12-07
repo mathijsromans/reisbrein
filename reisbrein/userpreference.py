@@ -49,6 +49,7 @@ def get_conditions(option):
         else:
             condition_dict['ends with bike'] = 0
 
+
     condition_dict['involves bike'] = 0
     condition_dict['involves own bike'] = 0
     condition_dict['involves car'] = 0
@@ -57,6 +58,11 @@ def get_conditions(option):
     condition_dict['involves bus'] = 0
     condition_dict['total time'] = 0
     condition_dict['rainy'] = 0
+    condition_dict['time at home'] = 0
+
+    if option[0].transport_type == TransportType.WAIT:
+        condition_dict['time at home'] = option[0].time_sec
+
     for s in option:
         if s.transport_type == TransportType.CAR:
             condition_dict['involves car'] = 1
