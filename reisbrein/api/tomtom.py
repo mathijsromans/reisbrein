@@ -20,6 +20,7 @@ class TomTomApi:
     def search(self, loc_str):
         arguments = {
             'key': TOMTOM_APIKEY,
+            'countrySet': 'NL',
             'lat': '52.8085',
             'lon': '4.4239',
             'idxSet': 'POI,PAD,Str,Xstr,Geo,Addr',

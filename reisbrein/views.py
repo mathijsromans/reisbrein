@@ -8,6 +8,7 @@ from django.views.generic import TemplateView, UpdateView
 from django.views.generic.edit import FormView
 from django.urls import reverse
 import logging
+from reisbrein.primitives import Location
 from reisbrein.planner import Planner
 from reisbrein.generator.generator import Generator
 from reisbrein.models import UserTravelPreferences
@@ -17,9 +18,10 @@ logger = logging.getLogger(__name__)
 
 
 def validate_location(value):
-    if value != 'utrecht':
+    location = Location(value)
+    if not location.gps() or location.gps() == (0,0):
         raise ValidationError(
-            '%(value)s is not utrecht',
+            '{0} is not a valid location'.format(value),
             params={'value': value},
         )
 
