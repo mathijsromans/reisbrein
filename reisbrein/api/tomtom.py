@@ -16,6 +16,7 @@ class TomTomApi:
     # https://api.tomtom.com/routing/1/calculateRoute/52.09126,5.12275:52.37317,4.89066/json?key=xxx
     # https://mydrive.tomtom.com/nl_nl/#mode=routes+routes={"departure":true,"traffic":true,"routeType":"FASTEST","travelMode":"CAR","points":["hw~52.09126,5.12275","hw~52.37317,4.89066"],"avoidCriteria":[]}+ver=3
 
+
     def search(self, loc_str):
         arguments = {
             'key': TOMTOM_APIKEY,
@@ -27,11 +28,7 @@ class TomTomApi:
         url = TomTomApi.BASE_URL + TomTomApi.SEARCHING_URL + loc_str + '.json'
         # url = TomTomApi.BASE_URL + TomTomApi.SEARCHING_URL + 'madurodam' + '.json?key=' + TOMTOM_APIKEY + '&lat=' \
         #        '52.8085' + '&lon=' + '4.4239' + '&idxSet=POI,PAD,Str,Xstr,Geo,Addr'
-        response = requests.get(url, arguments)
-        # print(response.url)
-        # print(response.content)
-        # print(response.json())
-        json = response.json()
+        json = cache.query(url, arguments, headers='', expiry=datetime.timedelta(days=1))
         try:
             loc = json['results'][0]['position']
             result = (float(loc['lat']), float(loc['lon']))

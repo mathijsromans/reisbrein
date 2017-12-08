@@ -3,9 +3,9 @@ import datetime
 from django import forms
 from django.contrib.auth.models import User
 from django.contrib.messages.views import SuccessMessageMixin
+from django.core.exceptions import ValidationError
 from django.views.generic import TemplateView, UpdateView
 from django.views.generic.edit import FormView
-from django.core.exceptions import PermissionDenied
 from django.urls import reverse
 import logging
 from reisbrein.planner import Planner
@@ -16,9 +16,17 @@ from reisbrein.models import UserTravelPlan, Request
 logger = logging.getLogger(__name__)
 
 
+def validate_location(value):
+    if value != 'utrecht':
+        raise ValidationError(
+            '%(value)s is not utrecht',
+            params={'value': value},
+        )
+
+
 class PlanForm(forms.Form):
-    start = forms.CharField(label='Van')
-    end = forms.CharField(label='Naar')
+    start = forms.CharField(label='Van', validators=[validate_location])
+    end = forms.CharField(label='Naar', validators=[validate_location])
 
 
 class PlanInputView(FormView):

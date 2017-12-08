@@ -15,7 +15,7 @@ class RdwApi:
     last_update = datetime.datetime(year=1970, month=1, day=1)
 
     @staticmethod
-    def get_json(suburl, arguments = {}):
+    def get_json(suburl, arguments={}):
         url = RdwApi.BASE_URL + suburl
         response = requests.get(url, arguments)
         return response.json()
