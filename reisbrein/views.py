@@ -63,13 +63,8 @@ class PlanInputView(FormView):
 class PlanView(TemplateView):
     template_name = 'reisbrein/plan_results.html'
 
-    def get_context_data(self, start, end, **kwargs):
-        context = super().get_context_data()
-        user_preferences = UserTravelPreferences()
-        user = None
-        if self.request.user.is_authenticated:
-            user = self.request.user
-            user_preferences, created = UserTravelPreferences.objects.get_or_create(user=user)
+    @staticmethod
+    def register_request(start, end, user):
         Request.objects.create(
             user=user,
             start=start,
@@ -82,12 +77,22 @@ class PlanView(TemplateView):
         )
         if not created:
             plan.save()  # update datetime updated
+
+    def get_context_data(self, start, end, **kwargs):
+        context = super().get_context_data()
+        user_preferences = UserTravelPreferences()
+        user = None
+        if self.request.user.is_authenticated:
+            user = self.request.user
+            user_preferences, created = UserTravelPreferences.objects.get_or_create(user=user)
+        self.register_request(start, end, user)
+
         p = Planner()
         now = datetime.datetime.now()
         # now = datetime.datetime(year=2017, month=12, day=7, hour=22, minute=25, second=0)
         # logger.info(now)
+
         plans = p.solve(start, end, now, user_preferences)
-        plans = plans[:user_preferences.show_n_results]
         results = self.get_results(plans)
 
         context['start'] = start
