@@ -15,7 +15,7 @@ class UserTravelPreferencesAdmin(admin.ModelAdmin):
 
 class RequestAdmin(admin.ModelAdmin):
     model = Request
-    list_display = ('user', 'start', 'end', 'datetime_created')
+    list_display = ('user', 'start', 'end', 'timedelta', 'datetime_created')
 
 
 class TravelTimeAdmin(admin.ModelAdmin):

@@ -1,5 +1,5 @@
 import datetime
-
+import time
 from django import forms
 from django.contrib.auth.models import User
 from django.contrib.messages.views import SuccessMessageMixin
@@ -65,7 +65,7 @@ class PlanView(TemplateView):
 
     @staticmethod
     def register_request(start, end, user):
-        Request.objects.create(
+        log_req = Request.objects.create(
             user=user,
             start=start,
             end=end
@@ -77,24 +77,33 @@ class PlanView(TemplateView):
         )
         if not created:
             plan.save()  # update datetime updated
+        return log_req
 
-    def get_context_data(self, start, end, **kwargs):
-        context = super().get_context_data()
+    def get_user_preferences(self):
         user_preferences = UserTravelPreferences()
         user = None
         if self.request.user.is_authenticated:
             user = self.request.user
             user_preferences, created = UserTravelPreferences.objects.get_or_create(user=user)
-        self.register_request(start, end, user)
+        return user, user_preferences
 
+    def solve(self, start, end, user_preferences):
         p = Planner()
         now = datetime.datetime.now()
-        # now = datetime.datetime(year=2017, month=12, day=7, hour=22, minute=25, second=0)
-        # logger.info(now)
-
         plans = p.solve(start, end, now, user_preferences)
-        results = self.get_results(plans)
+        return self.get_results(plans)
 
+    def get_context_data(self, start, end, **kwargs):
+        user, user_preferences = self.get_user_preferences()
+        log_req = self.register_request(start, end, user)
+
+        request_start = time.time()
+        results = self.solve(start, end, user_preferences)
+        request_end = time.time()
+        log_req.timedelta = request_end - request_start
+        log_req.save()
+
+        context = super().get_context_data()
         context['start'] = start
         context['end'] = end
         context['results'] = results
