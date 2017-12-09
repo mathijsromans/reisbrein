@@ -5,6 +5,7 @@ import heapq
 
 MIN_SHORT_PLANS = 3
 
+
 def remove_long_plans(plans):
     """Remove plans that are too long to make sure we keep a good resolution on the good plans."""
     complex_plans = [p for p in plans if len(p.route) > 1]

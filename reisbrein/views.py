@@ -65,11 +65,6 @@ class PlanView(TemplateView):
 
     @staticmethod
     def register_request(start, end, user):
-        log_req = Request.objects.create(
-            user=user,
-            start=start,
-            end=end
-        )
         plan, created = UserTravelPlan.objects.get_or_create(
             user=user,
             start=start,
@@ -77,7 +72,6 @@ class PlanView(TemplateView):
         )
         if not created:
             plan.save()  # update datetime updated
-        return log_req
 
     def get_user_preferences(self):
         user_preferences = UserTravelPreferences()
@@ -95,13 +89,12 @@ class PlanView(TemplateView):
 
     def get_context_data(self, start, end, **kwargs):
         user, user_preferences = self.get_user_preferences()
-        log_req = self.register_request(start, end, user)
+        self.register_request(start, end, user)
 
         request_start = time.time()
         results = self.solve(start, end, user_preferences)
         request_end = time.time()
-        log_req.timedelta = request_end - request_start
-        log_req.save()
+        Request.objects.create(user=user, start=start, end=end, timedelta=request_end - request_start)
 
         context = super().get_context_data()
         context['start'] = start
