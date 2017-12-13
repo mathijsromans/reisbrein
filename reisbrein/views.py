@@ -84,6 +84,7 @@ class PlanView(TemplateView):
     def solve(self, start, end, user_preferences):
         p = Planner()
         now = datetime.datetime.now()
+        now = datetime.datetime(year=2017, month=12, day=11, hour=9, minute=20, second=0)
         plans = p.solve(start, end, now, user_preferences)
         return self.get_results(plans)
 
@@ -123,7 +124,7 @@ class PlanView(TemplateView):
             result.append(
             {
                 'travel_time_min': int(time/60),
-                'arrival_time': datetime.datetime.now() + datetime.timedelta(seconds=int(time)),
+                'arrival_time': plan.route[-1].to_vertex.time,
                 'travel_time_str': PlanView.format_minutes(int(time/60)),
                 'travel_time_percentage': 100*time/max_time,
                 'segments': segments

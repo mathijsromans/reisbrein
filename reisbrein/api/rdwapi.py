@@ -1,6 +1,7 @@
 import requests
 import datetime
 from reisbrein.primitives import Location
+from reisbrein.api import cache
 
 class RdwApi:
 
@@ -17,8 +18,8 @@ class RdwApi:
     @staticmethod
     def get_json(suburl, arguments={}):
         url = RdwApi.BASE_URL + suburl
-        response = requests.get(url, arguments)
-        return response.json()
+        response = cache.query(url, arguments, headers=dict(), expiry=datetime.timedelta(minutes=5))
+        return response
 
     @staticmethod
     def get_park_and_ride_json():
