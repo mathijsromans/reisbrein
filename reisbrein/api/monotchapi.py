@@ -15,8 +15,8 @@ logger = logging.getLogger(__name__)
 class MonotchApi:
 
     MONOTCH_BASE_URL = 'https://api.monotch.com/plannerstack/v1/routers/default/plan/'
-    PLANNERSTACK_BASE_URL = 'http://demo.planner.plannerstack.com/otp/routers/default/plan'
-    # PLANNERSTACK_BASE_URL = 'http://planner.plannerstack.com/otp/routers/default/plan'
+    PLANNERSTACK_DEMO_URL = 'http://demo.planner.plannerstack.com/otp/routers/default/plan'
+    PLANNERSTACK_PRODUCTION_URL = 'http://planner.plannerstack.com/otp/routers/default/plan'
 
 
     @staticmethod
@@ -36,7 +36,8 @@ class MonotchApi:
             # 'api_key' : MONOTCH_APIKEY,
         }
         headers = {'Content-Type': 'application/json'}
-        result = cache.query(MonotchApi.PLANNERSTACK_BASE_URL, arguments, headers, expiry=datetime.timedelta(minutes=15))
+        url = MonotchApi.PLANNERSTACK_PRODUCTION_URL if PRODUCTION_SERVER else MonotchApi.PLANNERSTACK_DEMO_URL
+        result = cache.query(url, arguments, headers, expiry=datetime.timedelta(minutes=15))
         log_end = time.time()
         # logger.info('END - time: ' + str(log_end - log_start))
         return result['plan']
