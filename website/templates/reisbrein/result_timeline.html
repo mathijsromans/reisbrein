@@ -51,6 +51,9 @@
                                     {% elif segment.obj.transport_type.name == 'CAR' %}
                                     <span class="text-danger"> +0 min</span>
                                     {% endif %}
+                                    {% if segment.obj.info %}
+                                    <span class="text-success">{{ segment.obj.info }}</span>
+                                    {% endif %}
                                     {% if segment.obj.map_url %}
                                     <a href="{{ segment.obj.map_url }}" target="_blank">
                                         <span class="fa fa-pull-right fa-map-o timeline-icon"></span>

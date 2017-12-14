@@ -49,6 +49,22 @@ class TransportType(Enum):
     TRAM = 6
     OVFIETS = 7
 
+    def to_dutch(self):
+        translate = {
+            self.WAIT: 'Wachten',
+            self.WALK: 'Lopen',
+            self.TRAIN: 'Trein',
+            self.BIKE: 'Fiets',
+            self.CAR: 'Auto',
+            self.BUS: 'Bus',
+            self.TRAM: 'Tram',
+            self.OVFIETS: 'OV-fiets',
+        }
+        try:
+            return translate[self]
+        except KeyError:
+            return ''
+
 
 class Location:
     def __init__(self, loc_str, location=(0,0)):
@@ -110,11 +126,20 @@ class Segment(Edge):
         self.weather_icon = ''
         self.delay = 0
         self.map_url = ''
+        self.route_name = ''
 
     def has_same_points_and_type(self, other):
         return self.from_vertex == other.from_vertex and\
                self.to_vertex == other.to_vertex and\
                self.transport_type == other.transport_type
+
+    @property
+    def info(self):
+        bus_or_tram = self.transport_type == TransportType.BUS or \
+                      self.transport_type == TransportType.TRAM
+        if bus_or_tram and self.route_name:
+            return self.transport_type.to_dutch() + ' ' + self.route_name
+        return ''
 
     def __lt__(self, other):
         return self.time < other.time_sec

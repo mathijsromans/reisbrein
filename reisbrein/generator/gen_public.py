@@ -62,7 +62,10 @@ class PublicGenerator:
                     new_edges.append(Segment(TransportType.WAIT, prev_point, p_start))
                 else:
                     p_start = prev_point
-                new_edges.append(Segment(transport_type, p_start, p_end))
+                segment = Segment(transport_type, p_start, p_end)
+                if 'routeShortName' in leg:
+                    segment.route_name = leg['routeShortName']
+                new_edges.append(segment)
                 prev_point = p_end
 
         for s in new_edges:
