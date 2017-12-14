@@ -65,3 +65,6 @@ OPENWEATHERMAP_APIKEY = ''
 
 # PRODUCTION TOGGLE
 PRODUCTION_SERVER = False
+
+# API EXPIRY
+ASSUME_NO_API_EXPIRY = False  # warning: when set to True it api cache will never expire

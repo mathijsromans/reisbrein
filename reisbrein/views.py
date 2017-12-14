@@ -84,7 +84,7 @@ class PlanView(TemplateView):
     def solve(self, start, end, user_preferences):
         p = Planner()
         now = datetime.datetime.now()
-        now = datetime.datetime(year=2017, month=12, day=11, hour=9, minute=20, second=0)
+        # now = datetime.datetime(year=2017, month=12, day=11, hour=9, minute=20, second=0)
         plans = p.solve(start, end, now, user_preferences)
         return self.get_results(plans)
 

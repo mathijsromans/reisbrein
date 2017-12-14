@@ -23,8 +23,13 @@ class TravelTimeAdmin(admin.ModelAdmin):
     list_display = ('flat', 'flon', 'tlat', 'tlon', 'transport_type', 'distance', 'time_sec', 'speed', 'datetime_created')
 
 
+class ApiCacheAdmin(admin.ModelAdmin):
+    model = ApiCache
+    list_display = ('url', 'datetime_updated')
+
+
 admin.site.register(UserTravelPlan, UserTravelPlanAdmin)
 admin.site.register(UserTravelPreferences, UserTravelPreferencesAdmin)
 admin.site.register(Request, RequestAdmin)
 admin.site.register(TravelTime, TravelTimeAdmin)
-admin.site.register(ApiCache)
+admin.site.register(ApiCache, ApiCacheAdmin)

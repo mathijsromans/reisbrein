@@ -7,7 +7,7 @@ import os
 from datetime import timedelta, datetime, timezone
 from urllib.parse import urlparse
 from reisbrein.models import ApiCache
-from website.settings import TESTING_FROM_CMD_LINE
+from website.settings import TESTING_FROM_CMD_LINE, ASSUME_NO_API_EXPIRY
 
 logger = logging.getLogger(__name__)
 
@@ -41,16 +41,18 @@ def query(url, params, headers, expiry):
     # print(params)
     # print(headers)
 
+    params_str = make_str(params)
+    headers_str = make_str(headers)
+
     # try to retreive from database
-    cache, created = ApiCache.objects.get_or_create(url=url, params=params, headers=headers)
-    if not created and now - cache.datetime_updated < expiry:
+    cache, created = ApiCache.objects.get_or_create(url=url, params=params_str, headers=headers_str)
+    expired = not ASSUME_NO_API_EXPIRY and now - cache.datetime_updated > expiry
+    if not created and not expired:
         logger.info('Retreiving ' + url + ' from cache')
         return json.loads(cache.result)
 
     if TESTING_FROM_CMD_LINE:
         # try to retreive from disk
-        params_str = make_str(params)
-        headers_str = make_str(headers)
         # print (url+params_str+headers_str + ' -> ' + hashlib.md5((url+params_str+headers_str).encode('utf-8')).hexdigest())
         h = hashlib.md5((url+params_str+headers_str).encode('utf-8')).hexdigest()
         o = urlparse(url)
