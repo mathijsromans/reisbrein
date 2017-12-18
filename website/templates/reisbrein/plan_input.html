@@ -17,6 +17,7 @@
         {% csrf_token %}
         {% bootstrap_field form.start show_label=False %}
         {% bootstrap_field form.end show_label=False %}
+        {% bootstrap_field form.leave show_label=False %}
         {% buttons %}
         <button type="submit" class="btn btn-block btn-primary" title="Plan reis">
           Plan
@@ -39,7 +40,7 @@
         </div>
         <div class="panel-body">
         {% for plan in plan_history %}
-          <div class="h5"><a href="{% url 'plan-results' plan.start plan.end %}">{{ plan.start }} - {{ plan.end }}</a></div>
+          <div class="h5"><a href="{% url 'plan-results' plan.start plan.end 0 %}">{{ plan.start }} - {{ plan.end }}</a></div>
         {% endfor %}
         </div>
       </div>
