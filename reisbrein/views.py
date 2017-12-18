@@ -45,6 +45,7 @@ class PlanInputView(FormView):
             return initial
         user_preferences, created = UserTravelPreferences.objects.get_or_create(user=self.request.user)
         initial['start'] = user_preferences.home_address
+        initial['leave'] = datetime.datetime.now()
         return initial
 
     def form_valid(self, form):
