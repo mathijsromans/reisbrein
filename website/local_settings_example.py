@@ -68,3 +68,7 @@ PRODUCTION_SERVER = False
 
 # API EXPIRY
 ASSUME_NO_API_EXPIRY = False  # warning: when set to True api cache will never expire
+
+# PIWIK (optional)
+PIWIK_URL = ''  # optional, without trailing slash
+PIWIK_SITE_ID = 0
