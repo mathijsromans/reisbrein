@@ -51,14 +51,14 @@ class TransportType(Enum):
 
     def to_dutch(self):
         translate = {
-            self.WAIT: 'Wachten',
-            self.WALK: 'Lopen',
-            self.TRAIN: 'Trein',
-            self.BIKE: 'Fiets',
-            self.CAR: 'Auto',
-            self.BUS: 'Bus',
-            self.TRAM: 'Tram',
-            self.OVFIETS: 'OV-fiets',
+            TransportType.WAIT: 'Wachten',
+            TransportType.WALK: 'Lopen',
+            TransportType.TRAIN: 'Trein',
+            TransportType.BIKE: 'Fiets',
+            TransportType.CAR: 'Auto',
+            TransportType.BUS: 'Bus',
+            TransportType.TRAM: 'Tram',
+            TransportType.OVFIETS: 'OV-fiets',
         }
         try:
             return translate[self]
