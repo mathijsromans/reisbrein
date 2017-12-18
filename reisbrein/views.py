@@ -2,10 +2,8 @@ import datetime
 import time
 import logging
 from django import forms
-from django.contrib.auth.models import User
-from django.contrib.messages.views import SuccessMessageMixin
 from django.core.exceptions import ValidationError
-from django.views.generic import TemplateView, UpdateView
+from django.views.generic import TemplateView
 from django.views.generic.edit import FormView
 from django.urls import reverse
 # from bootstrap3_datetime.widgets import DateTimePicker
@@ -15,6 +13,7 @@ from reisbrein.planner import Planner
 from reisbrein.generator.generator import Generator
 from reisbrein.models import UserTravelPreferences
 from reisbrein.models import UserTravelPlan, Request
+from .auth import create_and_login_anonymous_user
 
 logger = logging.getLogger(__name__)
 
@@ -38,6 +37,11 @@ class PlanForm(forms.Form):
 class PlanInputView(FormView):
     template_name = 'reisbrein/plan_input.html'
     form_class = PlanForm
+
+    def dispatch(self, request, *args, **kwargs):
+        if not self.request.user.is_authenticated:
+            create_and_login_anonymous_user(request)
+        return super().dispatch(request, *args, **kwargs)
 
     def get_initial(self):
         initial = super().get_initial()
