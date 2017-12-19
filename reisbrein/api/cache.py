@@ -35,17 +35,22 @@ def make_str(coll):
     return str(coll)
 
 
-def query(url, params, headers, expiry):
+def query_list(url, queries, headers, expiry):
+    for q in queries:
+        q.result = query(url, q.arguments, headers, expiry)
+
+
+def query(url, arguments, headers, expiry):
     now = datetime.now(timezone.utc)
     # print(url)
     # print(params)
     # print(headers)
 
-    params_str = make_str(params)
+    arguments_str = make_str(arguments)
     headers_str = make_str(headers)
 
     # try to retreive from database
-    cache, created = ApiCache.objects.get_or_create(url=url, params=params_str, headers=headers_str)
+    cache, created = ApiCache.objects.get_or_create(url=url, params=arguments_str, headers=headers_str)
     expired = not ASSUME_NO_API_EXPIRY and now - cache.datetime_updated > expiry
     if not created and not expired:
         logger.info('Retreiving ' + url + ' from cache')
@@ -54,19 +59,19 @@ def query(url, params, headers, expiry):
     if TESTING_FROM_CMD_LINE:
         # try to retreive from disk
         # print (url+params_str+headers_str + ' -> ' + hashlib.md5((url+params_str+headers_str).encode('utf-8')).hexdigest())
-        h = hashlib.md5((url+params_str+headers_str).encode('utf-8')).hexdigest()
+        h = hashlib.md5((url+arguments_str+headers_str).encode('utf-8')).hexdigest()
         o = urlparse(url)
         filename = 'data/cache/' + o.netloc + '_' + h + '.dat'
         try:
             with open(filename, 'r') as json_file:
                 result = json.load(json_file)
         except OSError:
-            result = do_query(url, params, headers)
+            result = do_query(url, arguments, headers)
             os.makedirs(os.path.dirname(filename), exist_ok=True)
             with open(filename, 'w') as json_file:
                 json.dump(result, json_file)
     else:
-        result = do_query(url, params, headers)
+        result = do_query(url, arguments, headers)
 
     cache.result = json.dumps(result)
     cache.save()
