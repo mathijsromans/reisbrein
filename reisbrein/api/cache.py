@@ -41,7 +41,7 @@ def query_list(url, queries, headers, expiry):
 
 
 def query(url, arguments, headers, expiry):
-    query_from_session(url, arguments, headers, expiry)
+    return query_from_session(url, arguments, headers, expiry)
 
 def query_from_session(url, arguments, headers, expiry):
     now = datetime.now(timezone.utc)
