@@ -39,13 +39,13 @@ class MonotchApi:
             'arriveBy' : 'false',
             'maxWalkDistance' : '3000',
             'mode' : 'TRANSIT,WALK',
-            'date' : str(start_time.month) + '-' + str(r.start_time.day) + '-' + str(r.start_time.year),
-            'time' : str(start_time.hour) + ':' + str(r.start_time.minute),
+            'date' : str(start_time.month) + '-' + str(start_time.day) + '-' + str(start_time.year),
+            'time' : str(start_time.hour) + ':' + str(start_time.minute),
             # 'api_key' : MONOTCH_APIKEY,
         }
         headers = {'Content-Type': 'application/json'}
         url = MonotchApi.PLANNERSTACK_PRODUCTION_URL if PRODUCTION_SERVER else MonotchApi.PLANNERSTACK_DEMO_URL
-        expiry=datetime.timedelta(minutes=15)
+        expiry = datetime.timedelta(minutes=15)
         request = self.Request(None, start, end, start_time, url, arguments, headers, expiry)
         self.requests.append(request)
         return request
