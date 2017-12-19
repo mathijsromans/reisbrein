@@ -37,10 +37,13 @@ def make_str(coll):
 
 def query_list(url, queries, headers, expiry):
     for q in queries:
-        q.result = query(url, q.arguments, headers, expiry)
+        q.result = query_from_session(url, q.arguments, headers, expiry)
 
 
 def query(url, arguments, headers, expiry):
+    query_from_session(url, arguments, headers, expiry)
+
+def query_from_session(url, arguments, headers, expiry):
     now = datetime.now(timezone.utc)
     # print(url)
     # print(params)
