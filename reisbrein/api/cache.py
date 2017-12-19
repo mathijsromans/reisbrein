@@ -12,13 +12,13 @@ from website.settings import TESTING_FROM_CMD_LINE, ASSUME_NO_API_EXPIRY
 logger = logging.getLogger(__name__)
 
 
-def do_query(url, params, headers):
+def do_query(session, url, params, headers):
     log_start = time.time()
     logger.info('BEGIN query')
     # logger.info('Query url=' + url)
     # logger.info('Query params=' + str(params))
     # logger.info('Query headers=' + headers_str)
-    response = requests.get(url, params, headers=headers)
+    response = session.get(url, params=params, headers=headers)
     logger.info(response.url)
     log_end = time.time()
     logger.info('END query; time=' + str(log_end - log_start))
@@ -36,8 +36,9 @@ def make_str(coll):
 
 
 def query_list(url, queries, headers, expiry):
-    for q in queries:
-        q.result = query(url, q.arguments, headers, expiry)
+    with requests.Session() as session:
+        for q in queries:
+            q.result = query_from_session(session, url, q.arguments, headers, expiry)
 
 
 def query(url, arguments, headers, expiry):
@@ -72,12 +73,12 @@ def query_from_session(session, url, arguments, headers, expiry):
             with open(filename, 'r') as json_file:
                 result = json.load(json_file)
         except OSError:
-            result = do_query(url, arguments, headers)
+            result = do_query(session, url, arguments, headers)
             os.makedirs(os.path.dirname(filename), exist_ok=True)
             with open(filename, 'w') as json_file:
                 json.dump(result, json_file)
     else:
-        result = do_query(url, arguments, headers)
+        result = do_query(session, url, arguments, headers)
 
     cache.result = json.dumps(result)
     cache.save()
