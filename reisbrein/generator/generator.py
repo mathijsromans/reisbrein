@@ -5,6 +5,7 @@ from reisbrein.generator.gen_public import PublicGenerator
 from reisbrein.generator.gen_walk import WalkGenerator
 from reisbrein.generator.gen_car import CarGenerator
 from reisbrein.generator.gen_parkride import ParkRideGenerator
+from reisbrein.api.monotchapi import MonotchApi
 
 logger = logging.getLogger(__name__)
 
@@ -12,9 +13,7 @@ logger = logging.getLogger(__name__)
 class Generator:
     def __init__(self):
         self.walk_generator = WalkGenerator()
-        self.public_generator = PublicGenerator()
         self.car_generator = CarGenerator()
-        self.parkride_generator = ParkRideGenerator()
 
     @staticmethod
     def remove_duplicates(edges):
@@ -53,8 +52,18 @@ class Generator:
 
     def create_edges(self, start, end):
         edges = []
-        self.public_generator.create_edges(start, end, edges)
-        self.parkride_generator.create_edges(start, end, edges)
+
+        routing_api = MonotchApi()
+        public_generator = PublicGenerator(start, end)
+        parkride_generator = ParkRideGenerator(start, end)
+        public_generator.prepare(routing_api)
+        parkride_generator.prepare(routing_api)
+
+        routing_api.do_requests()
+
+        public_generator.finish(edges)
+        parkride_generator.finish(edges)
+
         self.walk_generator.create_edges(start, end, edges)
         self.car_generator.create_edges(start, end, edges)
         self.remove_duplicates(edges)

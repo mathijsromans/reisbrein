@@ -13,10 +13,10 @@ logger = logging.getLogger(__name__)
 
 
 def do_query(url, params, headers):
-    logger.info('BEGIN query')
     log_start = time.time()
-    logger.info('Query url=' + url)
-    logger.info('Query params=' + str(params))
+    logger.info('BEGIN query')
+    # logger.info('Query url=' + url)
+    # logger.info('Query params=' + str(params))
     # logger.info('Query headers=' + headers_str)
     response = requests.get(url, params, headers=headers)
     logger.info(response.url)

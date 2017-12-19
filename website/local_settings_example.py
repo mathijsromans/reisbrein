@@ -67,7 +67,7 @@ OPENWEATHERMAP_APIKEY = ''
 PRODUCTION_SERVER = False
 
 # API EXPIRY
-ASSUME_NO_API_EXPIRY = False  # warning: when set to True api cache will never expire
+ASSUME_NO_API_EXPIRY = True  # warning: when set to True api cache will never expire
 
 # PIWIK (optional)
 PIWIK_URL = ''  # optional, without trailing slash

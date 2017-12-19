@@ -9,3 +9,4 @@ geopy==1.11.0
 nsapi==2.7.4
 numpy
 django-datetime-widget==0.9.3
+recordclass==0.4.3

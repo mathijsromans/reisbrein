@@ -5,7 +5,7 @@ from reisbrein.generator.gen_public import PublicGenerator
 from reisbrein.generator.gen_train import TrainGenerator, skip_first
 from reisbrein.primitives import TransportType, Point, Location, noon_today
 from .gen_common import FixTime
-from reisbrein.planner import recur_map
+from reisbrein.api.monotchapi import MonotchApi
 
 
 class TestWalkGenerator(TestCase):
@@ -90,16 +90,17 @@ class TestTrainGenerator(TestCase):
 
 
 class TestPublicGenerator(TestCase):
-    def setUp(self):
-        self.generator = PublicGenerator()
-
     def test(self):
         time = noon_today()
         start = Point(Location('Den Haag'), time)
         end = Point(Location('Nieuwegein'), time)
-        segments = []
-        self.generator.create_edges(start, end, segments)
+        edges = []
+        generator = PublicGenerator(start, end)
+        routing_api = MonotchApi()
+        generator.prepare(routing_api)
+        routing_api.do_requests()
+        generator.finish(edges)
         # for s in segments:
         #     print(s)
-        self.assertGreater(len(segments), 8)
+        self.assertGreater(len(edges), 8)
 

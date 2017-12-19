@@ -110,7 +110,7 @@ class TestMonotch(TestCase):
         begin = Location('Madurodam')
         end = Location('Martinitoren')
         start_time = datetime.datetime.combine(datetime.date.today(), datetime.time(12))
-        result = self.monotch.search(begin, end, start_time)
+        self.monotch.add_search_request(begin, end, start_time)
         # print(result)
         # self.assertNotEqual(result, [])
         # self.assertEqual(len(result['itineraries']), 2)

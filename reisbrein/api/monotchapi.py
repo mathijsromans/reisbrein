@@ -1,5 +1,4 @@
-import requests
-import json
+from recordclass import recordclass
 import datetime
 import logging
 import time
@@ -18,27 +17,37 @@ class MonotchApi:
     PLANNERSTACK_DEMO_URL = 'http://demo.planner.plannerstack.com/otp/routers/default/plan'
     PLANNERSTACK_PRODUCTION_URL = 'http://planner.plannerstack.com/otp/routers/default/plan'
 
+    Request = recordclass('Request', ['start', 'end', 'start_time', 'result'])
 
-    @staticmethod
-    def search(start, end, start_time):
-        # logger.info('BEGIN')
-        log_start = time.time()
-        start_gps = start.gps()
-        end_gps = end.gps()
-        arguments = {
-            'fromPlace' : str(start_gps[0]) + ',' + str(start_gps[1]),
-            'toPlace' : str(end_gps[0]) + ',' + str(end_gps[1]),
-            'arriveBy' : 'false',
-            'maxWalkDistance' : '3000',
-            'mode' : 'TRANSIT,WALK',
-            'date' : str(start_time.month) + '-' + str(start_time.day) + '-' + str(start_time.year),
-            'time' : str(start_time.hour) + ':' + str(start_time.minute),
-            # 'api_key' : MONOTCH_APIKEY,
-        }
-        headers = {'Content-Type': 'application/json'}
-        url = MonotchApi.PLANNERSTACK_PRODUCTION_URL if PRODUCTION_SERVER else MonotchApi.PLANNERSTACK_DEMO_URL
-        result = cache.query(url, arguments, headers, expiry=datetime.timedelta(minutes=15))
-        log_end = time.time()
-        # logger.info('END - time: ' + str(log_end - log_start))
-        return result['plan']
+    def __init__(self):
+        self.requests = []
+
+    def add_search_request(self, start, end, start_time):
+        request = self.Request(start, end, start_time, None)
+        self.requests.append(request)
+        return request
+
+    def do_requests(self):
+        for r in self.requests:
+            # logger.info('BEGIN')
+            log_start = time.time()
+            start_gps = r.start.gps()
+            end_gps = r.end.gps()
+            arguments = {
+                'fromPlace' : str(start_gps[0]) + ',' + str(start_gps[1]),
+                'toPlace' : str(end_gps[0]) + ',' + str(end_gps[1]),
+                'arriveBy' : 'false',
+                'maxWalkDistance' : '3000',
+                'mode' : 'TRANSIT,WALK',
+                'date' : str(r.start_time.month) + '-' + str(r.start_time.day) + '-' + str(r.start_time.year),
+                'time' : str(r.start_time.hour) + ':' + str(r.start_time.minute),
+                # 'api_key' : MONOTCH_APIKEY,
+            }
+            headers = {'Content-Type': 'application/json'}
+            url = MonotchApi.PLANNERSTACK_PRODUCTION_URL if PRODUCTION_SERVER else MonotchApi.PLANNERSTACK_DEMO_URL
+            query_out = cache.query(url, arguments, headers, expiry=datetime.timedelta(minutes=15))
+            log_end = time.time()
+            # logger.info('END - time: ' + str(log_end - log_start))
+
+            r.result = query_out['plan']
 
