@@ -27,13 +27,6 @@ QueryInfo = recordclass('QueryInfo',
                          'update_cache',
                          'filename_to_be_updated'])
 
-
-def do_query(session, q):
-    response = session.get(q.url, params=q.arguments, headers=q.headers)
-    logger.info(response.url)
-    return response.json()
-
-
 def make_str(coll):
     """
     :param coll: input dict or list
@@ -71,28 +64,33 @@ def try_get_from_file(qi):
 
 
 def query_list(queries):
-    with requests.Session() as session:
-        qis = [QueryInfo(q, make_str(q.arguments), make_str(q.headers), False, '') for q in queries]
-        for qi in qis:
-            qi.q.result = None
-            try_get_from_cache(qi)
-            if not qi.q.result and TESTING_FROM_CMD_LINE:
-                try_get_from_file(qi)
+    qis = [QueryInfo(q, make_str(q.arguments), make_str(q.headers), False, '') for q in queries]
+    for qi in qis:
+        qi.q.result = None
+        try_get_from_cache(qi)
+        if not qi.q.result and TESTING_FROM_CMD_LINE:
+            try_get_from_file(qi)
 
-        for qi in qis:
-            if not qi.q.result:
-                qi.q.result = do_query(session, qi.q)
+    log_start = time.time()
+    logger.info('BEGIN query')
+    to_do_qi = [qi for qi in qis if not qi.q.result]
+    rs = [requests.async.get(qi.q.url, params=qi.q.arguments, headers=qi.q.headers) for qi in to_do_qi]
+    responses = requests.async.map(rs)
+    for item in zip(to_do_qi, responses):
+        item[0].q.result = item[1].response.json()
+    log_end = time.time()
+    logger.info('END query; time=' + str(log_end - log_start))
 
-        for qi in qis:
-            if qi.update_cache:
-                cache, created = ApiCache.objects.get_or_create(url=qi.q.url, params=qi.arguments_str, headers=qi.headers_str)
-                cache.result = json.dumps(qi.q.result)
-                cache.save()
+    for qi in qis:
+        if qi.update_cache:
+            cache, created = ApiCache.objects.get_or_create(url=qi.q.url, params=qi.arguments_str, headers=qi.headers_str)
+            cache.result = json.dumps(qi.q.result)
+            cache.save()
 
-            if qi.filename_to_be_updated:
-                os.makedirs(os.path.dirname(qi.filename_to_be_updated), exist_ok=True)
-                with open(qi.filename_to_be_updated, 'w') as json_file:
-                    json.dump(qi.q.result, json_file)
+        if qi.filename_to_be_updated:
+            os.makedirs(os.path.dirname(qi.filename_to_be_updated), exist_ok=True)
+            with open(qi.filename_to_be_updated, 'w') as json_file:
+                json.dump(qi.q.result, json_file)
 
 
 def query(url, arguments, headers, expiry):
