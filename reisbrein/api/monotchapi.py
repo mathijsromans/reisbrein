@@ -23,15 +23,13 @@ class MonotchApi:
                            'end',
                            'start_time'])
 
-    Query = recordclass('Request',
-                         ['result',
-                          'arguments',
-                          'request'])
+    RequestQuery = recordclass('RequestQuery', ['request', 'query'])
 
     def __init__(self):
-        self.queries = []
+        self.reqs = []
 
     def add_search_request(self, start, end, start_time):
+        request = self.Request(None, start, end, start_time)
         start_gps = start.gps()
         end_gps = end.gps()
         arguments = {
@@ -44,20 +42,21 @@ class MonotchApi:
             'time': str(start_time.hour) + ':' + str(start_time.minute),
             # 'api_key' : MONOTCH_APIKEY,
         }
-        request = self.Request(None, start, end, start_time)
-        query = self.Query(None, arguments, request)
-        self.queries.append(query)
+        url = self.PLANNERSTACK_PRODUCTION_URL if PRODUCTION_SERVER else self.PLANNERSTACK_DEMO_URL
+        headers = {'Content-Type': 'application/json'}
+        expiry = datetime.timedelta(minutes=15)
+        query = cache.Query(None, url, arguments, headers, expiry)
+        req = self.RequestQuery(request, query)
+        self.reqs.append(req)
         return request
 
     def do_requests(self):
         logger.info('BEGIN')
         log_start = time.time()
-        url = MonotchApi.PLANNERSTACK_PRODUCTION_URL if PRODUCTION_SERVER else MonotchApi.PLANNERSTACK_DEMO_URL
-        headers = {'Content-Type': 'application/json'}
-        expiry = datetime.timedelta(minutes=15)
-        cache.query_list(url, self.queries, headers, expiry)
-        for q in self.queries:
-            q.request.result = q.result['plan']
+        queries = [rq.query for rq in self.reqs]
+        cache.query_list(queries)
+        for rq in self.reqs:
+            rq.request.result = rq.query.result['plan']
         log_end = time.time()
         logger.info('END - time: ' + str(log_end - log_start))
 

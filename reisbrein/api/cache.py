@@ -1,3 +1,4 @@
+from recordclass import recordclass
 import requests
 import json
 import time
@@ -12,16 +13,24 @@ from website.settings import TESTING_FROM_CMD_LINE, ASSUME_NO_API_EXPIRY
 logger = logging.getLogger(__name__)
 
 
-def do_query(session, url, params, headers):
-    log_start = time.time()
-    logger.info('BEGIN query')
-    # logger.info('Query url=' + url)
-    # logger.info('Query params=' + str(params))
-    # logger.info('Query headers=' + headers_str)
-    response = session.get(url, params=params, headers=headers)
+Query = recordclass('Query',
+                    ['result',
+                     'url',
+                     'arguments',
+                     'headers',
+                     'expiry'])
+
+QueryInfo = recordclass('QueryInfo',
+                        ['q',
+                         'arguments_str',
+                         'headers_str',
+                         'update_cache',
+                         'filename_to_be_updated'])
+
+
+def do_query(session, q):
+    response = session.get(q.url, params=q.arguments, headers=q.headers)
     logger.info(response.url)
-    log_end = time.time()
-    logger.info('END query; time=' + str(log_end - log_start))
     return response.json()
 
 
@@ -35,52 +44,59 @@ def make_str(coll):
     return str(coll)
 
 
-def query_list(url, queries, headers, expiry):
-    with requests.Session() as session:
-        for q in queries:
-            q.result = query_from_session(session, url, q.arguments, headers, expiry)
+def try_get_from_cache(qi):
+        now = datetime.now(timezone.utc)
+        try:
+            cache = ApiCache.objects.get(url=qi.q.url, params=qi.arguments_str, headers=qi.headers_str)
+            expired = not ASSUME_NO_API_EXPIRY and now - cache.datetime_updated > qi.q.expiry
+            if expired:
+                cache.delete()
+                qi.update_cache = True
+            else:
+                logging.info('Retreiving ' + qi.q.url + ' from cache')
+                qi.q.result = json.loads(cache.result)
+        except ApiCache.DoesNotExist:
+            qi.update_cache = True
 
 
-def query(url, arguments, headers, expiry):
-    with requests.Session() as session:
-        result = query_from_session(session, url, arguments, headers, expiry)
-    return result
-
-
-def query_from_session(session, url, arguments, headers, expiry):
-    now = datetime.now(timezone.utc)
-    # print(url)
-    # print(params)
-    # print(headers)
-
-    arguments_str = make_str(arguments)
-    headers_str = make_str(headers)
-
-    # try to retreive from database
-    cache, created = ApiCache.objects.get_or_create(url=url, params=arguments_str, headers=headers_str)
-    expired = not ASSUME_NO_API_EXPIRY and now - cache.datetime_updated > expiry
-    if not created and not expired:
-        logger.info('Retreiving ' + url + ' from cache')
-        return json.loads(cache.result)
-
-    if TESTING_FROM_CMD_LINE:
-        # try to retreive from disk
-        # print (url+params_str+headers_str + ' -> ' + hashlib.md5((url+params_str+headers_str).encode('utf-8')).hexdigest())
-        h = hashlib.md5((url+arguments_str+headers_str).encode('utf-8')).hexdigest()
-        o = urlparse(url)
+def try_get_from_file(qi):
+        h = hashlib.md5((qi.q.url+qi.arguments_str+qi.headers_str).encode('utf-8')).hexdigest()
+        o = urlparse(qi.q.url)
         filename = 'data/cache/' + o.netloc + '_' + h + '.dat'
         try:
             with open(filename, 'r') as json_file:
-                result = json.load(json_file)
+                qi.q.result = json.load(json_file)
         except OSError:
-            result = do_query(session, url, arguments, headers)
-            os.makedirs(os.path.dirname(filename), exist_ok=True)
-            with open(filename, 'w') as json_file:
-                json.dump(result, json_file)
-    else:
-        result = do_query(session, url, arguments, headers)
+            qi.filename_to_be_updated = filename
 
-    cache.result = json.dumps(result)
-    cache.save()
 
-    return result
+def query_list(queries):
+    with requests.Session() as session:
+        qis = [QueryInfo(q, make_str(q.arguments), make_str(q.headers), False, '') for q in queries]
+        for qi in qis:
+            qi.q.result = None
+            try_get_from_cache(qi)
+            if not qi.q.result and TESTING_FROM_CMD_LINE:
+                try_get_from_file(qi)
+
+        for qi in qis:
+            if not qi.q.result:
+                qi.q.result = do_query(session, qi.q)
+
+        for qi in qis:
+            if qi.update_cache:
+                cache, created = ApiCache.objects.get_or_create(url=qi.q.url, params=qi.arguments_str, headers=qi.headers_str)
+                cache.result = json.dumps(qi.q.result)
+                cache.save()
+
+            if qi.filename_to_be_updated:
+                os.makedirs(os.path.dirname(qi.filename_to_be_updated), exist_ok=True)
+                with open(qi.filename_to_be_updated, 'w') as json_file:
+                    json.dump(qi.q.result, json_file)
+
+
+def query(url, arguments, headers, expiry):
+    q = Query(None, url, arguments, headers, expiry)
+    query_list([q])
+    return q.result
+
