@@ -104,10 +104,10 @@ class WalkGenerator:
                 e.weather, e.weather_icon = WalkGenerator.weather.search(w)
 
     def create_edges(self, start, end, edges):
-        logger.info('BEGIN')
-        log_start = time.time()
+        # logger.info('BEGIN')
+        # log_start = time.time()
         self.do_create_edges(start, end, edges)
         # self.add_weather(edges)
-        log_end = time.time()
-        logger.info('END - time: ' + str(log_end - log_start))
+        # log_end = time.time()
+        # logger.info('END - time: ' + str(log_end - log_start))
 

@@ -1,5 +1,6 @@
 from recordclass import recordclass
-import requests
+from requests_futures.sessions import FuturesSession
+from concurrent.futures import wait
 import json
 import time
 import logging
@@ -63,6 +64,30 @@ def try_get_from_file(qi):
             qi.filename_to_be_updated = filename
 
 
+def bg_cb(sess, resp):
+    # parse the json storing the result on the response object
+    resp.data = resp.json()
+
+
+def do_queries(qis):
+    to_do_qi = [qi for qi in qis if not qi.q.result]
+    if not to_do_qi:
+        return
+    logger.info('BEGIN query ' + to_do_qi[0].q.url + ' (' + str(len(to_do_qi)) + ')')
+    log_start = time.time()
+    session = FuturesSession(max_workers=len(to_do_qi))
+    futures = [
+        session.get(qi.q.url, params=qi.q.arguments, headers=qi.q.headers,
+                    background_callback=bg_cb)
+        for qi in to_do_qi
+    ]
+    wait(futures)
+    for item in zip(to_do_qi, futures):
+        item[0].q.result = item[1].result().data
+    log_end = time.time()
+    logger.info('END query; time=' + str(log_end - log_start))
+
+
 def query_list(queries):
     qis = [QueryInfo(q, make_str(q.arguments), make_str(q.headers), False, '') for q in queries]
     for qi in qis:
@@ -71,15 +96,7 @@ def query_list(queries):
         if not qi.q.result and TESTING_FROM_CMD_LINE:
             try_get_from_file(qi)
 
-    log_start = time.time()
-    logger.info('BEGIN query')
-    to_do_qi = [qi for qi in qis if not qi.q.result]
-    rs = [requests.async.get(qi.q.url, params=qi.q.arguments, headers=qi.q.headers) for qi in to_do_qi]
-    responses = requests.async.map(rs)
-    for item in zip(to_do_qi, responses):
-        item[0].q.result = item[1].response.json()
-    log_end = time.time()
-    logger.info('END query; time=' + str(log_end - log_start))
+    do_queries(qis)
 
     for qi in qis:
         if qi.update_cache:
