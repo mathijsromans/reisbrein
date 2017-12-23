@@ -43,7 +43,7 @@ def try_get_from_cache(qi):
         try:
             cache = ApiCache.objects.get(url=qi.q.url, params=qi.arguments_str, headers=qi.headers_str)
             expired = not ASSUME_NO_API_EXPIRY and now - cache.datetime_updated > qi.q.expiry
-            if expired:
+            if expired or not cache.result:
                 cache.delete()
                 qi.update_cache = True
             else:
