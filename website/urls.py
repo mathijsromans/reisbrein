@@ -14,7 +14,7 @@ from website.views import UserProfileView
 
 urlpatterns = [
     url(r'^$', PlanInputView.as_view(), name='plan-input'),
-    url(r'^reisadvies/(?P<start>.+)/(?P<end>.+)/(?P<leave_timestamp>.+)$', PlanView.as_view(), name='plan-results'),
+    url(r'^reisadvies/(?P<start>.+)/(?P<end>.+)/(?P<timestamp>.+)$', PlanView.as_view(), name='plan-results'),
 
     url(r'^about/$', TemplateView.as_view(template_name="website/about.html"), name='about'),
 

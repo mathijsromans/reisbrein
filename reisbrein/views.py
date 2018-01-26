@@ -1,16 +1,15 @@
 import datetime
 import time
 import logging
+from reisbrein.generator.gen_common import FixTime
 from django import forms
 from django.core.exceptions import ValidationError
 from django.views.generic import TemplateView
 from django.views.generic.edit import FormView
 from django.urls import reverse
-# from bootstrap3_datetime.widgets import DateTimePicker
 from datetimewidget.widgets import DateTimeWidget
 from reisbrein.primitives import Location
 from reisbrein.planner import Planner
-from reisbrein.generator.generator import Generator
 from reisbrein.models import UserTravelPreferences
 from reisbrein.models import UserTravelPlan, Request
 from .auth import create_and_login_anonymous_user
@@ -41,7 +40,8 @@ class PlanInputView(FormView):
     def __init__(self):
         self.start = ''
         self.end = ''
-        self.leave_timestamp = 0
+        self.timestamp = 0
+        self.fix_time = FixTime.START
 
     def dispatch(self, request, *args, **kwargs):
         if not self.request.user.is_authenticated:
@@ -60,11 +60,12 @@ class PlanInputView(FormView):
     def form_valid(self, form):
         self.start = form.cleaned_data['start']
         self.end = form.cleaned_data['end']
-        self.leave_timestamp = int(form.cleaned_data['leave'].timestamp())
+        self.timestamp = int(form.cleaned_data['leave'].timestamp())
         return super().form_valid(form)
 
     def get_success_url(self):
-        return reverse('plan-results', args=(self.start, self.end, self.leave_timestamp))
+        fix = 'd' if self.fix_time == FixTime.START else 'a'
+        return reverse('plan-results', args=(self.start, self.end, str(self.timestamp) + fix))
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data()
@@ -96,23 +97,27 @@ class PlanView(TemplateView):
             user_preferences, created = UserTravelPreferences.objects.get_or_create(user=user)
         return user, user_preferences
 
-    def solve(self, start, end, leave, user_preferences):
+    def solve(self, start, end, req_time, fix_time, user_preferences):
         p = Planner()
         # leave = datetime.datetime(year=2017, month=12, day=11, hour=9, minute=20, second=0)
-        plans = p.solve(start, end, leave, user_preferences)
+        plans = p.solve(start, end, req_time, fix_time, user_preferences)
         return self.get_results(plans)
 
-    def get_context_data(self, start, end, leave_timestamp, **kwargs):
+    def get_context_data(self, start, end, timestamp, **kwargs):
         user, user_preferences = self.get_user_preferences()
         self.register_request(start, end, user)
 
         request_start = time.time()
-        print(leave_timestamp)
-        if not leave_timestamp or leave_timestamp == '0':
-            leave = datetime.datetime.now()
+        fix_time = FixTime.START
+        if timestamp[-1].isalpha:
+            if timestamp[-1] == 'a':
+                fix_time = FixTime.END
+            timestamp = timestamp[:-1]
+        if not timestamp or timestamp == '0':
+            req_time = datetime.datetime.now()
         else:
-            leave = datetime.datetime.fromtimestamp(float(leave_timestamp))
-        results = self.solve(start, end, leave, user_preferences)
+            req_time = datetime.datetime.fromtimestamp(float(timestamp))
+        results = self.solve(start, end, req_time, fix_time, user_preferences)
         request_end = time.time()
         Request.objects.create(user=user, start=start, end=end, timedelta=request_end - request_start)
 
