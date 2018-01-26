@@ -38,6 +38,11 @@ class PlanInputView(FormView):
     template_name = 'reisbrein/plan_input.html'
     form_class = PlanForm
 
+    def __init__(self):
+        self.start = ''
+        self.end = ''
+        self.leave_timestamp = 0
+
     def dispatch(self, request, *args, **kwargs):
         if not self.request.user.is_authenticated:
             create_and_login_anonymous_user(request)
