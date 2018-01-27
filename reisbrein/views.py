@@ -40,7 +40,7 @@ class PlanInputView(FormView):
     def __init__(self):
         self.start = ''
         self.end = ''
-        self.timestamp = 0
+        self.timestamp_minutes = 0
         self.fix_time = FixTime.START
 
     def dispatch(self, request, *args, **kwargs):
@@ -60,12 +60,12 @@ class PlanInputView(FormView):
     def form_valid(self, form):
         self.start = form.cleaned_data['start']
         self.end = form.cleaned_data['end']
-        self.timestamp = int(form.cleaned_data['leave'].timestamp())
+        self.timestamp_minutes = int(form.cleaned_data['leave'].timestamp()/60)
         return super().form_valid(form)
 
     def get_success_url(self):
         fix = 'd' if self.fix_time == FixTime.START else 'a'
-        return reverse('plan-results', args=(self.start, self.end, str(self.timestamp) + fix))
+        return reverse('plan-results', args=(self.start, self.end, str(self.timestamp_minutes) + fix))
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data()
@@ -116,7 +116,7 @@ class PlanView(TemplateView):
         if not timestamp or timestamp == '0':
             req_time = datetime.datetime.now()
         else:
-            req_time = datetime.datetime.fromtimestamp(float(timestamp))
+            req_time = datetime.datetime.fromtimestamp(60*float(timestamp))
         results = self.solve(start, end, req_time, fix_time, user_preferences)
         request_end = time.time()
         Request.objects.create(user=user, start=start, end=end, timedelta=request_end - request_start)
