@@ -26,7 +26,7 @@ class Generator:
         # remove duplicate locations
         for index, l1 in enumerate(locations):
             for l2 in locations[index+1:]:
-                if not l1 is l2 and l1 == l2:
+                if l1 is not l2 and l1 == l2:
                     for p in points:
                         if p.location is l2:
                             p.location = l1
@@ -49,13 +49,12 @@ class Generator:
                     duplicates.add(e2)
         edges[:] = [e for e in edges if e not in duplicates]
 
-
-    def create_edges(self, start, end):
+    def create_edges(self, start, end, fix_time):
         edges = []
 
         routing_api = MonotchApi()
-        public_generator = PublicGenerator(start, end)
-        parkride_generator = ParkRideGenerator(start, end)
+        public_generator = PublicGenerator(start, end, fix_time)
+        parkride_generator = ParkRideGenerator(start, end, fix_time)
         public_generator.prepare(routing_api)
         parkride_generator.prepare(routing_api)
 
@@ -64,8 +63,8 @@ class Generator:
         public_generator.finish(edges)
         parkride_generator.finish(edges)
 
-        self.walk_generator.create_edges(start, end, edges)
-        self.car_generator.create_edges(start, end, edges)
+        self.walk_generator.create_edges(start, end, fix_time, edges)
+        self.car_generator.create_edges(start, end, fix_time, edges)
         self.remove_duplicates(edges)
         # for e in edges:
         #     logger.info(e)
@@ -74,7 +73,7 @@ class Generator:
 
 class TestGenerator:
 
-    def create_edges(self, start, end):
+    def create_edges(self, start, end, fix_time):
         b = Point('b', start.time+datetime.timedelta(seconds=20))
         c = Point('c', start.time+datetime.timedelta(seconds=80))
         d = Point('d', start.time+datetime.timedelta(seconds=50))

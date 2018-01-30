@@ -23,7 +23,7 @@ class CarGenerator:
         segment.map_url = map_url
         return segment, new_point
 
-    def create_edges(self, start, end, edges):
+    def create_edges(self, start, end, fix_time, edges):
         new_edges = []
         new_edges += create_wait_and_move_segments(self, start, end, FixTime.START, TransportType.CAR)
 

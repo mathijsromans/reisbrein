@@ -3,6 +3,7 @@ from reisbrein.api import yoursapi
 from django.test import TestCase
 from website.local_settings import *
 from reisbrein.primitives import Location, TransportType
+from reisbrein.generator.gen_common import FixTime
 from ns_api import NSAPI
 from .tomtom import TomTomApi
 # from .mapquest import MapQuestApi
@@ -110,7 +111,7 @@ class TestMonotch(TestCase):
         begin = Location('Madurodam')
         end = Location('Martinitoren')
         start_time = datetime.datetime.combine(datetime.date.today(), datetime.time(12))
-        self.monotch.add_search_request(begin, end, start_time)
+        self.monotch.add_search_request(begin, end, start_time, FixTime.START)
         # print(result)
         # self.assertNotEqual(result, [])
         # self.assertEqual(len(result['itineraries']), 2)

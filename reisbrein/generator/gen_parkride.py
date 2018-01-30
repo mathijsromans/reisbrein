@@ -7,12 +7,14 @@ from reisbrein.generator.gen_walk import WalkGenerator
 from reisbrein.generator.gen_public import PublicGenerator
 from .gen_common import FixTime
 
+
 class ParkRideGenerator:
     ParkPointAndGenerator = namedtuple('ParkPointAndGenerator', ['park_point', 'generator'])
 
-    def __init__(self, start, end):
+    def __init__(self, start, end, fix_time):
         self.start = start
         self.end = end
+        self.fix_time = fix_time
         self.rdwapi = RdwApi()
         self.cargenerator = CarGenerator()
         self.walkgenerator = WalkGenerator()
@@ -23,12 +25,12 @@ class ParkRideGenerator:
         return min(parkings, key=lambda x: vincenty(location.gps(), x.gps()).meters, default=None)
 
     def prepare(self, routing_api):
-        for loc in set([self.start.location, self.end.location]):
+        for loc in {self.start.location, self.end.location}:
             park_loc = self.closest_parking(loc)
             if park_loc:
                 park = Point(park_loc, self.end.time)
                 segment, new_point = self.cargenerator.create_segment(self.start, park, FixTime.START)
-                publicgenerator = PublicGenerator(new_point, self.end)
+                publicgenerator = PublicGenerator(new_point, self.end, self.fix_time)
                 publicgenerator.prepare(routing_api)
                 ppag = self.ParkPointAndGenerator(park, publicgenerator)
                 self.ppags.append(ppag)

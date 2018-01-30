@@ -4,6 +4,7 @@ import logging
 import time
 from website.local_settings import *
 from reisbrein.api import cache
+from reisbrein.generator.gen_common import FixTime
 
 # MONOTCH_BASE_URL      + ?fromPlace=51.923943445544715%2C4.4659423828125&toPlace=52.38901106223458%2C4.9658203125&arriveBy=false&maxWalkDistance=3000&mode=TRANSIT%2CWALK&api_key=dnjttz9xhbdsm89ba6wpymwu
 # PLANNERSTACK_BASE_URL + ?fromPlace=51.923943445544715%2C4.4659423828125&toPlace=52.38901106223458%2C4.9658203125&mode=TRANSIT%2CWALK&maxWalkDistance=3000&arriveBy=false&wheelchair=false
@@ -28,7 +29,7 @@ class MonotchApi:
     def __init__(self):
         self.reqs = []
 
-    def add_search_request(self, start, end, start_time):
+    def add_search_request(self, start, end, start_time, fix_time):
         request = self.Request(None, start, end, start_time)
         start_gps = start.gps()
         end_gps = end.gps()
@@ -40,6 +41,7 @@ class MonotchApi:
             'mode': 'TRANSIT,WALK',
             'date': str(start_time.month) + '-' + str(start_time.day) + '-' + str(start_time.year),
             'time': str(start_time.hour) + ':' + str(start_time.minute),
+            'arriveBy': str(fix_time == FixTime.END)
             # 'api_key' : MONOTCH_APIKEY,
         }
         url = self.PLANNERSTACK_PRODUCTION_URL if PRODUCTION_SERVER else self.PLANNERSTACK_DEMO_URL

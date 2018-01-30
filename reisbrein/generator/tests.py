@@ -62,6 +62,7 @@ class TestWalkGenerator(TestCase):
         self.assertGreater(segment.to_vertex.time - segment.from_vertex.time, timedelta(minutes=10))
         self.assertLess(segment.to_vertex.time - segment.from_vertex.time, timedelta(minutes=30))
 
+
 class TestTrainGenerator(TestCase):
 
     def setUp(self):
@@ -85,22 +86,39 @@ class TestTrainGenerator(TestCase):
         start = Point(Location('Madurodam'), noon)
         end = Point(Location('Martinitoren'), noon)
         segments = []
-        self.generator.create_edges(start, end, segments)
+        self.generator.create_edges(start, end, FixTime.START, segments)
         self.assertEqual(len(segments), 4)
 
 
 class TestPublicGenerator(TestCase):
-    def test(self):
-        time = noon_today()
+
+    def gen_edges(self, time, fix_time):
+
         start = Point(Location('Den Haag'), time)
         end = Point(Location('Nieuwegein'), time)
         edges = []
-        generator = PublicGenerator(start, end)
+        generator = PublicGenerator(start, end, fix_time)
         routing_api = MonotchApi()
         generator.prepare(routing_api)
         routing_api.do_requests()
         generator.finish(edges)
-        # for s in segments:
-        #     print(s)
+        return edges
+
+    def test_fixed_time_start(self):
+        noon = noon_today()
+        edges = self.gen_edges(noon, FixTime.START)
+        for e in edges:
+            # print(e)
+            self.assertGreater(e.from_vertex.time, noon)
+            self.assertGreater(e.to_vertex.time, noon)
+        self.assertGreater(len(edges), 8)
+
+    def test_fixed_time_end(self):
+        noon = noon_today()
+        edges = self.gen_edges(noon, FixTime.END)
+        for e in edges:
+            # print(e)
+            self.assertLess(e.from_vertex.time, noon)
+            self.assertLess(e.to_vertex.time, noon)
         self.assertGreater(len(edges), 8)
 

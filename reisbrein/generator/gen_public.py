@@ -15,15 +15,19 @@ def get_or_add(container, item):
 
 
 class PublicGenerator:
-    def __init__(self, start, end):
+    def __init__(self, start, end, fix_time):
         self.start = start
         self.end = end
+        self.fix_time = fix_time
         self.routing_api = None
         self.search_request = None
 
     def prepare(self, routing_api):
         self.routing_api = routing_api
-        self.search_request = self.routing_api.add_search_request(self.start.location, self.end.location, self.start.time)
+        self.search_request = self.routing_api.add_search_request(self.start.location,
+                                                                  self.end.location,
+                                                                  self.start.time,
+                                                                  self.fix_time)
 
     def finish(self, edges):
         translate = {

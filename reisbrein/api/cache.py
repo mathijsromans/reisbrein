@@ -28,6 +28,7 @@ QueryInfo = recordclass('QueryInfo',
                          'update_cache',
                          'filename_to_be_updated'])
 
+
 def make_str(coll):
     """
     :param coll: input dict or list
@@ -82,6 +83,8 @@ def do_queries(qis):
         for qi in to_do_qi
     ]
     wait(futures)
+    # for f in futures:
+    #     print(f.result().url)
     for item in zip(to_do_qi, futures):
         item[0].q.result = item[1].result().data
     log_end = time.time()

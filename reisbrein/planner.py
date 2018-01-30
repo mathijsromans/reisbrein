@@ -3,6 +3,7 @@ import logging
 import time
 from datetime import timedelta
 from reisbrein.generator.generator import Generator
+from reisbrein.generator.gen_common import FixTime
 from .graph import Graph, shortest_path
 from .primitives import Point, Location, TransportType
 from .userpreference import order_and_select
@@ -114,9 +115,15 @@ class Planner():
     def solve(self, start_loc, end_loc, req_time, fix_time, user_preferences=UserTravelPreferences()):
         logger.info('BEGIN')
         log_start = time.time()
-        start = Point(Location(start_loc), req_time)
-        end = Point(Location(end_loc), req_time + timedelta(hours=12))
-        edges = self.generator.create_edges(start, end)
+        if fix_time == FixTime.START:
+            start_time = req_time
+            end_time = req_time + timedelta(hours=12)
+        else:
+            start_time = req_time - timedelta(hours=12)
+            end_time = req_time
+        start = Point(Location(start_loc), start_time)
+        end = Point(Location(end_loc), end_time)
+        edges = self.generator.create_edges(start, end, fix_time)
         routes = self.router.make_routes(start, end, edges)
         routes = list(filter(self.has_no_double_biking, routes))
         self.remove_waiting_at_end(routes)

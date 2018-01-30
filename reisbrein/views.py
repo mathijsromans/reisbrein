@@ -124,6 +124,7 @@ class PlanView(TemplateView):
         context = super().get_context_data()
         context['start'] = start
         context['end'] = end
+        context['arrive_by'] = fix_time == FixTime.END
         context['results'] = results
         return context
 

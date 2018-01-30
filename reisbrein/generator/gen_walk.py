@@ -73,7 +73,7 @@ class WalkGenerator:
         segment.map_url = map_url
         return segment, new_point
 
-    def do_create_edges(self, start, end, edges):
+    def do_create_edges(self, start, end, fix_time, edges):
         edges += create_wait_and_move_segments(self, start, end, FixTime.START, TransportType.WALK)
         edges += create_wait_and_move_segments(self, start, end, FixTime.START, TransportType.BIKE,
                                                WalkGenerator.MIN_BIKE_TIME_SEC)
@@ -103,10 +103,10 @@ class WalkGenerator:
                     break
                 e.weather, e.weather_icon = WalkGenerator.weather.search(w)
 
-    def create_edges(self, start, end, edges):
+    def create_edges(self, start, end, fix_time, edges):
         # logger.info('BEGIN')
         # log_start = time.time()
-        self.do_create_edges(start, end, edges)
+        self.do_create_edges(start, end, fix_time, edges)
         # self.add_weather(edges)
         # log_end = time.time()
         # logger.info('END - time: ' + str(log_end - log_start))
