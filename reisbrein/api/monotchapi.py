@@ -31,8 +31,8 @@ class MonotchApi:
 
     def add_search_request(self, start, end, start_time, fix_time):
         request = self.Request(None, start, end, start_time)
-        start_gps = start.gps()
-        end_gps = end.gps()
+        start_gps = start.gps
+        end_gps = end.gps
         arguments = {
             'fromPlace': str(start_gps[0]) + ',' + str(start_gps[1]),
             'toPlace': str(end_gps[0]) + ',' + str(end_gps[1]),

@@ -19,7 +19,7 @@ logger = logging.getLogger(__name__)
 
 def validate_location(value):
     location = Location(value)
-    if not location.gps() or location.gps() == (0,0):
+    if not location.gps or location.gps == (0,0):
         raise ValidationError(
             '{0} is not a valid location'.format(value),
             params={'value': value},

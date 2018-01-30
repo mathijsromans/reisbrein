@@ -11,6 +11,7 @@ def skip_first(iterable):
     for item in it:
         yield item
 
+
 class Station:
     def __init__(self, row):
         self.id = row[0]
@@ -25,15 +26,17 @@ class Station:
         self.geo_lat = row[9]
         self.geo_lng = row[10]
 
+    @property
     def gps(self):
         return self.geo_lat, self.geo_lng
 
     def __str__(self):
         return 'Station: ' + self.naam
 
+
 class TrainGenerator:
     def __init__(self):
-        self.stations=[]
+        self.stations = []
         with open('data/stations-nl-2015-08_from_openov_nl.csv', 'rt', encoding='utf-8') as stations_file:
             reader = csv.reader(stations_file, delimiter=';', quotechar='|')
             for row in skip_first(reader):
@@ -41,7 +44,7 @@ class TrainGenerator:
         # print(list(map(str, self.stations)))
 
     def closest_stations(self, location, n):
-        return heapq.nsmallest(n, self.stations, lambda x: vincenty(location.gps(), x.gps()).meters)
+        return heapq.nsmallest(n, self.stations, lambda x: vincenty(location.gps, x.gps).meters)
 
     def create_edges(self, start, end, fix_time, edges):
         st_start_loc = self.closest_stations(start.location, 2)

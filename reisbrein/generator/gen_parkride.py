@@ -22,7 +22,7 @@ class ParkRideGenerator:
 
     def closest_parking(self, location):
         parkings = self.rdwapi.get_park_and_rides()
-        return min(parkings, key=lambda x: vincenty(location.gps(), x.gps()).meters, default=None)
+        return min(parkings, key=lambda x: vincenty(location.gps, x.gps).meters, default=None)
 
     def prepare(self, routing_api):
         for loc in {self.start.location, self.end.location}:

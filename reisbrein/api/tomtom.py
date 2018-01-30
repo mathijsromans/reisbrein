@@ -42,8 +42,8 @@ class TomTomApi:
         return None
 
     def travel_time(self, start, end):
-        start_gps = start.gps()
-        end_gps = end.gps()
+        start_gps = start.gps
+        end_gps = end.gps
         arguments = { 'key': TOMTOM_APIKEY }
         # headers = {'contentType': 'jsonp'}
         url = TomTomApi.BASE_URL + TomTomApi.ROUTING_URL + \
@@ -60,7 +60,7 @@ class TomTomApi:
 
     @staticmethod
     def map_url(start, end):
-        start_gps = start.gps()
-        end_gps = end.gps()
+        start_gps = start.gps
+        end_gps = end.gps
         return TomTomApi.MAP_URL_START + str(start_gps[0]) + ',' + str(start_gps[1]) + '","hw~' +\
                                          str(end_gps[0]) + ',' + str(end_gps[1]) + TomTomApi.MAP_URL_END

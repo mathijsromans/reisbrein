@@ -67,23 +67,24 @@ class TransportType(Enum):
 
 
 class Location:
-    def __init__(self, loc_str, location=(0,0)):
+    def __init__(self, loc_str, gps=(0, 0)):
         # geolocator = Nominatim()
         self.loc_str = loc_str
-        self.location = location if location != (0,0) else TomTomApi().search(loc_str)
+        self._gps = gps if gps != (0, 0) else TomTomApi().search(loc_str)
         self.has_parking = False
         # geolocator.geocode(self.loc_str)
 
+    @property
     def gps(self):
-        return self.location
+        return self._gps
 
     @property
     def latitude(self):
-        return self.location.latitude
+        return self.gps.latitude
 
     @property
     def longitude(self):
-        return self.location.longitude
+        return self.gps.longitude
 
     def __eq__(self, other):
         # see https://stackoverflow.com/a/25176504

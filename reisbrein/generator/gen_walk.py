@@ -29,8 +29,8 @@ class WalkGenerator:
     def get_bike_travel_time(start_loc, end_loc, transport_type):
         if transport_type == TransportType.OVFIETS:
             transport_type = TransportType.BIKE
-        start_gps = start_loc.gps()
-        end_gps = end_loc.gps()
+        start_gps = start_loc.gps
+        end_gps = end_loc.gps
         distance = vincenty(start_gps, end_gps).meters
         # print ('distance in meters ' + str(distance))
         if transport_type == TransportType.WALK:
@@ -42,8 +42,8 @@ class WalkGenerator:
             if time_sec < time_sec_min:
                 logger.error('Yoursapi gives unrealistic bike timing of ' +
                              str(timedelta(seconds=time_sec)) + ' from: ' +
-                             str(start_loc) + ' at ' + str(start_loc.gps()) + ' to: ' +
-                             str(end_loc) + ' at ' + str(end_loc.gps()))
+                             str(start_loc) + ' at ' + str(start_loc.gps) + ' to: ' +
+                             str(end_loc) + ' at ' + str(end_loc.gps))
                 time_sec = distance/WalkGenerator.SPEED_BIKE
             else:
                 TravelTime.objects.get_or_create(

@@ -61,7 +61,7 @@ class RdwApi:
             except (StopIteration, KeyError, IndexError):
                 pass
         # for p in parkings:
-        #     print(str(p) + ' at ' + str(p.gps()))
+        #     print(str(p) + ' at ' + str(p.gps))
         # print(str(len(parkings)) + ' parkings have a location')
         RdwApi.last_update = datetime.datetime.now()
 

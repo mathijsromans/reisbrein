@@ -100,9 +100,9 @@ class TestLocation(TestCase):
 
     def test(self):
         loc = Location('Utrecht')
-        self.assertEqual(loc.gps(), (52.09126, 5.12275))
+        self.assertEqual(loc.gps, (52.09126, 5.12275))
         loc2 = Location('ddd-unknown-location-ddsfaasdfasdf')
-        self.assertEqual(loc2.gps(), None)
+        self.assertEqual(loc2.gps, None)
 
 
 class TestDijkstraRouter(TestCase):

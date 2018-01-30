@@ -66,6 +66,6 @@ def travel_time(start_gps, end_gps, mode):
 
 
 def map_url(start, end, mode):
-    arguments = get_common_args( start.gps(), end.gps(), mode)
+    arguments = get_common_args( start.gps, end.gps, mode)
     p = requests.Request('GET', BASE_URL, params=arguments).prepare()
     return p.url

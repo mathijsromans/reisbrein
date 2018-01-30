@@ -76,7 +76,7 @@ class TestTrainGenerator(TestCase):
 
     def test_closest_stations(self):
         location = Location('Madurodam')
-        self.assertIsNotNone(location.gps())
+        self.assertIsNotNone(location.gps)
         closest = [station.naam for station in self.generator.closest_stations(location, 3)]
         expected = ['Den Haag Centraal', 'Den Haag HS', 'Den Haag Laan v NOI']
         self.assertEqual(closest, expected)
