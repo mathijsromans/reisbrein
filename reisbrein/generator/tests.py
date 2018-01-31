@@ -90,24 +90,24 @@ class TestTrainGenerator(TestCase):
         self.assertEqual(len(segments), 4)
 
 
-def gen_edges(req_time, fix_time, generator_cls=PublicGenerator):
+def gen_edges(req_time, fix_time, generator):
     start_time = req_time if fix_time == FixTime.START else req_time-timedelta(hours=12)
     end_time   = req_time if fix_time == FixTime.END else req_time+timedelta(hours=12)
     start = Point(Location('Den Haag'), start_time)
     end = Point(Location('Nieuwegein'), end_time)
     edges = []
-    generator = generator_cls()
-    routing_api = MonotchApi()
-    generator.prepare(start, end, fix_time, routing_api)
-    routing_api.do_requests()
-    generator.finish(edges)
+    request = generator.prepare_request(start, end, fix_time)
+    generator.do_requests()
+    request.finish(edges)
     return edges
 
 class TestPublicGenerator(TestCase):
 
     def test_fixed_time_start(self):
         noon = noon_today()
-        edges = gen_edges(noon, FixTime.START)
+        routing_api = MonotchApi()
+        public_generator = PublicGenerator(routing_api)
+        edges = gen_edges(noon, FixTime.START, public_generator)
         for e in edges:
             # print(e)
             self.assertGreater(e.from_vertex.time, noon)
@@ -116,7 +116,9 @@ class TestPublicGenerator(TestCase):
 
     def test_fixed_time_end(self):
         noon = noon_today()
-        edges = gen_edges(noon, FixTime.END)
+        routing_api = MonotchApi()
+        public_generator = PublicGenerator(routing_api)
+        edges = gen_edges(noon, FixTime.END, public_generator)
         for e in edges:
             # print(e)
             self.assertLess(e.from_vertex.time, noon)
@@ -125,12 +127,12 @@ class TestPublicGenerator(TestCase):
 
     def test_mocking(self):
         noon = noon_today()
-        edges = gen_edges(noon, FixTime.START, MockPublicGenerator)
+        edges = gen_edges(noon, FixTime.START, MockPublicGenerator())
         for e in edges:
             # print(e)
             self.assertGreater(e.from_vertex.time, noon)
             self.assertGreater(e.to_vertex.time, noon)
-        edges = gen_edges(noon, FixTime.END, MockPublicGenerator)
+        edges = gen_edges(noon, FixTime.END, MockPublicGenerator())
         for e in edges:
             # print(e)
             self.assertLess(e.from_vertex.time, noon)
@@ -140,7 +142,10 @@ class TestParkRideGenerator(TestCase):
 
     def test_fixed_time_start(self):
         noon = noon_today()
-        edges = gen_edges(noon, FixTime.START, ParkRideGenerator)
+        routing_api = MonotchApi()
+        public_generator = PublicGenerator(routing_api)
+        park_ride_generator = ParkRideGenerator(public_generator)
+        edges = gen_edges(noon, FixTime.START, park_ride_generator)
         for e in edges:
             # print(e)
             self.assertGreater(e.from_vertex.time, noon)
@@ -149,7 +154,10 @@ class TestParkRideGenerator(TestCase):
 
     def test_fixed_time_end(self):
         noon = noon_today()
-        edges = gen_edges(noon, FixTime.END, ParkRideGenerator)
+        routing_api = MonotchApi()
+        public_generator = PublicGenerator(routing_api)
+        park_ride_generator = ParkRideGenerator(public_generator)
+        edges = gen_edges(noon, FixTime.END, park_ride_generator)
         for e in edges:
             # print(e)
             self.assertLess(e.from_vertex.time, noon)

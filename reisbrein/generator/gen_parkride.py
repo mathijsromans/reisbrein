@@ -8,46 +8,46 @@ from reisbrein.generator.gen_public import PublicGenerator
 from .gen_common import FixTime
 
 
-class ParkRideGenerator:
-    ParkPointAndGenerator = namedtuple('ParkPointAndGenerator', ['park_point', 'generator'])
+class ParkRideGeneratorRequest:
 
-    def __init__(self, public_generator_cls=PublicGenerator):
-        self.start = None
-        self.end = None
-        self.fix_time = None
-        self.rdwapi = RdwApi()
-        self.cargenerator = CarGenerator()
-        self.walkgenerator = WalkGenerator()
-        self.ppags = []
-        self.public_generator_cls = public_generator_cls
+    def __init__(self, start, end, fix_time, public_generator):
+        self.ppars = []
+        rdwapi = RdwApi()
+        cargenerator = CarGenerator()
+        for loc in {start.location, end.location}:
+            park_loc = self.closest_parking(loc, rdwapi)
+            if park_loc:
+                park = Point(park_loc, end.time)
+                segment, new_point = cargenerator.create_segment(start, park, FixTime.START)
+                request = public_generator.prepare_request(new_point, end, fix_time)
+                self.ppars.append((park, request))
 
-    def closest_parking(self, location):
-        parkings = self.rdwapi.get_park_and_rides()
+    @staticmethod
+    def closest_parking(location, rdwapi):
+        parkings = rdwapi.get_park_and_rides()
         return min(parkings, key=lambda x: vincenty(location.gps, x.gps).meters, default=None)
 
-    def prepare(self, start, end, fix_time, routing_api):
-        self.start = start
-        self.end = end
-        self.fix_time = fix_time
-        for loc in {self.start.location, self.end.location}:
-            park_loc = self.closest_parking(loc)
-            if park_loc:
-                park = Point(park_loc, self.end.time)
-                segment, new_point = self.cargenerator.create_segment(self.start, park, FixTime.START)
-                publicgenerator = self.public_generator_cls()
-                publicgenerator.prepare(new_point, self.end, self.fix_time, routing_api)
-                ppag = self.ParkPointAndGenerator(park, publicgenerator)
-                self.ppags.append(ppag)
-
     def finish(self, edges):
-        for ppag in self.ppags:
+        walkgenerator = WalkGenerator()
+        for ppar in self.ppars:
             num_edges = len(edges)
-            ppag.generator.finish(edges)
+            ppar[1].finish(edges)
             if len(edges) > num_edges:
                 first_new_vertex = min(edges[num_edges:], key=lambda x: x.from_vertex.time)
 
                 # walk from P+R to first public transport
-                walk_segment, new_point = self.walkgenerator.create_segment(ppag.park_point, first_new_vertex.from_vertex, FixTime.END, TransportType.WALK)
+                walk_segment, new_point = walkgenerator.create_segment(ppar[0], first_new_vertex.from_vertex, FixTime.END, TransportType.WALK)
                 edges.append(walk_segment)
                 # transportation to parking will be added later...
 
+
+class ParkRideGenerator:
+
+    def __init__(self, public_generator):
+        self.public_generator = public_generator
+
+    def prepare_request(self, start, end, fix_time):
+        return ParkRideGeneratorRequest(start, end, fix_time, self.public_generator)
+
+    def do_requests(self):
+        self.public_generator.do_requests()

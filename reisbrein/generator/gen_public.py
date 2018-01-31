@@ -15,15 +15,8 @@ def get_or_add(container, item):
     return item
 
 
-class PublicGenerator:
-    def __init__(self):
-        self.start = None
-        self.end = None
-        self.fix_time = None
-        self.routing_api = None
-        self.search_request = None
-
-    def prepare(self, start, end, fix_time, routing_api):
+class PublicGeneratorRequest:
+    def __init__(self, start, end, fix_time, routing_api):
         self.start = start
         self.end = end
         self.fix_time = fix_time
@@ -88,19 +81,11 @@ class PublicGenerator:
                 edges.append(s)
 
 
-class MockPublicGenerator:
-    def __init__(self):
-        self.start = None
-        self.end = None
-        self.fix_time = None
-        self.routing_api = None
-        self.search_request = None
-
-    def prepare(self, start, end, fix_time, routing_api):
+class MockPublicGeneratorRequest:
+    def __init__(self, start, end, fix_time):
         self.start = start
         self.end = end
         self.fix_time = fix_time
-        self.routing_api = routing_api
 
     def finish(self, edges):
         loc_1 = Location.midpoint(self.start.location, self.end.location, 0.1)
@@ -128,3 +113,28 @@ class MockPublicGenerator:
             Segment(TransportType.TRAIN, p2, p3),
             Segment(TransportType.WALK, p3, p4),
             ]
+
+
+class PublicGenerator:
+
+    def __init__(self, routing_api):
+        self.routing_api = routing_api
+
+    def prepare_request(self, start, end, fix_time):
+        return PublicGeneratorRequest(start, end, fix_time, self.routing_api)
+
+    def do_requests(self):
+        self.routing_api.do_requests()
+
+
+
+class MockPublicGenerator:
+
+    def __init__(self):
+        pass
+
+    def prepare_request(self, start, end, fix_time):
+        return MockPublicGeneratorRequest(start, end, fix_time)
+
+    def do_requests(self):
+        pass
