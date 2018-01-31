@@ -16,14 +16,17 @@ def get_or_add(container, item):
 
 
 class PublicGenerator:
-    def __init__(self, start, end, fix_time):
-        self.start = start
-        self.end = end
-        self.fix_time = fix_time
+    def __init__(self):
+        self.start = None
+        self.end = None
+        self.fix_time = None
         self.routing_api = None
         self.search_request = None
 
-    def prepare(self, routing_api):
+    def prepare(self, start, end, fix_time, routing_api):
+        self.start = start
+        self.end = end
+        self.fix_time = fix_time
         self.routing_api = routing_api
         req_time = self.start.time if self.fix_time == FixTime.START else self.end.time
         self.search_request = self.routing_api.add_search_request(self.start.location,
@@ -86,14 +89,17 @@ class PublicGenerator:
 
 
 class MockPublicGenerator:
-    def __init__(self, start, end, fix_time):
-        self.start = start
-        self.end = end
-        self.fix_time = fix_time
+    def __init__(self):
+        self.start = None
+        self.end = None
+        self.fix_time = None
         self.routing_api = None
         self.search_request = None
 
-    def prepare(self, routing_api):
+    def prepare(self, start, end, fix_time, routing_api):
+        self.start = start
+        self.end = end
+        self.fix_time = fix_time
         self.routing_api = routing_api
 
     def finish(self, edges):

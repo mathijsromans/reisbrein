@@ -53,10 +53,10 @@ class Generator:
         edges = []
 
         routing_api = MonotchApi()
-        public_generator = PublicGenerator(start, end, fix_time)
-        parkride_generator = ParkRideGenerator(start, end, fix_time)
-        public_generator.prepare(routing_api)
-        parkride_generator.prepare(routing_api)
+        public_generator = PublicGenerator()
+        parkride_generator = ParkRideGenerator()
+        public_generator.prepare(start, end, fix_time, routing_api)
+        parkride_generator.prepare(start, end, fix_time, routing_api)
 
         routing_api.do_requests()
 

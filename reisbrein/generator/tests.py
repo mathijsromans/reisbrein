@@ -96,9 +96,9 @@ def gen_edges(req_time, fix_time, generator_cls=PublicGenerator):
     start = Point(Location('Den Haag'), start_time)
     end = Point(Location('Nieuwegein'), end_time)
     edges = []
-    generator = generator_cls(start, end, fix_time)
+    generator = generator_cls()
     routing_api = MonotchApi()
-    generator.prepare(routing_api)
+    generator.prepare(start, end, fix_time, routing_api)
     routing_api.do_requests()
     generator.finish(edges)
     return edges

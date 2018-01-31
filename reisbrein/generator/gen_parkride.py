@@ -11,10 +11,10 @@ from .gen_common import FixTime
 class ParkRideGenerator:
     ParkPointAndGenerator = namedtuple('ParkPointAndGenerator', ['park_point', 'generator'])
 
-    def __init__(self, start, end, fix_time, public_generator_cls=PublicGenerator):
-        self.start = start
-        self.end = end
-        self.fix_time = fix_time
+    def __init__(self, public_generator_cls=PublicGenerator):
+        self.start = None
+        self.end = None
+        self.fix_time = None
         self.rdwapi = RdwApi()
         self.cargenerator = CarGenerator()
         self.walkgenerator = WalkGenerator()
@@ -25,14 +25,17 @@ class ParkRideGenerator:
         parkings = self.rdwapi.get_park_and_rides()
         return min(parkings, key=lambda x: vincenty(location.gps, x.gps).meters, default=None)
 
-    def prepare(self, routing_api):
+    def prepare(self, start, end, fix_time, routing_api):
+        self.start = start
+        self.end = end
+        self.fix_time = fix_time
         for loc in {self.start.location, self.end.location}:
             park_loc = self.closest_parking(loc)
             if park_loc:
                 park = Point(park_loc, self.end.time)
                 segment, new_point = self.cargenerator.create_segment(self.start, park, FixTime.START)
-                publicgenerator = self.public_generator_cls(new_point, self.end, self.fix_time)
-                publicgenerator.prepare(routing_api)
+                publicgenerator = self.public_generator_cls()
+                publicgenerator.prepare(new_point, self.end, self.fix_time, routing_api)
                 ppag = self.ParkPointAndGenerator(park, publicgenerator)
                 self.ppags.append(ppag)
 
