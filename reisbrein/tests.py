@@ -98,11 +98,23 @@ class TestGraph(TestCase):
 
 class TestLocation(TestCase):
 
-    def test(self):
+    def test_basic(self):
         loc = Location('Utrecht')
         self.assertEqual(loc.gps, (52.09126, 5.12275))
         loc2 = Location('ddd-unknown-location-ddsfaasdfasdf')
         self.assertEqual(loc2.gps, None)
+
+    def test_mid(self):
+        loc1 = Location('a', (0.5, 1.5))
+        loc2 = Location('b', (1.5, 3.5))
+
+        mid1 = Location.midpoint(loc1, loc2)
+        self.assertEqual(mid1.loc_str, 'mid_a_b')
+        self.assertEqual(mid1.gps, (1.0, 2.5))
+
+        mid2 = Location.midpoint(loc1, loc2, 0.75)
+        self.assertEqual(mid2.loc_str, 'mid_a_b')
+        self.assertEqual(mid2.gps, (1.25, 3.0))
 
 
 class TestDijkstraRouter(TestCase):

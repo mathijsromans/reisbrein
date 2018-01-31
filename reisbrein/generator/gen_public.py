@@ -2,6 +2,7 @@ import heapq
 import logging
 from datetime import timedelta, datetime
 from reisbrein.primitives import Segment, TransportType, Point, Location, get_equivalent
+from reisbrein.generator.gen_common import FixTime
 
 logger = logging.getLogger(__name__)
 
@@ -24,9 +25,10 @@ class PublicGenerator:
 
     def prepare(self, routing_api):
         self.routing_api = routing_api
+        req_time = self.start.time if self.fix_time == FixTime.START else self.end.time
         self.search_request = self.routing_api.add_search_request(self.start.location,
                                                                   self.end.location,
-                                                                  self.start.time,
+                                                                  req_time,
                                                                   self.fix_time)
 
     def finish(self, edges):
@@ -81,3 +83,42 @@ class PublicGenerator:
             if not any(se.has_same_points_and_type(s) for se in edges):
                 # logger.info('Adding segment ' + str(s))
                 edges.append(s)
+
+
+class MockPublicGenerator:
+    def __init__(self, start, end, fix_time):
+        self.start = start
+        self.end = end
+        self.fix_time = fix_time
+        self.routing_api = None
+        self.search_request = None
+
+    def prepare(self, routing_api):
+        self.routing_api = routing_api
+
+    def finish(self, edges):
+        loc_1 = Location.midpoint(self.start.location, self.end.location, 0.1)
+        loc_2 = Location.midpoint(self.start.location, self.end.location, 0.5)
+        loc_3 = Location.midpoint(self.start.location, self.end.location, 0.9)
+        loc_4 = self.end.location
+
+        if self.fix_time == FixTime.START:
+            start_time = self.start.time
+            end_time = self.start.time + timedelta(hours=1)
+        else:
+            start_time = self.end.time - timedelta(hours=1)
+            end_time = self.end.time
+
+        time_1 = start_time + 0.25 * timedelta(hours=1)
+        time_2 = start_time + 0.5 * timedelta(hours=1)
+        time_3 = start_time + 0.75 * timedelta(hours=1)
+        time_4 = start_time + 0.99 * timedelta(hours=1)
+        p1 = Point(loc_1, time_1)
+        p2 = Point(loc_2, time_2)
+        p3 = Point(loc_3, time_3)
+        p4 = Point(loc_4, time_4)
+        edges += [
+            Segment(TransportType.BUS, p1, p2),
+            Segment(TransportType.TRAIN, p2, p3),
+            Segment(TransportType.WALK, p3, p4),
+            ]

@@ -11,13 +11,16 @@ class _CaptureEq:
     def __init__(self, obj):
         self.obj = obj
         self.match = obj
+
     def __eq__(self, other):
         result = (self.obj == other)
         if result:
             self.match = other
         return result
+
     def __hash__(self):
         return hash(self.obj)
+
 
 def get_equivalent(container, item, default=None):
     """Gets the specific container element matched by: "item in container".
@@ -36,8 +39,10 @@ def get_equivalent(container, item, default=None):
         return t.match
     return default
 
+
 def noon_today():
     return datetime.datetime.combine(datetime.date.today(), datetime.time(12))
+
 
 class TransportType(Enum):
     WAIT = 0
@@ -73,6 +78,13 @@ class Location:
         self._gps = gps if gps != (0, 0) else TomTomApi().search(loc_str)
         self.has_parking = False
         # geolocator.geocode(self.loc_str)
+
+    @classmethod
+    def midpoint(cls, loc1, loc2, p=0.5):
+        loc_str = 'mid_' + loc1.loc_str + '_' + loc2.loc_str
+        gps = ((1-p)*loc1.gps[0] + p*loc2.gps[0],
+               (1-p)*loc1.gps[1] + p*loc2.gps[1])
+        return cls(loc_str, gps)
 
     @property
     def gps(self):
