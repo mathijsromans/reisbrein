@@ -25,7 +25,7 @@ class CarGenerator:
 
     def create_edges(self, start, end, fix_time, edges):
         new_edges = []
-        new_edges += create_wait_and_move_segments(self, start, end, FixTime.START, TransportType.CAR)
+        new_edges += create_wait_and_move_segments(self, start, end, fix_time, TransportType.CAR)
 
         for e in edges:
             if e.from_vertex.location.has_parking:

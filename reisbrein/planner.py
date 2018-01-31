@@ -107,10 +107,12 @@ class Planner():
         return True
 
     @staticmethod
-    def remove_waiting_at_end(routes):
+    def remove_unnecessary_waiting(routes, fix_time):
         for r in routes:
-            if r and r[-1].transport_type == TransportType.WAIT:
-                r.pop()
+            if r:
+                n = 0 if fix_time == FixTime.END else len(r)-1  # remove waiting at the time which is NOT fixed
+            if r[n].transport_type == TransportType.WAIT:
+                r.pop(n)
 
     def solve(self, start_loc, end_loc, req_time, fix_time, user_preferences=UserTravelPreferences()):
         logger.info('BEGIN')
@@ -126,7 +128,7 @@ class Planner():
         edges = self.generator.create_edges(start, end, fix_time)
         routes = self.router.make_routes(start, end, edges)
         routes = list(filter(self.has_no_double_biking, routes))
-        self.remove_waiting_at_end(routes)
+        self.remove_unnecessary_waiting(routes, fix_time)
         plans = [Plan(r) for r in routes]
         order_and_select(plans, user_preferences)
         log_end = time.time()

@@ -92,8 +92,8 @@ class TestTrainGenerator(TestCase):
 
 
 def gen_points(req_time, fix_time):
-    start_time = req_time if fix_time == FixTime.START else req_time-timedelta(hours=12)
-    end_time   = req_time if fix_time == FixTime.END else req_time+timedelta(hours=12)
+    start_time = req_time if fix_time == FixTime.START else req_time-timedelta(hours=10)
+    end_time   = req_time if fix_time == FixTime.END else req_time+timedelta(hours=10)
     start = Point(Location('Den Haag'), start_time)
     end = Point(Location('Nieuwegein'), end_time)
     return start, end
@@ -114,15 +114,17 @@ class TestPublicGenerator(TestCase):
         routing_api = MonotchApi()
         self.public_generator = PublicGenerator(routing_api)
 
-
     def test_fixed_time_start(self):
         fix_time = FixTime.START
         start, end = gen_points(self.noon, fix_time)
         edges = gen_edges(start, end, fix_time, self.public_generator)
         for e in edges:
             # print(e)
-            self.assertGreater(e.from_vertex.time, self.noon)
-            self.assertGreater(e.to_vertex.time, self.noon)
+            if e.transport_type != TransportType.WAIT:
+                self.assertGreaterEqual(e.from_vertex.time, self.noon)
+                self.assertLess(e.from_vertex.time, self.noon + timedelta(hours=2))
+                self.assertGreaterEqual(e.to_vertex.time, self.noon)
+                self.assertLess(e.to_vertex.time, self.noon + timedelta(hours=2))
         self.assertGreater(len(edges), 8)
 
     def test_fixed_time_end(self):
@@ -131,8 +133,11 @@ class TestPublicGenerator(TestCase):
         edges = gen_edges(start, end, fix_time, self.public_generator)
         for e in edges:
             # print(e)
-            self.assertLess(e.from_vertex.time, self.noon)
-            self.assertLess(e.to_vertex.time, self.noon)
+            if e.transport_type != TransportType.WAIT:
+                self.assertLessEqual(e.from_vertex.time, self.noon)
+                self.assertGreater(e.from_vertex.time, self.noon - timedelta(hours=2))
+                self.assertLessEqual(e.to_vertex.time, self.noon)
+                self.assertGreater(e.to_vertex.time, self.noon - timedelta(hours=2))
         self.assertGreater(len(edges), 8)
 
     def test_mocking(self):
@@ -141,15 +146,21 @@ class TestPublicGenerator(TestCase):
         edges = gen_edges(start, end, fix_time, MockPublicGenerator())
         for e in edges:
             # print(e)
-            self.assertGreater(e.from_vertex.time, self.noon)
-            self.assertGreater(e.to_vertex.time, self.noon)
+            if e.transport_type != TransportType.WAIT:
+                self.assertGreaterEqual(e.from_vertex.time, self.noon)
+                self.assertLess(e.from_vertex.time, self.noon + timedelta(hours=2))
+                self.assertGreaterEqual(e.to_vertex.time, self.noon)
+                self.assertLess(e.to_vertex.time, self.noon + timedelta(hours=2))
         fix_time = FixTime.END
         start, end = gen_points(self.noon, fix_time)
         edges = gen_edges(start, end, fix_time, MockPublicGenerator())
         for e in edges:
             # print(e)
-            self.assertLess(e.from_vertex.time, self.noon)
-            self.assertLess(e.to_vertex.time, self.noon)
+            if e.transport_type != TransportType.WAIT:
+                self.assertLessEqual(e.from_vertex.time, self.noon)
+                self.assertGreater(e.from_vertex.time, self.noon - timedelta(hours=2))
+                self.assertLessEqual(e.to_vertex.time, self.noon)
+                self.assertGreater(e.to_vertex.time, self.noon - timedelta(hours=2))
 
 
 class TestParkRideGenerator(TestCase):
@@ -166,10 +177,12 @@ class TestParkRideGenerator(TestCase):
         edges = gen_edges(start, end, fix_time, self.park_ride_generator)
         self.car_generator.create_edges(start, end, fix_time, edges)
         for e in edges:
-            pass
             # print(e)
-            # self.assertGreater(e.from_vertex.time, self.noon)
-            # self.assertGreater(e.to_vertex.time, self.noon)
+            if e.transport_type != TransportType.WAIT:
+                self.assertGreaterEqual(e.from_vertex.time, self.noon)
+                self.assertLess(e.from_vertex.time, self.noon + timedelta(hours=2))
+                self.assertGreaterEqual(e.to_vertex.time, self.noon)
+                self.assertLess(e.to_vertex.time, self.noon + timedelta(hours=2))
         self.assertEqual(len(edges), 14)
 
     def test_fixed_time_end(self):
@@ -178,9 +191,11 @@ class TestParkRideGenerator(TestCase):
         edges = gen_edges(start, end, fix_time, self.park_ride_generator)
         self.car_generator.create_edges(start, end, fix_time, edges)
         for e in edges:
-            pass
             # print(e)
-            # self.assertLess(e.from_vertex.time, self.noon)
-            # self.assertLess(e.to_vertex.time, self.noon)
+            if e.transport_type != TransportType.WAIT:
+                self.assertLessEqual(e.from_vertex.time, self.noon)
+                self.assertGreater(e.from_vertex.time, self.noon - timedelta(hours=2))
+                self.assertLessEqual(e.to_vertex.time, self.noon)
+                self.assertGreater(e.to_vertex.time, self.noon - timedelta(hours=2))
         self.assertEqual(len(edges), 14)
 

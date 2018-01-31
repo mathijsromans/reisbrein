@@ -1,13 +1,13 @@
 import datetime
 import time
 import logging
-from reisbrein.generator.gen_common import FixTime
 from django import forms
 from django.core.exceptions import ValidationError
 from django.views.generic import TemplateView
 from django.views.generic.edit import FormView
 from django.urls import reverse
 from datetimewidget.widgets import DateTimeWidget
+from reisbrein.generator.gen_common import FixTime
 from reisbrein.primitives import Location
 from reisbrein.planner import Planner
 from reisbrein.models import UserTravelPreferences
@@ -31,6 +31,7 @@ class PlanForm(forms.Form):
     end = forms.CharField(label='Naar', validators=[validate_location])
     date_time_widget = DateTimeWidget(attrs={'id':"yourdatetimeid"}, usel10n=True, bootstrap_version=3)
     leave = forms.DateTimeField(label='Vertrek', widget=date_time_widget)
+    arrive_by = forms.BooleanField(label='Is aankomsttijd', required=False)
 
 
 class PlanInputView(FormView):
@@ -41,7 +42,7 @@ class PlanInputView(FormView):
         self.start = ''
         self.end = ''
         self.timestamp_minutes = 0
-        self.fix_time = FixTime.START
+        self.arrive_by = False
 
     def dispatch(self, request, *args, **kwargs):
         if not self.request.user.is_authenticated:
@@ -55,16 +56,18 @@ class PlanInputView(FormView):
         user_preferences, created = UserTravelPreferences.objects.get_or_create(user=self.request.user)
         initial['start'] = user_preferences.home_address
         initial['leave'] = datetime.datetime.now()
+        initial['arrive_by'] = False
         return initial
 
     def form_valid(self, form):
         self.start = form.cleaned_data['start']
         self.end = form.cleaned_data['end']
         self.timestamp_minutes = int(form.cleaned_data['leave'].timestamp()/60)
+        self.arrive_by = form.cleaned_data['arrive_by']
         return super().form_valid(form)
 
     def get_success_url(self):
-        fix = 'd' if self.fix_time == FixTime.START else 'a'
+        fix = 'a' if self.arrive_by else 'd'
         return reverse('plan-results', args=(self.start, self.end, str(self.timestamp_minutes) + fix))
 
     def get_context_data(self, **kwargs):
