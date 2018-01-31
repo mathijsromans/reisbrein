@@ -88,17 +88,15 @@ class MockPublicGeneratorRequest:
         self.fix_time = fix_time
 
     def finish(self, edges):
-        loc_1 = Location.midpoint(self.start.location, self.end.location, 0.1)
+        loc_1 = Location.midpoint(self.start.location, self.end.location, 0.01)
         loc_2 = Location.midpoint(self.start.location, self.end.location, 0.5)
-        loc_3 = Location.midpoint(self.start.location, self.end.location, 0.9)
+        loc_3 = Location.midpoint(self.start.location, self.end.location, 0.99)
         loc_4 = self.end.location
 
         if self.fix_time == FixTime.START:
             start_time = self.start.time
-            end_time = self.start.time + timedelta(hours=1)
         else:
             start_time = self.end.time - timedelta(hours=1)
-            end_time = self.end.time
 
         time_1 = start_time + 0.25 * timedelta(hours=1)
         time_2 = start_time + 0.5 * timedelta(hours=1)
