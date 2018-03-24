@@ -8,9 +8,11 @@ class CarGenerator:
 
     def __init__(self):
         self.tomtom = TomTomApi()
+        
+    
 
-    def create_segment(self, start, end, fix, transport_type=TransportType.CAR):
-        route_params = TomTomApi.RouteParams(start=start.location, end=end.location)
+    def create_segment(self, start, end, fix, transport_type=TransportType.CAR, option=False):
+        route_params = TomTomApi.RouteParams(start=start.location, end=end.location, avoid_highways=option)
         travel_time, delay = self.tomtom.travel_time(route_params)
         delta_t = timedelta(seconds=travel_time)
         map_url = self.tomtom.map_url(route_params)
@@ -26,10 +28,14 @@ class CarGenerator:
 
     def create_edges(self, start, end, fix_time, edges):
         new_edges = []
-        new_edges += create_wait_and_move_segments(self, start, end, fix_time, TransportType.CAR)
+        
+        #both including and excluding highways, to possibly filter later on
+        for highway_toggle in (True, False):
 
-        for e in edges:
-            if e.from_vertex.location.has_parking:
-                new_edges += create_wait_and_move_segments(self, start, e.from_vertex, FixTime.END, TransportType.CAR)
+            new_edges += create_wait_and_move_segments(self, start, end, fix_time, TransportType.CAR, option=highway_toggle)
+
+            for e in edges:
+                if e.from_vertex.location.has_parking:
+                    new_edges += create_wait_and_move_segments(self, start, e.from_vertex, FixTime.END, TransportType.CAR, option=highway_toggle)
 
         edges += new_edges

@@ -8,8 +8,8 @@ class FixTime(Enum):
     END = 1
 
 
-def create_wait_and_move_segments(generator, start, end, fix, transport_type, min_time_sec=0):
-    segment, new_point = generator.create_segment(start, end, fix, transport_type)
+def create_wait_and_move_segments(generator, start, end, fix, transport_type, min_time_sec=0, option=None):
+    segment, new_point = generator.create_segment(start, end, fix, transport_type, option)
     if segment.time_sec < min_time_sec:
         return []
     edges = []

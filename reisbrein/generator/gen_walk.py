@@ -60,7 +60,7 @@ class WalkGenerator:
         return time_sec
 
     @staticmethod
-    def create_segment(start, end, fix_time, transport_type):
+    def create_segment(start, end, fix_time, transport_type, option=None):
         time_sec = WalkGenerator.get_bike_travel_time(start.location, end.location, transport_type)
         map_url = yoursapi.map_url(start.location, end.location, transport_type)
         delta_t = timedelta(seconds=time_sec)
