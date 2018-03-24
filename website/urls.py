@@ -8,7 +8,7 @@ from reisbrein.views import PlanInputView
 from reisbrein.views import PlanView
 from reisbrein.views import UserTravelPreferencesView
 
-from website.views import ContactView
+from website.views import RegisterView
 from website.views import UserProfileView
 
 
@@ -22,6 +22,7 @@ urlpatterns = [
 
     url(r'^userprofile/(?P<pk>[0-9]+)/$', login_required(UserProfileView.as_view()), name='userprofile'),
 
+    url(r'^register/$', RegisterView.as_view()),  # needed to logout the auto-generated anonymous user
     url(r'^accounts/', include('registration.backends.simple.urls')),  # the django-registration module
     url(r'^admin/', admin.site.urls),
 ]
