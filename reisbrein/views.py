@@ -163,8 +163,6 @@ class PlanView(TemplateView):
     def format_minutes(minutes):
         hours = minutes // 60
         minutes %= 60
-        if hours == 0:
-            return "%2i min" % (minutes)
         return "%2i:%02i" % (hours, minutes)
 
 
