@@ -117,7 +117,14 @@ python manage.py runserver
 
 The website is now available at http://127.0.0.1:8000 and admin http://127.0.0.1:8000/admin.
 
-## Configuration (optional)
+## Configuration
+
+To use various external APIs you need to use API keys. These keys are not part of the git sources, so you have to set them manually.
+These kan be set in the file local_settings.py, which in first instance will be a copy of local_settings_example.py.
+
+Note also that this file as a production server toggle, named 'PRODUCTION_SERVER', which by default is set to false.
+This has the effect that a demo version of the external public transport planner will be used, which has a tight fair use policy.
+Setting it to true will not help, because it only works on certain IP addresses.
 
 #### Create a superuser (optional)
 This allows you to login at the website as superuser and view the admin page,
