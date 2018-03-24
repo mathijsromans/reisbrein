@@ -57,6 +57,8 @@ class WalkGenerator:
                         'time_sec': time_sec
                     }
                 )
+            # assume 2 minutes to get/park the bike at each end
+            time_sec += 2 * 2 * 60
         return time_sec
 
     @staticmethod
