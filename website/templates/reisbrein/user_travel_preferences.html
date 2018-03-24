@@ -21,6 +21,7 @@
         {% csrf_token %}
         {% bootstrap_field form.home_address show_label=True%}
         {% bootstrap_field form.has_car show_label=False %}
+        {% bootstrap_field form.avoid_highways show_label=False %}
         {% bootstrap_field form.has_bicycle show_label=False %}
         {% bootstrap_field form.likes_to_bike show_label=False %}
         {% bootstrap_field form.travel_time_importance show_label=False %}
