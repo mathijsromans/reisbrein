@@ -122,9 +122,9 @@ class TestPublicGenerator(TestCase):
             # print(e)
             if e.transport_type != TransportType.WAIT:
                 self.assertGreaterEqual(e.from_vertex.time, self.noon)
-                self.assertLess(e.from_vertex.time, self.noon + timedelta(hours=2))
+                self.assertLess(e.from_vertex.time, self.noon + timedelta(hours=3))
                 self.assertGreaterEqual(e.to_vertex.time, self.noon)
-                self.assertLess(e.to_vertex.time, self.noon + timedelta(hours=2))
+                self.assertLess(e.to_vertex.time, self.noon + timedelta(hours=3))
         self.assertGreater(len(edges), 8)
 
     def test_fixed_time_end(self):
