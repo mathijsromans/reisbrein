@@ -67,13 +67,14 @@ def get_conditions(option):
     condition_dict['num transfers'] = 0
     condition_dict['car distance'] = 0
     condition_dict['train distance'] = 0
+    condition_dict['tram distance'] = 0
     condition_dict['bus distance'] = 0
 
     if option[0].transport_type == TransportType.WAIT:
         condition_dict['time at home'] = option[0].time_sec / 60
 
     for s in option:
-        if s.transport_type in [TransportType.CAR, TransportType.TRAIN, TransportType.BUS]: 
+        if s.transport_type in [TransportType.CAR, TransportType.TRAIN, TransportType.BUS, TransportType.TRAM]: 
             condition_dict['num transfers'] += 1
         if s.transport_type == TransportType.CAR:
             condition_dict['involves car'] = 1
@@ -87,6 +88,9 @@ def get_conditions(option):
         if s.transport_type == TransportType.TRAIN:
             condition_dict['involves train'] = 1
             condition_dict['train distance'] += s.time_sec / 60.0
+        if s.transport_type == TransportType.TRAM:
+            #condition_dict['involves tram'] = 1
+            condition_dict['tram distance'] += s.time_sec / 60.0
         if s.transport_type == TransportType.BUS:
             condition_dict['bus distance'] += s.time_sec / 60.0
             condition_dict['involves bus'] = 1

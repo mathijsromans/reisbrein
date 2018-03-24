@@ -39,7 +39,6 @@ class PlanInputView(FormView):
     form_class = PlanForm
 
     def __init__(self):
-        super().__init__()
         self.start = ''
         self.end = ''
         self.timestamp_minutes = 0

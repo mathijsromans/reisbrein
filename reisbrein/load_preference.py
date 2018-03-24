@@ -30,6 +30,7 @@ def load_dummy_preference_condition_matrix():
         'car distance',
         'train distance',
         'bus distance',
+        'tram distance',
     ]
     
 
@@ -41,11 +42,13 @@ def load_dummy_preference_condition_matrix():
     
     
     # from Kamiel, value of time per minute --> costs per hour
-    # car 10.098774858, train 1.012834843, bus 3.4614907766
+    # car 10.098774858, train 1.012834843, bus 3.4614907766, tram 0.506417422
+
 
     CO2_conversion_number = -18/60. #18=minute --> hour
     M[pl.index('save CO2'), cl.index('car distance')] = CO2_conversion_number*10.098774858
     M[pl.index('save CO2'), cl.index('train distance')] = CO2_conversion_number*1.012834843
+    M[pl.index('save CO2'), cl.index('tram distance')] = CO2_conversion_number*0.506417422
     M[pl.index('save CO2'), cl.index('bus distance')] = CO2_conversion_number*3.4614907766
     
     M[pl.index('fast'), cl.index('total time')] = -18  # per minute
