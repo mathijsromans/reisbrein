@@ -23,8 +23,11 @@
                   {% if segment.obj.transport_type.name == 'WAIT' %} - leave in
                     <span class="text-success">
                       <strong>{{ segment.travel_time_min }}</strong>
-                    </span> minutes at <span class="text-success">
-                    <strong>{{ segment.obj.to_vertex.time|date:"H:i" }}</strong>
+                    </span>
+                    minutes at
+                    <span class="text-success">
+                      <strong>{{ segment.obj.to_vertex.time|date:"H:i" }}</strong>
+                    </span>
                   {% endif %}
                 </span>
               </div>
