@@ -1,5 +1,5 @@
 # reisbrein
-
+[![Dependency Status](https://gemnasium.com/badges/github.com/mathijsromans/reisbrein.svg)](https://gemnasium.com/github.com/mathijsromans/reisbrein)  
 Requires Python 3.4+ and Django 1.11+
 
 ## Installation part 1 (Linux)
