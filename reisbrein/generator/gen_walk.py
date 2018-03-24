@@ -39,7 +39,7 @@ class WalkGenerator:
             # logger.info('Yoursapi bike request from: ' + str(start_loc) + ' to: ' + str(end_loc))
             time_sec_min = distance/WalkGenerator.MAX_SPEED_BIKE
             time_sec = yoursapi.travel_time(start_gps, end_gps, TransportType.BIKE)
-            if time_sec < time_sec_min:
+            if time_sec_min > 30 and time_sec < time_sec_min:
                 logger.error('Yoursapi gives unrealistic bike timing of ' +
                              str(timedelta(seconds=time_sec)) + ' from: ' +
                              str(start_loc) + ' at ' + str(start_loc.gps) + ' to: ' +
