@@ -26,7 +26,7 @@
               <strong>{{ result.travel_time_str }}</strong>
             </span>
           </div>
-          <div class="col-xs-11">
+          <div class="col-xs-11" {% if arrive_by %} align="right" {% endif %}>
             <div class="progress" style="height: 30px; margin-bottom: 5px; width: {{ result.travel_time_percentage }}%">
             {% for segment in result.segments %}
               {% transport_type_icon segment.obj.transport_type.name as icon %}
