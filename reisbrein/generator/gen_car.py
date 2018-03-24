@@ -10,9 +10,10 @@ class CarGenerator:
         self.tomtom = TomTomApi()
 
     def create_segment(self, start, end, fix, transport_type=TransportType.CAR):
-        travel_time, delay = self.tomtom.travel_time(start.location, end.location)
+        route_params = TomTomApi.RouteParams(start=start.location, end=end.location)
+        travel_time, delay = self.tomtom.travel_time(route_params)
         delta_t = timedelta(seconds=travel_time)
-        map_url = self.tomtom.map_url(start.location, end.location)
+        map_url = self.tomtom.map_url(route_params)
         if fix == FixTime.START:
             new_point = Point(end.location, start.time + delta_t)
             segment = Segment(transport_type, start, new_point)

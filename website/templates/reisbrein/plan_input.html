@@ -2,7 +2,7 @@
 
 {% load bootstrap3 %}
 
-{% block title %}Plan {{ block.super }}{% endblock %}
+{% block title %}Reisplanner op maat {{ block.super }}{% endblock %}
 
 {% block content %}
 <div class="container">
@@ -37,42 +37,18 @@
     <div class="col-md-4 col-md-offset-4">
       <div class="panel panel-default text-center">
         <div class="panel-heading">
-          Previous Trips
+          Eerdere Reizen
         </div>
         <div class="panel-body">
         {% for plan in plan_history %}
-          <div class="h5"><a href="{% url 'plan-results' plan.start plan.end 0 %}">{{ plan.start }} - {{ plan.end }}</a></div>
+          <div class="h5">
+            <a href="{% url 'plan-results' plan.start plan.end 0 %}">{{ plan.start }} - {{ plan.end }}</a>
+          </div>
         {% endfor %}
         </div>
       </div>
     </div>
   </div>
   {% endif %}
-  <div class="row">
-    <div class="col-md-4 col-md-offset-4">
-      <div class="panel panel-default text-center">
-        <div class="panel-heading">
-          About
-        </div>
-        <div class="panel-body">
-          <p>
-            Reisbrein is a hackathon project participating in the
-            <a href ="https://www.utrechtinc.nl/en/dutchmobilityhackathon/">Dutch Mobility Hackathon</a>
-            (17-18 November 2017).
-          </p>
-          <p>
-            Reisbrein makes use of data generously made available by
-            <a href="https://developer.tomtom.com/">TomTom</a>,
-            <a href="http://www.plannerstack.org/">Plannerstack</a>,
-            <a href="http://wiki.openstreetmap.org/wiki/YOURS">Yours</a>, and
-            <a href="https://opendata.rdw.nl/">RDW</a>.            .
-          </p>
-          <p>
-            Contact: reisbrein@romansland.nl
-          </p>
-        </div>
-      </div>
-    </div>
-  </div>
 </div>
 {% endblock %}

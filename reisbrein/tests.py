@@ -141,7 +141,7 @@ class TestDijkstraRouter(TestCase):
         p = Planner(router=DijkstraRouter)
         vertices = []
         noon = noon_today()
-        for plan in p.solve('Madurodam', 'Martinitoren', noon, FixTime.START):
+        for plan in p.solve('Nijverheidsweg Utrecht', 'Voorstraat Utrecht', noon, FixTime.START):
             vertices.append([edge.to_vertex for edge in plan.route])
 
         # print(list(recur_map(str, vertices)))
@@ -175,7 +175,7 @@ class TestRichRouter(TestCase):
         p = Planner()
         vertices = []
         noon = noon_today()
-        plans = p.solve('Madurodam', 'Martinitoren', noon, FixTime.START)
+        plans = p.solve('Nijverheidsweg Utrecht', 'Voorstraat Utrecht', noon, FixTime.START)
         for plan in plans:
             vertices.append([edge.to_vertex for edge in plan.route])
         # print(list(recur_map(str, vertices)))

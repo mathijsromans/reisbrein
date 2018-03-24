@@ -35,15 +35,22 @@ class TestTomTom(TestCase):
     def testRouting(self):
         start = Location('Madurodam')
         end = Location('Martinitoren')
-        travel1 = self.tomtom.travel_time(start, end)[0]
-        # print(travel1)
+        travel1 = self.tomtom.travel_time(TomTomApi.RouteParams(start, end))[0]
         self.assertGreater(travel1, 2 * 3600)
         self.assertLess(travel1, 4 * 3600)
+
+    def testAvoidHighway(self):
+        start = Location('Madurodam')
+        end = Location('Martinitoren')
+        travel1 = self.tomtom.travel_time(TomTomApi.RouteParams(start, end, avoid_highways=True))[0]
+        self.assertGreater(travel1, 8442)
+        self.assertGreater(travel1, 4 * 3600)
+        self.assertLess(travel1, 6 * 3600)
 
     def test_map_url(self):
         start = Location('Utrecht')
         end = Location('Amsterdam')
-        url = self.tomtom.map_url(start, end)
+        url = self.tomtom.map_url(TomTomApi.RouteParams(start=start, end=end))
         self.assertEqual(url,'https://mydrive.tomtom.com/nl_nl/#mode=routes+routes={"departure":true,"traffic":true,"routeType":"FASTEST","travelMode":"CAR","points":["hw~52.09126,5.12275","hw~52.37317,4.89066"],"avoidCriteria":[]}+ver=3')
 
 

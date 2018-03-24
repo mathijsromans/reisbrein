@@ -2,18 +2,37 @@
 
 {% block title %}About {{ block.super }}{% endblock %}
 
+
 {% block content %}
+<div class="vertical-spacer-20"></div>
 
-<div class="row" align="center">
-  <h3>About</h3>
-</div>
-
-<div class="row">
-
-  <div class="col-sm-8 - col-sm-offset-2" align="left">
-    <p>This is an example about page.</p>
+<div class="container">
+  <div class="row">
+    <div class="col-md-6 col-md-offset-3">
+      <div class="panel panel-default text-center">
+        <div class="panel-heading">
+          About
+        </div>
+        <div class="panel-body">
+          <p>
+            Reisbrein is a hackathon project participating in the
+            <a href ="https://www.utrechtinc.nl/en/dutchmobilityhackathon/">Dutch Mobility Hackathon</a>
+            (17-18 November 2017).
+          </p>
+          <p>
+            Reisbrein makes use of data generously made available by
+            <a href="https://developer.tomtom.com/">TomTom</a>,
+            <a href="http://www.plannerstack.org/">Plannerstack</a>,
+            <a href="http://wiki.openstreetmap.org/wiki/YOURS">Yours</a>, and
+            <a href="https://opendata.rdw.nl/">RDW</a>.
+          </p>
+          <p>
+            Contact: reisbrein@romansland.nl
+          </p>
+        </div>
+      </div>
+    </div>
   </div>
-
 </div>
 
 {% endblock %}

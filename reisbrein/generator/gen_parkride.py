@@ -1,10 +1,8 @@
-from collections import namedtuple
 from geopy.distance import vincenty
 from reisbrein.api.rdwapi import RdwApi
 from reisbrein.primitives import Segment, TransportType, Point
 from reisbrein.generator.gen_car import CarGenerator
 from reisbrein.generator.gen_walk import WalkGenerator
-from reisbrein.generator.gen_public import PublicGenerator
 from .gen_common import FixTime
 
 
