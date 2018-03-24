@@ -31,7 +31,7 @@ class PlanForm(forms.Form):
     end = forms.CharField(label='Naar', validators=[validate_location])
     date_time_widget = DateTimeWidget(attrs={'id':"yourdatetimeid"}, usel10n=True, bootstrap_version=3)
     leave = forms.DateTimeField(label='Vertrek', widget=date_time_widget)
-    arrive_by = forms.BooleanField(label='Is aankomsttijd', required=False)
+    arrive_by = forms.BooleanField(label='Is aankomsttijd', required=False, widget=forms.HiddenInput())
 
 
 class PlanInputView(FormView):
