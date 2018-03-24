@@ -31,7 +31,7 @@ class PlanForm(forms.Form):
     end = forms.CharField(label='Naar', validators=[validate_location])
     date_time_widget = DateTimeWidget(attrs={'id':"yourdatetimeid"}, usel10n=True, bootstrap_version=3)
     leave = forms.DateTimeField(label='Vertrek', widget=date_time_widget)
-    arrive_by = forms.BooleanField(label='Is aankomsttijd', required=False)
+    arrive_by = forms.BooleanField(label='Is aankomsttijd', required=False, widget=forms.HiddenInput())
 
 
 class PlanInputView(FormView):
@@ -163,8 +163,6 @@ class PlanView(TemplateView):
     def format_minutes(minutes):
         hours = minutes // 60
         minutes %= 60
-        if hours == 0:
-            return "%2i min" % (minutes)
         return "%2i:%02i" % (hours, minutes)
 
 
@@ -186,10 +184,15 @@ class PlanView(TemplateView):
 class UserTravelPreferencesForm(forms.Form):
     home_address = forms.CharField(label='Home address', required=False)
     has_car = forms.BooleanField(label='I have a car', required=False)
+    avoid_highways = forms.BooleanField(label='I want to avoid highways', required=False)
     has_bicycle = forms.BooleanField(label='I have a bicycle', required=False)
     likes_to_bike = forms.IntegerField()
     travel_time_importance = forms.IntegerField()
+    save_CO2 = forms.IntegerField(label='Save CO2')
     show_n_results = forms.IntegerField(label='Number of results')
+    #reduce_number_of_transfers = forms.BooleanField(label='Avoid transfers where it makes sense', required=False)
+
+
 
 
 class UserTravelPreferencesView(FormView):
@@ -202,9 +205,12 @@ class UserTravelPreferencesView(FormView):
         initial['home_address'] = user_preferences.home_address
         initial['show_n_results'] = user_preferences.show_n_results
         initial['has_car'] = user_preferences.has_car
+        initial['avoid_highways'] = user_preferences.avoid_highways
         initial['has_bicycle'] = user_preferences.has_bicycle
         initial['likes_to_bike'] = user_preferences.likes_to_bike
         initial['travel_time_importance'] = user_preferences.travel_time_importance
+        initial['save_CO2'] = user_preferences.save_CO2
+        #initial['reduce_number_of_transfers'] = user_preferences.reduce_number_of_transfers
         return initial
 
     def form_valid(self, form):
@@ -212,9 +218,12 @@ class UserTravelPreferencesView(FormView):
         user_preferences.home_address = form.cleaned_data['home_address']
         user_preferences.show_n_results = form.cleaned_data['show_n_results']
         user_preferences.has_car = form.cleaned_data['has_car']
+        user_preferences.avoid_highways = form.cleaned_data['avoid_highways']
         user_preferences.has_bicycle = form.cleaned_data['has_bicycle']
         user_preferences.likes_to_bike = form.cleaned_data['likes_to_bike']
         user_preferences.travel_time_importance = form.cleaned_data['travel_time_importance']
+        user_preferences.save_CO2 = form.cleaned_data['save_CO2']
+        #user_preferences.reduce_number_of_transfers = form.cleaned_data['reduce_number_of_transfers']
         user_preferences.save()
         return super().form_valid(form)
 

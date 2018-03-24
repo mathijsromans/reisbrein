@@ -65,14 +65,20 @@ def get_conditions(option):
     condition_dict['rainy'] = 0
     condition_dict['time at home'] = 0
     condition_dict['num transfers'] = 0
+    condition_dict['car distance'] = 0
+    condition_dict['train distance'] = 0
+    condition_dict['tram distance'] = 0
+    condition_dict['bus distance'] = 0
 
     if option[0].transport_type == TransportType.WAIT:
         condition_dict['time at home'] = option[0].time_sec / 60
 
     for s in option:
-        condition_dict['num transfers'] += 1
+        if s.transport_type in [TransportType.CAR, TransportType.TRAIN, TransportType.BUS, TransportType.TRAM]: 
+            condition_dict['num transfers'] += 1
         if s.transport_type == TransportType.CAR:
             condition_dict['involves car'] = 1
+            condition_dict['car distance'] += s.time_sec / 60.0
         if s.transport_type == TransportType.WALK:
             condition_dict['involves walk'] = 1
         if s.transport_type == TransportType.BIKE or s.transport_type == TransportType.OVFIETS:
@@ -81,7 +87,12 @@ def get_conditions(option):
             condition_dict['involves own bike'] = 1
         if s.transport_type == TransportType.TRAIN:
             condition_dict['involves train'] = 1
+            condition_dict['train distance'] += s.time_sec / 60.0
+        if s.transport_type == TransportType.TRAM:
+            #condition_dict['involves tram'] = 1
+            condition_dict['tram distance'] += s.time_sec / 60.0
         if s.transport_type == TransportType.BUS:
+            condition_dict['bus distance'] += s.time_sec / 60.0
             condition_dict['involves bus'] = 1
         condition_dict['total time'] += s.time_sec / 60
         if s.weather == 'rainy':
@@ -95,6 +106,10 @@ def score(option, user_preferences):
     conditions = array( [cd[cond] for cond in conditions_list] )
     conditions_vector = Matrix.dot(conditions)
     preference = conditions_vector.dot(preference_vec)
+    #print(conditions)
+    #print(conditions_vector)
+    #print(preference_vec)
+    #print(preference)
     # print(str(list(map(str, option))) + ' has score ' + str(preference))
     return preference
 

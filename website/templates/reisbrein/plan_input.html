@@ -18,13 +18,33 @@
         {% bootstrap_field form.start show_label=False %}
         {% bootstrap_field form.end show_label=False %}
         {% bootstrap_field form.leave show_label=False %}
-        {% bootstrap_field form.arrive_by show_label=True %}
+        <label class="switch">
+          <input type="checkbox" id="arrive-toggle-button">
+          <div class="toggle-slider round"></div>
+        </label>
+        {% bootstrap_field form.arrive_by %}
         {% buttons %}
-        <button type="submit" class="btn btn-block btn-primary" title="Plan reis">
-          Plan
-        </button>
+          <button id="submit-directions" type="submit" class="btn btn-block btn-primary" title="Plan reis">
+            Plan
+          </button>
         {% endbuttons %}
       </form>
+
+      <script>
+        // set the hidden django form checkbox to the value of the fancy toggle slider
+        $(function() {
+          function setHiddenArriveCheckbox() {
+            var arriveToggleButton = $("#arrive-toggle-button");
+            var hiddenInputField = $("#id_arrive_by");
+            if (arriveToggleButton.prop('checked')) {
+              hiddenInputField.val('True');
+            } else {
+              hiddenInputField.val('False');
+            }
+          }
+          $("#submit-directions").on("click", setHiddenArriveCheckbox);
+        });
+      </script>
 
     </div>
   </div>
