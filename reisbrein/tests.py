@@ -281,7 +281,7 @@ class TestUserPreference(TestCase):
         bikeplan, carplan, publicplan1, publicplan2, walkplan, bikeplan2 = self.get_plans()
         plans = [bikeplan, carplan, publicplan1]
         order_and_select(plans, UserTravelPreferences())
-        self.assertEqual(plans, [carplan, bikeplan, publicplan1])
+        self.assertEqual(plans, [bikeplan, publicplan1, carplan])
 
         # quick biking is better than long walking
         plans = [walkplan, bikeplan]
@@ -295,20 +295,20 @@ class TestUserPreference(TestCase):
         bikeplan, carplan, publicplan1, publicplan2, walkplan, bikeplan2 = self.get_plans()
         plans = [bikeplan, carplan, publicplan1, publicplan2]
         order_and_select(plans, UserTravelPreferences())
-        self.assertEqual(plans, [carplan, bikeplan, publicplan1])
+        self.assertEqual(plans, [bikeplan, publicplan1, carplan])
 
         # not enough plans, so keep publicplan2
         plans = [publicplan2, carplan, publicplan1]
         order_and_select(plans, UserTravelPreferences())
-        self.assertEqual(plans, [carplan, publicplan1, publicplan2])
+        self.assertEqual(plans, [publicplan1, carplan, publicplan2])
 
     def test_bike_preference(self):
         bikeplan, carplan, publicplan1, publicplan2, walkplan, bikeplan2 = self.get_plans()
         prefs = UserTravelPreferences()
-        self.assertEqual(prefs.likes_to_bike,5)
+        self.assertEqual(prefs.likes_to_bike, 5)
         plans = [bikeplan, carplan]
         order_and_select(plans, prefs)
-        self.assertEqual(plans, [carplan, bikeplan])
+        self.assertEqual(plans, [bikeplan, carplan])
         prefs.likes_to_bike=6
         plans = [bikeplan, carplan]
         order_and_select(plans, prefs)
@@ -320,7 +320,7 @@ class TestUserPreference(TestCase):
         prefs.likes_to_bike=4
         plans = [bikeplan2, carplan]
         order_and_select(plans, prefs)
-        self.assertEqual(plans, [carplan, bikeplan2])
+        self.assertEqual(plans, [bikeplan2, carplan])
 
 
 

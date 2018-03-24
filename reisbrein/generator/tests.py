@@ -183,7 +183,7 @@ class TestParkRideGenerator(TestCase):
                 self.assertLess(e.from_vertex.time, self.noon + timedelta(hours=2))
                 self.assertGreaterEqual(e.to_vertex.time, self.noon)
                 self.assertLess(e.to_vertex.time, self.noon + timedelta(hours=2))
-        self.assertEqual(len(edges), 14)
+        self.assertEqual(len(edges), 18)
 
     def test_fixed_time_end(self):
         fix_time = FixTime.END
@@ -194,8 +194,8 @@ class TestParkRideGenerator(TestCase):
             # print(e)
             if e.transport_type != TransportType.WAIT:
                 self.assertLessEqual(e.from_vertex.time, self.noon)
-                self.assertGreater(e.from_vertex.time, self.noon - timedelta(hours=2))
+                self.assertGreater(e.from_vertex.time, self.noon - timedelta(hours=2, minutes=30))
                 self.assertLessEqual(e.to_vertex.time, self.noon)
-                self.assertGreater(e.to_vertex.time, self.noon - timedelta(hours=2))
-        self.assertEqual(len(edges), 14)
+                self.assertGreater(e.to_vertex.time, self.noon - timedelta(hours=2, minutes=30))
+        self.assertEqual(len(edges), 20)
 
