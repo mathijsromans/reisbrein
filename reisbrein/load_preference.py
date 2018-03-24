@@ -10,6 +10,7 @@ preference_list = [
     'likebike',
     'no bike at start',
     'no bike at end',
+    'save CO2',
 ]
 
 
@@ -26,7 +27,11 @@ def load_dummy_preference_condition_matrix():
         'starts with bike',
         'ends with bike',
         'num transfers',
+        'car distance',
+        'train distance',
+        'bus distance',
     ]
+    
 
     Matrix = zeros((len(preference_list),len(conditions_list)))
     
@@ -34,9 +39,19 @@ def load_dummy_preference_condition_matrix():
     cl = conditions_list
     M = Matrix
     
+    
+    # from Kamiel, value of time per minute --> costs per hour
+    # car 10.098774858, train 1.012834843, bus 3.4614907766
+
+    CO2_conversion_number = -18/60. #18=minute --> hour
+    M[pl.index('save CO2'), cl.index('car distance')] = CO2_conversion_number*10.098774858
+    M[pl.index('save CO2'), cl.index('train distance')] = CO2_conversion_number*1.012834843
+    M[pl.index('save CO2'), cl.index('bus distance')] = CO2_conversion_number*3.4614907766
+    
     M[pl.index('fast'), cl.index('total time')] = -18  # per minute
     M[pl.index('fast'), cl.index('time at home')] = +3  # we get some time back for waiting at home
-    M[pl.index('noliketransfer'), cl.index('num transfers')] = -30
+    M[pl.index('noliketransfer'), cl.index('num transfers')] = -12*18   
+#    M[pl.index('noliketransfer'), cl.index('num transfers')] = -30
     M[pl.index('nocar'), cl.index('involves car')] = -1e10
     M[pl.index('nobike'), cl.index('involves own bike')] = -1e10
     M[pl.index('no bike at start'), cl.index('starts with bike')] = -1e10
@@ -62,6 +77,16 @@ def load_user_preference(pref, option):
                      str(option[-1].from_vertex.location) != pref.home_address  # going from home
     preference_vec[preference_list.index('no bike at start')] = no_bike_at_start
     preference_vec[preference_list.index('no bike at end')] = no_bike_at_end
-    preference_vec[preference_list.index('noliketransfer')] = 0.1
+    #preference_vec[preference_list.index('noliketransfer')] = float(pref.reduce_number_of_transfers)*0.9+0.1
+    preference_vec[preference_list.index('noliketransfer')] = 1.0
+    preference_vec[preference_list.index('save CO2')] = pref.save_CO2
+    
     return preference_vec
+
+
+
+
+
+
+
 
