@@ -1,4 +1,4 @@
-import copy
+import random
 import logging
 import time
 from datetime import timedelta
@@ -32,11 +32,8 @@ def get_default_trail():
 def get_trail():
     trails = Trail.objects.all()
     if trails:
-        index = len(trails) // 2  # perfectly random choice
-        trail = trails[index]
-    else:
-        trail = get_default_trail()
-    return trail
+        return random.choice(trails)
+    return get_default_trail()
 
 
 class WandelbreinPlanner:
