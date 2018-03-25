@@ -98,7 +98,10 @@ class PlanViewReisbrein(TemplateView):
             req_time = datetime.datetime.now()
         else:
             req_time = datetime.datetime.fromtimestamp(60*float(timestamp))
-        results = PlanView.solve(start, end, req_time, fix_time, user_preferences)
+
+        p = Planner()
+        plans = p.solve(start, end, req_time, fix_time, user_preferences)
+        results = PlanView.get_results(plans)
         request_end = time.time()
         Request.objects.create(user=user, start=start, end=end, timedelta=request_end - request_start)
 
@@ -108,6 +111,7 @@ class PlanViewReisbrein(TemplateView):
         context['arrive_by'] = fix_time == FixTime.END
         context['results'] = results
         return context
+
 
 class PlanView():
 
@@ -129,13 +133,6 @@ class PlanView():
             user = request.user
             user_preferences, created = UserTravelPreferences.objects.get_or_create(user=user)
         return user, user_preferences
-
-    @staticmethod
-    def solve(start, end, req_time, fix_time, user_preferences):
-        p = Planner()
-        # leave = datetime.datetime(year=2017, month=12, day=11, hour=9, minute=20, second=0)
-        plans = p.solve(start, end, req_time, fix_time, user_preferences)
-        return PlanView.get_results(plans)
 
     @staticmethod
     def get_results(plans):
