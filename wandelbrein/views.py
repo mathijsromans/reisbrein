@@ -1,5 +1,6 @@
 import datetime
 import time
+import logging
 
 from django.views.generic import TemplateView
 from django.views.generic.edit import FormView
@@ -12,6 +13,8 @@ from reisbrein.generator.gen_common import FixTime
 from reisbrein.views import PlanView
 from reisbrein.models import UserTravelPreferences
 from wandelbrein.planner import WandelbreinPlanner
+
+logger = logging.getLogger(__name__)
 
 
 
@@ -74,4 +77,4 @@ class PlanInputView(FormView):
         return super().form_valid(form)
 
     def get_success_url(self):
-        return reverse('wandel-plan-results', args=(self.start, str(self.timestamp_minutes)))
+        return reverse('wandel-plan-results', args=(self.start, str(self.timestamp_minutes) + 'd'))
