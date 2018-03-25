@@ -9,7 +9,7 @@
 
   <div class="row" align="center">
     <div class="col-md-4 col-md-offset-4">
-      <h3>Preferences</h3>
+      <h3>Voorkeuren</h3>
     </div>
   </div>
 
@@ -27,22 +27,22 @@
         {% bootstrap_field form.travel_time_importance show_label=False %}
         {% bootstrap_field form.save_CO2 show_label=False %}
         <div class="form-group">
-          <label class="control-label">I like to ride my bicycle</label>
+          <label class="control-label">Ik vind fietsen leuk</label>
           <div id="likes_to_bike_slider"></div>
         </div>
         <div class="form-group">
-          <label class="control-label">Travel time importance</label>
+          <label class="control-label">Ik vind reistijd belangrijk</label>
           <div id="travel_time_importance_slider"></div>
         </div>
         <div class="form-group">
-          <label class="control-label">Save CO2</label>
+          <label class="control-label">Ik vind duurzaamheid belangrijk</label>
           <div id="save_CO2"></div>
         </div>
         {% bootstrap_field form.show_n_results show_label=True%}
 
         {% buttons %}
         <button type="submit" class="btn btn-block btn-primary" title="Save preferences">
-          Save
+          Opslaan
         </button>
         {% endbuttons %}
       </form>

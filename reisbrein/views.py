@@ -183,14 +183,14 @@ class PlanView(TemplateView):
 
 
 class UserTravelPreferencesForm(forms.Form):
-    home_address = forms.CharField(label='Home address', required=False)
-    has_car = forms.BooleanField(label='I have a car', required=False)
-    avoid_highways = forms.BooleanField(label='I want to avoid highways', required=False)
-    has_bicycle = forms.BooleanField(label='I have a bicycle', required=False)
+    home_address = forms.CharField(label='Huisadres', required=False)
+    has_car = forms.BooleanField(label='Ik heb een auto', required=False)
+    avoid_highways = forms.BooleanField(label='Snelwegen vermijden', required=False)
+    has_bicycle = forms.BooleanField(label='Ik heb een fiets', required=False)
     likes_to_bike = forms.IntegerField()
     travel_time_importance = forms.IntegerField()
-    save_CO2 = forms.IntegerField(label='Save CO2')
-    show_n_results = forms.IntegerField(label='Number of results')
+    save_CO2 = forms.IntegerField(label='Duurzaamheid')
+    show_n_results = forms.IntegerField(label='Aantal resultaten')
     #reduce_number_of_transfers = forms.BooleanField(label='Avoid transfers where it makes sense', required=False)
 
 
