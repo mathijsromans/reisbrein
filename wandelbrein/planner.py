@@ -14,6 +14,9 @@ from reisbrein.primitives import noon_today
 
 logger = logging.getLogger(__name__)
 
+WALKING_SPEED_KM_H = 3
+WALKING_SPEED = WALKING_SPEED_KM_H / 3.6  # m/s
+
 
 def get_default_trail():
     return Trail(
@@ -59,7 +62,7 @@ class WandelbreinPlanner:
 
         start = Point(Location(start_loc_str), start_time)
         hike_start = Point(hike_start_loc, best_start_hike_time + timedelta(minutes=60))
-        hike_end = Point(hike_end_loc, best_start_hike_time + timedelta(hours=5))
+        hike_end = Point(hike_end_loc, best_start_hike_time + timedelta(seconds=trail.distance/WALKING_SPEED))
         end = Point(Location(start_loc_str), start_time + timedelta(hours=12))
 
         logger.info('start=' + str(start))
