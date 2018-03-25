@@ -11,7 +11,7 @@ import gpxpy.gpx
 class TrailData(object):
 
     def __init__(self, nswandel_url, wandelpagina_id, wandelpagina_url,
-                 begin_point, end_point, distance_m, gpx_str, geojson_str):
+                 begin_point, end_point, distance_m, gpx_str):
         self.nswandel_url = nswandel_url
         self.wandelpagina_id = wandelpagina_id
         self.wandelpagina_url = wandelpagina_url
@@ -19,7 +19,6 @@ class TrailData(object):
         self.end_point = end_point
         self.distance_m = distance_m
         self.gpx = gpx_str
-        self.geojson = geojson_str
 
 
 def get_groene_wissels_data(max_results=None):
@@ -42,14 +41,14 @@ def get_groene_wissels_data(max_results=None):
         gpx_str = response.text
         begin_point, end_point, distance_m = find_begin_end_distance_gpx(gpx_str)
         gpx_filepath = gpx_to_file(gpx_str, wandel_id)
-        geojson_str = gpx_to_geojson(gpx_filepath)
+        # geojson_str = gpx_to_geojson(gpx_filepath)
         if begin_point is None:
             print('ERROR: parsing gpx file failed')
             continue
         print(begin_point.latitude, begin_point.longitude)
         print(end_point.latitude, end_point.longitude)
         print('distance', distance_m / 1000, 'm')
-        trail_data = TrailData(nswandel_url, wandel_id, wandelpagina_url, begin_point, end_point, distance_m, gpx_str, geojson_str)
+        trail_data = TrailData(nswandel_url, wandel_id, wandelpagina_url, begin_point, end_point, distance_m, gpx_str)
         trail_data_list.append(trail_data)
         if max_results is not None and index == max_results:
             break
@@ -91,15 +90,15 @@ def gpx_to_file(gpx_str, wandel_id):
         fileout.write(gpx_str)
     return gpx_filepath
 
-
-def gpx_to_geojson(file_gpx):
-    args = ['togeojson', file_gpx]
-    try:
-        output = subprocess.check_output(args)
-    except subprocess.CalledProcessError as e:
-        print(e)
-        raise
-    return output.decode('utf-8')
+# NOTE: requires java package togeojson (npm install togeojson)
+# def gpx_to_geojson(file_gpx):
+#     args = ['togeojson', file_gpx]
+#     try:
+#         output = subprocess.check_output(args)
+#     except subprocess.CalledProcessError as e:
+#         print(e)
+#         raise
+#     return output.decode('utf-8')
 
 
 def find_begin_end_distance_gpx(gpx_xml_str):
