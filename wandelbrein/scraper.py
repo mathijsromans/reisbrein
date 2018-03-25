@@ -1,5 +1,4 @@
 import os
-import subprocess
 
 import requests
 import lxml.html
@@ -10,8 +9,9 @@ import gpxpy.gpx
 
 class TrailData(object):
 
-    def __init__(self, nswandel_url, wandelpagina_id, wandelpagina_url,
+    def __init__(self, title, nswandel_url, wandelpagina_id, wandelpagina_url,
                  begin_point, end_point, distance_m, gpx_str):
+        self.title = title
         self.nswandel_url = nswandel_url
         self.wandelpagina_id = wandelpagina_id
         self.wandelpagina_url = wandelpagina_url
@@ -21,12 +21,12 @@ class TrailData(object):
         self.gpx = gpx_str
 
 
-def get_groene_wissels_data(max_results=None):
+def get_groene_wissels_data(max_trails=None):
     trail_data_list = []
     urls = get_groene_wissel_urls()
     for index, nswandel_url in enumerate(urls):
         print(nswandel_url)
-        wandelpagina_url = get_wandelzoekpagina_url(nswandel_url)
+        title, wandelpagina_url = get_title_and_wandelzoekpagina_url(nswandel_url)
         print(wandelpagina_url)
         if wandelpagina_url is None:
             continue
@@ -35,12 +35,12 @@ def get_groene_wissels_data(max_results=None):
             print('ERROR: could not find wandel id for url', wandelpagina_url)
             continue
         wandel_id = gw_url_split[1]
-        print('wandel id', wandel_id)
+        print('wandel id:', wandel_id, 'title:', title)
         gpx_url = get_wandzoekpagina_gpx(wandel_id)
         response = requests.get(gpx_url)
         gpx_str = response.text
         begin_point, end_point, distance_m = find_begin_end_distance_gpx(gpx_str)
-        gpx_filepath = gpx_to_file(gpx_str, wandel_id)
+        # gpx_filepath = gpx_to_file(gpx_str, wandel_id)
         # geojson_str = gpx_to_geojson(gpx_filepath)
         if begin_point is None:
             print('ERROR: parsing gpx file failed')
@@ -48,9 +48,9 @@ def get_groene_wissels_data(max_results=None):
         print(begin_point.latitude, begin_point.longitude)
         print(end_point.latitude, end_point.longitude)
         print('distance', distance_m / 1000, 'm')
-        trail_data = TrailData(nswandel_url, wandel_id, wandelpagina_url, begin_point, end_point, distance_m, gpx_str)
+        trail_data = TrailData(title, nswandel_url, wandel_id, wandelpagina_url, begin_point, end_point, distance_m, gpx_str)
         trail_data_list.append(trail_data)
-        if max_results is not None and index == max_results:
+        if max_trails is not None and index == max_trails:
             break
     return trail_data_list
 
@@ -69,14 +69,24 @@ def get_groene_wissel_urls():
     return urls
 
 
-def get_wandelzoekpagina_url(groene_wissle_url):
-    page = requests.get(groene_wissle_url)
+def get_title_and_wandelzoekpagina_url(groene_wissel_url):
+    page = requests.get(groene_wissel_url)
     tree = lxml.html.fromstring(page.content)
+    titles = tree.xpath("//span[@class='style1']")
+    title = ''
+    if titles:
+        title = titles[0].text
+    titles = tree.xpath("//span[@class='auto-style1']")
+    if titles:
+        title = titles[0].text
+    titles_extra = tree.xpath("//span[@class='style2']")
+    for title_extra in titles_extra:
+        title += ' ' + title_extra.text
     links = tree.xpath("//a")
     for link in links:
         if 'wandelzoekpagina.nl' in link.get('href'):
-            return link.get('href')
-    return None
+            return title.strip(), link.get('href')
+    return '', None
 
 
 def get_wandzoekpagina_gpx(wandel_id):
