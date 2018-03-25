@@ -70,6 +70,7 @@ class PlanInputView(FormView):
 
     def form_valid(self, form):
         self.start = form.cleaned_data['start']
+        self.timestamp_minutes = int(form.cleaned_data['leave'].timestamp()/60)
         return super().form_valid(form)
 
     def get_success_url(self):
