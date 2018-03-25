@@ -12,15 +12,7 @@ from reisbrein.planner import Plan, RichRouter, Planner
 from wandelbrein.models import Trail
 from reisbrein.primitives import noon_today
 
-
 logger = logging.getLogger(__name__)
-
-
-class Hike:
-    def __init__(self, start_loc, end_loc, time_delta):
-        self.start_loc = start_loc
-        self.end_loc = end_loc
-        self.time_delta = time_delta
 
 
 def get_default_trail():
@@ -37,15 +29,14 @@ def get_default_trail():
     )
 
 
-def get_hike():
+def get_trail():
     trails = Trail.objects.all()
     if trails:
         index = len(trails) // 2  # perfectly random choice
         trail = trails[index]
     else:
         trail = get_default_trail()
-    return Hike(Location(trail.title + ' start', (trail.begin_lat, trail.begin_lon)),
-                Location(trail.title + ' end', (trail.end_lat, trail.end_lon)), timedelta(hours=5))
+    return trail
 
 
 class WandelbreinPlanner:
@@ -60,18 +51,18 @@ class WandelbreinPlanner:
 
         reisbrein_planner = Planner()
 
-        hike = get_hike()
-        hike_start = Point(hike.start_loc, start_time + timedelta(hours=12))
-        print('hike_start=' + str(hike_start.location.full_str()))
-        print('hike_end=' + str(hike.end_loc.full_str()))
+        trail = get_trail()
+        hike_start_loc = Location('startpunt wandeling', (trail.begin_lat, trail.begin_lon))
+        hike_end_loc = Location('eindpunt wandeling', (trail.end_lat, trail.end_lon))
+        hike_start = Point(hike_start_loc, start_time + timedelta(hours=12))
 
         start_loc = Location(start_loc_str)
         plans = reisbrein_planner.solve(start_loc, hike_start.location, start_time, FixTime.START)
         best_start_hike_time = plans[0].route[-1].to_vertex.time
 
         start = Point(Location(start_loc_str), start_time)
-        hike_start = Point(hike.start_loc, best_start_hike_time + timedelta(minutes=60))
-        hike_end = Point(hike.end_loc, best_start_hike_time + hike.time_delta)
+        hike_start = Point(hike_start_loc, best_start_hike_time + timedelta(minutes=60))
+        hike_end = Point(hike_end_loc, best_start_hike_time + timedelta(hours=5))
         end = Point(Location(start_loc_str), start_time + timedelta(hours=12))
 
         logger.info('start=' + str(start))
@@ -81,6 +72,8 @@ class WandelbreinPlanner:
 
         edges = self.generator.create_edges(start, hike_start, FixTime.END)
         hiking_segment = Segment(TransportType.WALK, hike_start, hike_end)
+        hiking_segment.route_name = trail.title
+        hiking_segment.map_url = trail.wandelpagina_url
         edges.append(hiking_segment)
         edges += self.generator.create_edges(hike_end, end, FixTime.START)
         # for e in edges:

@@ -152,10 +152,8 @@ class Segment(Edge):
 
     @property
     def info(self):
-        bus_or_tram = self.transport_type == TransportType.BUS or \
-                      self.transport_type == TransportType.TRAM
-        if bus_or_tram and self.route_name:
-            return self.transport_type.to_dutch() + ' ' + self.route_name
+        if self.route_name:
+            return self.route_name
         if self.platform_code:
             return 'Perron ' + self.platform_code
         return ''
