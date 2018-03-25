@@ -132,4 +132,4 @@ def find_begin_end_distance_gpx(gpx_xml_str):
 
 
 if __name__ == "__main__":
-    get_groene_wissels_data(max_results=5)
+    get_groene_wissels_data(max_trails=5)
