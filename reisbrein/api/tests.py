@@ -1,5 +1,6 @@
 import datetime
 from reisbrein.api import yoursapi
+from reisbrein.api import openrouteserviceapi
 from django.test import TestCase
 from website.local_settings import *
 from reisbrein.primitives import Location, TransportType
@@ -88,6 +89,36 @@ class TestYours(TestCase):
         self.assertEqual(words, ['fast=1','flat=52.0993','flon=4.2986','http://yournavigation.org/','layer=mapnik','tlat=53.21934','tlon=6.56817','v=bicycle'])
         url = yoursapi.map_url(start, end, TransportType.WALK)
         self.assertEqual(url,'http://yournavigation.org/?flat=52.0993&flon=4.2986&tlat=53.21934&tlon=6.56817&v=foot&fast=1&layer=mapnik')
+
+
+class TestOpenRouteServiceApi(TestCase):
+
+    def test_routing(self):
+        start = Location('Madurodam')
+        end = Location('Martinitoren')
+        travel1 = openrouteserviceapi.travel_time(start, end, TransportType.CAR)
+        # print(travel1)
+        self.assertGreater(travel1, 2 * 3600)
+        self.assertLess(travel1, 3 * 3600)
+        travel2 = openrouteserviceapi.travel_time(start, end, TransportType.BIKE)
+        # print(travel2)
+        self.assertGreater(travel2, 10 * 3600)
+        self.assertLess(travel2, 15 * 3600)
+        # travel3 = yoursapi.travel_time(begin, end, TransportType.WALK)
+        # print(travel3)
+        # self.assertGreater(travel3, 10 * 3600)
+        # self.assertLess(travel3, 15 * 3600)
+
+    def test_map_url(self):
+        start = Location('Madurodam')
+        end = Location('Martinitoren')
+        url = openrouteserviceapi.map_url(start, end, TransportType.CAR)
+        # note that yournavigation.org DOES care about order: lat must come before lon
+        self.assertEqual(url, 'https://maps.openrouteservice.org/directions?n3=9&a=52.0993%2C4.2986%2C53.21934%2C6.56817&b=1a&c=0&g1=-1&g2=0&h2=3&k1=en-US&k2=km')
+        url = openrouteserviceapi.map_url(start, end, TransportType.BIKE)
+        self.assertEqual(url, 'https://maps.openrouteservice.org/directions?n3=9&a=52.0993%2C4.2986%2C53.21934%2C6.56817&b=1a&c=0&g1=-1&g2=0&h2=3&k1=en-US&k2=km')
+        url = openrouteserviceapi.map_url(start, end, TransportType.WALK)
+        self.assertEqual(url, 'https://maps.openrouteservice.org/directions?n3=9&a=52.0993%2C4.2986%2C53.21934%2C6.56817&b=1a&c=0&g1=-1&g2=0&h2=3&k1=en-US&k2=km')
 
 
 # class TestMapQuest(TestCase):

@@ -13,8 +13,8 @@ from reisbrein.api.monotchapi import MonotchApi
 class TestWalkGenerator(TestCase):
 
     def test(self):
-        loc_utr = Location('Utrecht, Centraal')
-        loc_ams = Location('Amsterdam, Centraal')
+        loc_utr = Location('Utrecht, Varkenmarkt')
+        loc_ams = Location('Amsterdam, Damrak')
         noon = datetime(year=2017, month=11, day=17, hour=12)
         start1 = Point(location=loc_utr, time=noon)
         end1 = Point(location=loc_ams, time=noon)
@@ -27,8 +27,8 @@ class TestWalkGenerator(TestCase):
         self.assertEqual(segment.from_vertex.location, loc_utr)
         self.assertEqual(segment.to_vertex.location, loc_ams)
         self.assertEqual(segment.from_vertex.time, noon)
-        self.assertEqual(new_point.time, datetime(2017, 11, 17, 22, 3, 38, 86834))
-        self.assertEqual(new_point2.time, datetime(2017, 11, 17, 1, 56, 21, 913166))
+        self.assertEqual(new_point.time, datetime(2017, 11, 17, 21, 53, 14, 79125))
+        self.assertEqual(new_point2.time, datetime(2017, 11, 17, 2, 6, 45, 920875))
         self.assertEqual(segment2.to_vertex.time, noon)
 
         segment, new_point = generator.create_segment(start1, end1, FixTime.START, TransportType.BIKE)
@@ -37,8 +37,8 @@ class TestWalkGenerator(TestCase):
         self.assertEqual(segment.from_vertex.location, loc_utr)
         self.assertEqual(segment.to_vertex.location, loc_ams)
         self.assertEqual(segment.from_vertex.time, noon)
-        self.assertAlmostEqual(new_point.time, datetime(2017, 11, 17, 14, 2, 3), delta=timedelta(seconds=600))
-        self.assertAlmostEqual(new_point2.time, datetime(2017, 11, 17, 9, 57, 57), delta=timedelta(seconds=600))
+        self.assertAlmostEqual(new_point.time, datetime(2017, 11, 17, 14, 16, 48), delta=timedelta(seconds=600))
+        self.assertAlmostEqual(new_point2.time, datetime(2017, 11, 17, 9, 43, 12), delta=timedelta(seconds=600))
         self.assertEqual(segment2.to_vertex.time, noon)
 
         loc_bhd  = Location('sloterweg 183, badhoevedorp', (52.33668,4.77682))
