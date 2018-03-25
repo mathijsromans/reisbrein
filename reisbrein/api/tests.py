@@ -96,11 +96,11 @@ class TestOpenRouteServiceApi(TestCase):
     def test_routing(self):
         start = Location('Madurodam')
         end = Location('Martinitoren')
-        travel1 = openrouteserviceapi.travel_time(start, end, TransportType.CAR)
+        travel1, map_url = openrouteserviceapi.travel_time_and_map_url(start, end, TransportType.CAR)
         # print(travel1)
         self.assertGreater(travel1, 2 * 3600)
         self.assertLess(travel1, 3 * 3600)
-        travel2 = openrouteserviceapi.travel_time(start, end, TransportType.BIKE)
+        travel2, map_url = openrouteserviceapi.travel_time_and_map_url(start, end, TransportType.BIKE)
         # print(travel2)
         self.assertGreater(travel2, 10 * 3600)
         self.assertLess(travel2, 15 * 3600)
@@ -112,12 +112,12 @@ class TestOpenRouteServiceApi(TestCase):
     def test_map_url(self):
         start = Location('Madurodam')
         end = Location('Martinitoren')
-        url = openrouteserviceapi.map_url(start, end, TransportType.CAR)
+        travel1, url = openrouteserviceapi.travel_time_and_map_url(start, end, TransportType.CAR)
         # note that yournavigation.org DOES care about order: lat must come before lon
         self.assertEqual(url, 'https://maps.openrouteservice.org/directions?n3=9&a=52.0993%2C4.2986%2C53.21934%2C6.56817&b=1a&c=0&g1=-1&g2=0&h2=3&k1=en-US&k2=km')
-        url = openrouteserviceapi.map_url(start, end, TransportType.BIKE)
+        travel1, url = openrouteserviceapi.travel_time_and_map_url(start, end, TransportType.BIKE)
         self.assertEqual(url, 'https://maps.openrouteservice.org/directions?n3=9&a=52.0993%2C4.2986%2C53.21934%2C6.56817&b=1a&c=0&g1=-1&g2=0&h2=3&k1=en-US&k2=km')
-        url = openrouteserviceapi.map_url(start, end, TransportType.WALK)
+        travel1, url = openrouteserviceapi.travel_time_and_map_url(start, end, TransportType.WALK)
         self.assertEqual(url, 'https://maps.openrouteservice.org/directions?n3=9&a=52.0993%2C4.2986%2C53.21934%2C6.56817&b=1a&c=0&g1=-1&g2=0&h2=3&k1=en-US&k2=km')
 
 

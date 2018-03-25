@@ -1,8 +1,10 @@
 import requests
 import datetime
-from reisbrein.primitives import TransportType
+from reisbrein.primitives import TransportType, Location
 from reisbrein.api import cache
 from website.local_settings import OPENROUTESERVICE_APIKEY
+from geopy.distance import vincenty
+from copy import deepcopy
 
 # Note that adding 'format=geojson' gives a different result
 # https://api.openrouteservice.org/directions?api_key=your-api-key&coordinates=8.34234%2C48.23424%7C8.34423%2C48.26424&profile=driving-car
@@ -22,7 +24,12 @@ translate_mode = {
     TransportType.OVFIETS: 'cycling-road',
 }
 
-def travel_time(start, end, mode):
+
+class ConnectionNotFoundError(Exception):
+    pass
+
+
+def try_travel_time(start, end, mode):
     try:
         arguments = [
             ('api_key', OPENROUTESERVICE_APIKEY),
@@ -61,14 +68,37 @@ def travel_time(start, end, mode):
         time_sec = int(result['routes'][0]['summary']['duration'])
         # print('openrouteserviceapi.travel_time ' + str(start_gps) + ' -> ' + str(end_gps) + ': ' + str(datetime.timedelta(seconds=time_sec)))
     except (KeyError, IndexError) as error:
-        print('Failed with start=' + str(start) + ', end=' + str(end) + ', profile=' + str(translate_mode[mode]))
-        print('Failed with route ' + map_url(start, end, mode))
+        response = requests.Request('GET', BASE_API_URL, params=arguments).prepare()
+        # print('Failed with start=' + str(start) + ', end=' + str(end) + ', profile=' + str(translate_mode[mode]))
+        # print('Failed URL = ' + str(response.url))
+        # print('Failed with route ' + map_url(start, end, mode))
         # check for "Connection between locations not found"
         if 'error' in result and 'code' in result['error'] and result['error']['code'] == 2099:
-            time_sec = 99999
-        else:
-            raise ValueError
+            raise ConnectionNotFoundError()
+        raise ValueError
     return time_sec
+
+
+def travel_time_and_map_url(start, end, mode):
+    # because openrouteservice has trouble finding bike-routes, e.g. from Utrecht Centraal, we try to find other locations
+    # where we can bike from
+    jump_closer_distance = 100
+    bicycle_speed = 18/3.6
+    local_start = deepcopy(start)
+    local_end = deepcopy(end)
+    for i in range(0, 3):
+        try:
+            # print('Trying with locations ' + local_start.full_str() + ', ' + local_end.full_str())
+            extra_time = i * jump_closer_distance / bicycle_speed
+            time_sec = try_travel_time(local_start, local_end, mode) + extra_time
+            return time_sec, map_url(local_start, local_end, mode)
+        except ConnectionNotFoundError as error:
+            distance = vincenty(local_start.gps, local_end.gps).meters
+            new_start = Location.midpoint(local_start, local_end, jump_closer_distance/distance)
+            new_end = Location.midpoint(local_start, local_end, (distance-jump_closer_distance)/distance)
+            local_start = new_start
+            local_end = new_end
+    return 99999, map_url(local_start, local_end, mode)  # no bike route found, please ignore
 
 
 def map_url(start, end, mode):

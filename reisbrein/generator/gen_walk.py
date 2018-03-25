@@ -27,6 +27,7 @@ class WalkGenerator:
 
     @staticmethod
     def get_bike_travel_time(start_loc, end_loc, transport_type):
+        map_url = ''
         if transport_type == TransportType.OVFIETS:
             transport_type = TransportType.BIKE
         start_gps = start_loc.gps
@@ -38,33 +39,32 @@ class WalkGenerator:
         else:  # transport_type == TransportType.BIKE or transport_type == TransportType.OVFIETS:
             # logger.info('Yoursapi bike request from: ' + str(start_loc) + ' to: ' + str(end_loc))
             time_sec_min = distance/WalkGenerator.MAX_SPEED_BIKE
-            time_sec = openrouteserviceapi.travel_time(start_loc, end_loc, TransportType.BIKE)
+            time_sec, map_url = openrouteserviceapi.travel_time_and_map_url(start_loc, end_loc, TransportType.BIKE)
             if time_sec_min > 30 and time_sec < time_sec_min:
-                logger.error('Yoursapi gives unrealistic bike timing of ' +
+                logger.error('Unrealistic bike timing of ' +
                              str(timedelta(seconds=time_sec)) + ' from: ' +
                              str(start_loc) + ' at ' + str(start_loc.gps) + ' to: ' +
                              str(end_loc) + ' at ' + str(end_loc.gps))
                 time_sec = distance/WalkGenerator.SPEED_BIKE
             else:
                 TravelTime.objects.get_or_create(
-                    flat = start_gps[0],
-                    flon = start_gps[1],
-                    tlat = end_gps[0],
-                    tlon = end_gps[1],
-                    transport_type = transport_type.value,
-                    defaults = {
+                    flat=start_gps[0],
+                    flon=start_gps[1],
+                    tlat=end_gps[0],
+                    tlon=end_gps[1],
+                    transport_type=transport_type.value,
+                    defaults={
                         'distance': distance,
                         'time_sec': time_sec
                     }
                 )
             # assume 2 minutes to get/park the bike at each end
             time_sec += 2 * 2 * 60
-        return time_sec
+        return time_sec, map_url
 
     @staticmethod
     def create_segment(start, end, fix_time, transport_type, option=None):
-        time_sec = WalkGenerator.get_bike_travel_time(start.location, end.location, transport_type)
-        map_url = openrouteserviceapi.map_url(start.location, end.location, transport_type)
+        time_sec, map_url = WalkGenerator.get_bike_travel_time(start.location, end.location, transport_type)
         delta_t = timedelta(seconds=time_sec)
         if fix_time == FixTime.START:
             new_point = Point(end.location, start.time + delta_t)

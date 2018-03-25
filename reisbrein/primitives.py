@@ -111,6 +111,9 @@ class Location:
     def __str__(self):
         return self.loc_str
 
+    def full_str(self):
+        return self.loc_str + '@' + str(self.gps)
+
 
 class Point:
     def __init__(self, location, time):
