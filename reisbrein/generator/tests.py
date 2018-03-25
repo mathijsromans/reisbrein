@@ -37,8 +37,8 @@ class TestWalkGenerator(TestCase):
         self.assertEqual(segment.from_vertex.location, loc_utr)
         self.assertEqual(segment.to_vertex.location, loc_ams)
         self.assertEqual(segment.from_vertex.time, noon)
-        self.assertAlmostEqual(new_point.time, datetime(2017, 11, 17, 14, 16, 48), delta=timedelta(seconds=600))
-        self.assertAlmostEqual(new_point2.time, datetime(2017, 11, 17, 9, 43, 12), delta=timedelta(seconds=600))
+        self.assertAlmostEqual(new_point.time, datetime(2017, 11, 17, 14, 16, 48), delta=timedelta(seconds=1200))
+        self.assertAlmostEqual(new_point2.time, datetime(2017, 11, 17, 9, 43, 12), delta=timedelta(seconds=1200))
         self.assertEqual(segment2.to_vertex.time, noon)
 
         loc_bhd  = Location('sloterweg 183, badhoevedorp', (52.33668,4.77682))

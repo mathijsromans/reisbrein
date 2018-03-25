@@ -28,10 +28,10 @@ def get_hike():
     index = len(trails) // 2  # perfectly random choice
     print(index)
     choice = trails[index]
-    return [
-        Hike(Location('Zeewolde'), Location('Swifterbant'), timedelta(hours=5)),
-        Hike(Location('Lage Vuursche'), Location('Hoge Vuursche'), timedelta(hours=3)),
-    ]
+    # return [
+    #     Hike(Location('Zeewolde'), Location('Swifterbant'), timedelta(hours=5)),
+    #     Hike(Location('Lage Vuursche'), Location('Hoge Vuursche'), timedelta(hours=3)),
+    # ]
     return [
         Hike(Location(choice.title + ' start', (choice.begin_lat, choice.begin_lon)),
              Location(choice.title + ' end', (choice.end_lat, choice.end_lon)), timedelta(hours=5)),
@@ -45,10 +45,6 @@ class WandelbreinPlanner:
         self.router = router()
 
     def solve(self, start_loc_str, start_time, user_preferences=UserTravelPreferences()):
-
-        noon = noon_today()
-        start_loc_str, start_time = 'Utrecht', noon
-
         logger.info('BEGIN')
         log_start = time.time()
 
@@ -57,19 +53,21 @@ class WandelbreinPlanner:
         hike = get_hike()[0]
         hike_start = Point(hike.start_loc, start_time + timedelta(hours=12))
         print('hike_start=' + str(hike_start.location.full_str()))
+        print('hike_end=' + str(hike.end_loc.full_str()))
 
-        plans = reisbrein_planner.solve(start_loc_str, hike_start.location.loc_str, start_time, FixTime.START)
+        start_loc = Location(start_loc_str)
+        plans = reisbrein_planner.solve(start_loc, hike_start.location, start_time, FixTime.START)
         best_start_hike_time = plans[0].route[-1].to_vertex.time
 
         start = Point(Location(start_loc_str), start_time)
-        hike_start = Point(hike.start_loc, best_start_hike_time + timedelta(minutes=30))
+        hike_start = Point(hike.start_loc, best_start_hike_time + timedelta(minutes=60))
         hike_end = Point(hike.end_loc, best_start_hike_time + hike.time_delta)
         end = Point(Location(start_loc_str), start_time + timedelta(hours=12))
 
-        print('start=' + str(start))
-        print('hike_start=' + str(hike_start))
-        print('hike_end=' + str(hike_end))
-        print('end=' + str(end))
+        logger.info('start=' + str(start))
+        logger.info('hike_start=' + str(hike_start))
+        logger.info('hike_end=' + str(hike_end))
+        logger.info('end=' + str(end))
 
         edges = self.generator.create_edges(start, hike_start, FixTime.END)
         hiking_segment = Segment(TransportType.WALK, hike_start, hike_end)
@@ -83,7 +81,6 @@ class WandelbreinPlanner:
         Planner.remove_unnecessary_waiting(routes, FixTime.START)
         plans = [Plan(r) for r in routes]
         order_and_select(plans, user_preferences)
-        # print(str(routes))
         log_end = time.time()
         logger.info('END - time: ' + str(log_end - log_start))
         return plans

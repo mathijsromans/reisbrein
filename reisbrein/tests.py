@@ -4,7 +4,7 @@ from .graph import Graph, shortest_path, Edge
 from .planner import Planner, DijkstraRouter, recur_map, Plan
 from reisbrein.generator.generator import TestGenerator
 from reisbrein.generator.gen_common import FixTime
-from .views import PlanViewReisbrein
+from .views import PlanView
 from reisbrein.primitives import Location, Point, TransportType, Segment, noon_today
 from .userpreference import order_and_select
 from .models import UserTravelPreferences
@@ -141,7 +141,7 @@ class TestDijkstraRouter(TestCase):
         p = Planner(router=DijkstraRouter)
         vertices = []
         noon = noon_today()
-        for plan in p.solve('Nijverheidsweg Utrecht', 'Voorstraat Utrecht', noon, FixTime.START):
+        for plan in p.solve(Location('Nijverheidsweg Utrecht'), Location('Voorstraat Utrecht'), noon, FixTime.START):
             vertices.append([edge.to_vertex for edge in plan.route])
 
         # print(list(recur_map(str, vertices)))
@@ -155,36 +155,6 @@ class TestDijkstraRouter(TestCase):
         # self.assertEqual(len(vertices[2]), 1)
 
 
-class TestRichRouter(TestCase):
-
-    def test_fixed_generator(self):
-        p = Planner(generator=TestGenerator)
-
-        vertices = []
-        noon = noon_today()
-        plans = p.solve('a', 'e', noon, FixTime.START)
-        for plan in plans:
-            vertices.append([edge.to_vertex for edge in plan.route])
-        # print(list(recur_map(str, plans)))
-
-        # self.assertEqual(len(plans), 4)
-        # self.assertEqual(len(plans[0]), 3)
-        # self.assertEqual(len(plans[1]), 2)
-
-    def test_planner(self):
-        p = Planner()
-        vertices = []
-        noon = noon_today()
-        plans = p.solve('Nijverheidsweg Utrecht', 'Voorstraat Utrecht', noon, FixTime.START)
-        for plan in plans:
-            vertices.append([edge.to_vertex for edge in plan.route])
-        # print(list(recur_map(str, vertices)))
-
-        # self.assertEqual(len(plans), 4)
-        # self.assertEqual(len(plans[0]), 4)
-        # self.assertEqual(len(plans[1]), 4)
-
-
 class TestViews(TestCase):
 
     def setUp(self):
@@ -192,8 +162,8 @@ class TestViews(TestCase):
 
     def test(self):
         noon = noon_today()
-        plans = self.planner.solve('Den Haag', 'Nieuwegein', noon, FixTime.START)
-        results = PlanViewReisbrein.get_results(plans)
+        plans = self.planner.solve(Location('Den Haag'), Location('Nieuwegein'), noon, FixTime.START)
+        results = PlanView.get_results(plans)
         # for p in plans:
         #     print (list(map(str,p)))
         self.assertGreater(len(plans), 2)
@@ -206,7 +176,7 @@ class TestViews(TestCase):
 
     def test_no_short_bike_rides(self):
         noon = noon_today()
-        plans = self.planner.solve('Centraal Museum', 'Oldambt utrecht', noon, FixTime.START)
+        plans = self.planner.solve(Location('Centraal Museum'), Location('Oldambt utrecht'), noon, FixTime.START)
         for p in plans:
             for s in p.route:
                 if s.transport_type in (TransportType.BIKE, TransportType.OVFIETS):
@@ -214,7 +184,7 @@ class TestViews(TestCase):
 
     def test_doubles(self):
         noon = noon_today()
-        plans = self.planner.solve('Den haag centraal', 'Utrecht centraal', noon, FixTime.START)
+        plans = self.planner.solve(Location('Den haag centraal'), Location('Utrecht centraal'), noon, FixTime.START)
         segments = set()
         for p in plans:
             segments.update(p.route)

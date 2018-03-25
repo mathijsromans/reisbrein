@@ -56,13 +56,8 @@ def do_travel_time_sec(start_gps, end_gps, mode):
         raise ValueError
 
 
-def travel_time(start_gps, end_gps, mode):
-    try:
-        return travel_time_cache[(start_gps, end_gps, mode)]
-    except KeyError:
-        time_sec = do_travel_time_sec(start_gps, end_gps, mode)
-        travel_time_cache[(start_gps, end_gps, mode)] = time_sec
-        return time_sec
+def travel_time_and_map_url(start, end, mode):
+    return do_travel_time_sec(start.gps, end.gps, mode), map_url(start, end, mode)
 
 
 def map_url(start, end, mode):

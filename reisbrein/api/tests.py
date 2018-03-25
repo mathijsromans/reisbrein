@@ -60,11 +60,11 @@ class TestYours(TestCase):
     def test_routing(self):
         start = Location('Madurodam')
         end = Location('Martinitoren')
-        travel1 = yoursapi.travel_time(start.gps, end.gps, TransportType.CAR)
+        travel1, map_url = yoursapi.travel_time_and_map_url(start, end, TransportType.CAR)
         # print(travel1)
         self.assertGreater(travel1, 2 * 3600)
         self.assertLess(travel1, 3 * 3600)
-        travel2 = yoursapi.travel_time(start.gps, end.gps, TransportType.BIKE)
+        travel2, map_url = yoursapi.travel_time_and_map_url(start, end, TransportType.BIKE)
         # print(travel2)
         self.assertGreater(travel2, 10 * 3600)
         self.assertLess(travel2, 15 * 3600)
@@ -76,19 +76,17 @@ class TestYours(TestCase):
     def test_map_url(self):
         start = Location('Madurodam')
         end = Location('Martinitoren')
-        url = yoursapi.map_url(start, end, TransportType.CAR)
+        travel1, url = yoursapi.travel_time_and_map_url(start, end, TransportType.CAR)
         # note that yournavigation.org DOES care about order: lat must come before lon
         self.assertEqual(url,'http://yournavigation.org/?flat=52.0993&flon=4.2986&tlat=53.21934&tlon=6.56817&v=motorcar&fast=1&layer=mapnik')
-        url=url.replace('&', '?')
+        url = url.replace('&', '?')
         words = sorted(url.split('?'))
         self.assertEqual(words, ['fast=1','flat=52.0993','flon=4.2986','http://yournavigation.org/','layer=mapnik','tlat=53.21934','tlon=6.56817','v=motorcar'])
-        url = yoursapi.map_url(start, end, TransportType.BIKE)
+        travel1, url = yoursapi.travel_time_and_map_url(start, end, TransportType.BIKE)
         self.assertEqual(url,'http://yournavigation.org/?flat=52.0993&flon=4.2986&tlat=53.21934&tlon=6.56817&v=bicycle&fast=1&layer=mapnik')
-        url=url.replace('&', '?')
+        url = url.replace('&', '?')
         words = sorted(url.split('?'))
         self.assertEqual(words, ['fast=1','flat=52.0993','flon=4.2986','http://yournavigation.org/','layer=mapnik','tlat=53.21934','tlon=6.56817','v=bicycle'])
-        url = yoursapi.map_url(start, end, TransportType.WALK)
-        self.assertEqual(url,'http://yournavigation.org/?flat=52.0993&flon=4.2986&tlat=53.21934&tlon=6.56817&v=foot&fast=1&layer=mapnik')
 
 
 class TestOpenRouteServiceApi(TestCase):

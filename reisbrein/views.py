@@ -100,7 +100,9 @@ class PlanViewReisbrein(TemplateView):
             req_time = datetime.datetime.fromtimestamp(60*float(timestamp))
 
         p = Planner()
-        plans = p.solve(start, end, req_time, fix_time, user_preferences)
+        start_loc = Location(start)
+        end_loc = Location(end)
+        plans = p.solve(start_loc, end_loc, req_time, fix_time, user_preferences)
         results = PlanView.get_results(plans)
         request_end = time.time()
         Request.objects.create(user=user, start=start, end=end, timedelta=request_end - request_start)

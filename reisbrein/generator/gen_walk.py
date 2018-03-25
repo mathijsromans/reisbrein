@@ -3,7 +3,7 @@ from geopy.distance import vincenty
 from reisbrein.api.ovfiets import OvFietsStations
 from reisbrein.primitives import Segment, TransportType, Point
 from reisbrein.api.weather import WeatherApi
-from reisbrein.api import openrouteserviceapi
+from reisbrein.api import openrouteserviceapi, yoursapi
 from reisbrein.models import TravelTime
 from .gen_common import FixTime, create_wait_and_move_segments
 import logging
@@ -37,9 +37,8 @@ class WalkGenerator:
         if transport_type == TransportType.WALK:
             time_sec = distance/WalkGenerator.SPEED_WALK
         else:  # transport_type == TransportType.BIKE or transport_type == TransportType.OVFIETS:
-            # logger.info('Yoursapi bike request from: ' + str(start_loc) + ' to: ' + str(end_loc))
             time_sec_min = distance/WalkGenerator.MAX_SPEED_BIKE
-            time_sec, map_url = openrouteserviceapi.travel_time_and_map_url(start_loc, end_loc, TransportType.BIKE)
+            time_sec, map_url = yoursapi.travel_time_and_map_url(start_loc, end_loc, TransportType.BIKE)
             if time_sec_min > 30 and time_sec < time_sec_min:
                 logger.error('Unrealistic bike timing of ' +
                              str(timedelta(seconds=time_sec)) + ' from: ' +
