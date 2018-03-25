@@ -18,16 +18,20 @@
             <div class="row">
               <div class="col-xs-12" align="left">
                 <span class="timeline-text">
-                  {{ segment.obj.from_vertex.location }}
-                  {% if segment.obj.transport_type.name == 'WAIT' %} - leave in
-                    <span class="text-success">
-                      <strong>{{ segment.travel_time_min }}</strong>
-                    </span>
-                    minutes at
-                    <span class="text-success">
-                      <strong>{{ segment.obj.to_vertex.time|date:"H:i" }}</strong>
-                    </span>
-                  {% endif %}
+                  <span class="text-success">
+                    <strong>
+                      vetrek over
+                      <span class="text-success"><strong>{{ segment.travel_time_min }}</strong></span>
+                      minuten om
+                    {% if segment.obj.transport_type.name == 'WAIT' %}
+                      {{ segment.obj.to_vertex.time|date:"H:i" }}
+                    {% else %}
+                      {{ segment.obj.from_vertex.time|date:"H:i" }}
+                    {% endif %}
+                    </strong>
+                  </span>
+                  <br/>
+                  <span class="text-info">{{ segment.obj.from_vertex.location }}</span>
                 </span>
               </div>
             </div>
@@ -45,25 +49,31 @@
             <div class="row">
               <div class="col-xs-12" align="left">
                 <div class="timeline-text">
+                  <span class="text-success">
+                    <strong>{{ segment.obj.from_vertex.time|date:"H:i" }}</strong>
+                    <span class="text-info pull-right">
+                    reistijd: {{ segment.travel_time_str }}
+                    {% if segment.obj.delay %}
+                      <span class="text-danger"> +{{ segment.obj.delay|floatformat:0 }} min</span>
+                    {% elif segment.obj.transport_type.name == 'CAR' %}
+                      <span class="text-danger"> +0 min</span>
+                    {% endif %}
+                    </span>
+                  </span>
+                  <br/>
                   {% if segment.obj.transport_type.name == 'OVFIETS' %}
                     <img src="{% static 'img/ovfiets.png' %}" height="20px"/>
                   {% endif %}
-                    {{ segment.obj.from_vertex.location }} - {{ segment.obj.to_vertex.location }}
+                    <span class="text-info">{{ segment.obj.from_vertex.location }}</span> naar <span class="text-info">{{ segment.obj.to_vertex.location }}</span>
                   {% if segment.obj.transport_type.name == 'WALK' %}
                     <img class="pull-right" src="{{ segment.obj.weather_icon }}" height="40px"/>
                   {% endif %}
-                </div>
-                <div class="timeline-time-text text-info">
-                  {{ segment.travel_time_str }}
-                  {% if segment.obj.delay %}
-                    <span class="text-danger"> +{{ segment.obj.delay|floatformat:0 }} min</span>
-                  {% elif segment.obj.transport_type.name == 'CAR' %}
-                    <span class="text-danger"> +0 min</span>
-                  {% endif %}
                   {% if segment.obj.info %}
-                    <span class="text-success">{{ segment.obj.info }}</span>
+                    <br/>
+                    <span class="text-info"><strong>{{ segment.obj.info }}</strong></span>
                   {% endif %}
                   {% if segment.obj.map_url %}
+                    <br/>
                     <a href="{{ segment.obj.map_url }}" target="_blank">
                       <span class="fa fa-pull-right fa-map-o timeline-icon"></span>
                     </a>
@@ -85,10 +95,11 @@
             <div class="row">
               <div class="col-xs-12" align="left">
                 <span class="timeline-text">
-                  {{ segment.obj.to_vertex.location }} - arrive at
                   <span class="text-success">
                     <strong>{{ result.arrival_time|date:"H:i" }}</strong>
                   </span>
+                  <br/>
+                  <span class="text-info">{{ segment.obj.to_vertex.location }}</span>
                 </span>
               </div>
             </div>
