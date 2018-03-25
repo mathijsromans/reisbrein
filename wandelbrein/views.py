@@ -9,13 +9,13 @@ from django.urls import reverse
 
 from datetimewidget.widgets import DateTimeWidget
 
+from reisbrein.primitives import TransportType
 from reisbrein.generator.gen_common import FixTime
 from reisbrein.views import PlanView
 from reisbrein.models import UserTravelPreferences
 from wandelbrein.planner import WandelbreinPlanner
 
 logger = logging.getLogger(__name__)
-
 
 
 class PlanViewReisbrein(TemplateView):
@@ -39,9 +39,17 @@ class PlanViewReisbrein(TemplateView):
         plans = p.solve(start, start_time, user_preferences)
         results = PlanView.get_results(plans)
 
+        title = ''
+        title_url = ''
+        for p in plans:
+            for segment in p.route:
+                if segment.transport_type == TransportType.WALK and segment.route_name:
+                    title = 'Wandeling ' + segment.route_name
+                    title_url = segment.map_url
+
         context = super().get_context_data()
-        context['start'] = start
-        context['end'] = ''
+        context['title'] = title
+        context['title_url'] = title_url
         context['arrive_by'] = fix_time == FixTime.END
         context['results'] = results
         return context
