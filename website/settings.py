@@ -15,6 +15,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 INSTALLED_APPS = [
     'website',
     'reisbrein',
+    'wandelbrein',
     'datetimewidget',
     'bootstrap3',
     'registration',
@@ -186,6 +187,11 @@ LOGGING = {
             'level': 'ERROR',
         },
         'reisbrein': {
+            'handlers': ['file_debug', 'file_error', 'console'],
+            'propagate': True,
+            'level': 'DEBUG',
+        },
+        'wandelbrein': {
             'handlers': ['file_debug', 'file_error', 'console'],
             'propagate': True,
             'level': 'DEBUG',
