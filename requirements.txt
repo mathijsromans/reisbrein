@@ -10,4 +10,5 @@ nsapi==2.7.4
 numpy==1.14.2
 django-datetime-widget==0.9.3
 recordclass==0.5
-requests-futures==0.9.7
+lxml==4.2.1
+gpxpy==1.2.0
