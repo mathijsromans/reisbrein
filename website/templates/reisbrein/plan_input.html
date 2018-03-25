@@ -33,7 +33,7 @@
           <!--button to Wandelbrein-->
                     </button>
                     <input type="button" name="Wandelbrein" class="btn btn-block-block btn-primary" style="background: url(
-          {% static 'img/logo_wandelbrein.png' %}); width: 27px; height: 38px; float:right; border:none;" title="Wandelbrein" onclick='location.href="www.reisbrein.nl/wandelen"'/>
+          {% static 'img/logo_wandelbrein.png' %}); width: 27px; height: 38px; float:right; border:none;" title="Wandelbrein" onclick='location.href="{% url 'wandel-plan-input' %}"'/>
 
           </button>
         {% endbuttons %}

@@ -21,8 +21,8 @@ urlpatterns = [
     url(r'^travel/preferences/$', login_required(UserTravelPreferencesView.as_view()), name='user-travel-preferences'),
     url(r'^userprofile/(?P<pk>[0-9]+)/$', login_required(UserProfileView.as_view()), name='userprofile'),
 
-    url(r'^wandeladvies/$', wandelviews.PlanInputView.as_view(), name='wandel-plan-input'),
-    url(r'^wandeladvies/(?P<start>.+)/(?P<timestamp>.+)$', wandelviews.PlanViewReisbrein.as_view(), name='wandel-plan-results'),
+    url(r'^wandelen/$', wandelviews.PlanInputView.as_view(), name='wandel-plan-input'),
+    url(r'^wandelen/(?P<start>.+)/(?P<timestamp>.+)$', wandelviews.PlanViewReisbrein.as_view(), name='wandel-plan-results'),
 
     url(r'^register/$', RegisterView.as_view()),  # needed to logout the auto-generated anonymous user
     url(r'^accounts/', include('registration.backends.simple.urls')),  # the django-registration module
