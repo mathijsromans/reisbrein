@@ -13,4 +13,4 @@ class TestViews(TestCase):
 
     def test(self):
         noon = noon_today()
-        plans = self.planner.solve('Utrecht', noon)
+        plans, trail = self.planner.solve('Utrecht', noon)

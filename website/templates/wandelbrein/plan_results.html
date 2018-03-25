@@ -11,7 +11,29 @@
 
   <div class="row">
     <div class="col-sm-12" align="center">
-      <h4><a href="{{ title_url }}">{{ title }}</a></h4>
+      <h2>Wandelbrein Wandeling</h2>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-8 col-md-offset-2">
+      <div class="panel panel-default">
+        <div class="panel-heading" align="center">
+          <strong><a href="{{ trail.wandelpagina_url }}">Wandeling {{ trail.title }}</a></strong> <span class="pull-right">{{ trail.distance_km|floatformat:0 }} km</span>
+        </div>
+          <table class="table">
+            <tr>
+              <td>
+                <a href="{{ trail.nswandel_url }}" target="_blank">nswandel.nl</a>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <a href="{{ trail.wandelpagina_url }}" target="_blank">wandelzoekpagina.nl</a>
+              </td>
+            </tr>
+          </table>
+      </div>
     </div>
   </div>
 

@@ -12,3 +12,7 @@ class Trail(models.Model):
     end_lat = models.FloatField()
     distance = models.FloatField()
     gpx = models.TextField(blank=True, default="")
+
+    @property
+    def distance_km(self):
+        return self.distance / 1000

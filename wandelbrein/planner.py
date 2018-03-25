@@ -86,4 +86,4 @@ class WandelbreinPlanner:
         order_and_select(plans, user_preferences)
         log_end = time.time()
         logger.info('END - time: ' + str(log_end - log_start))
-        return plans
+        return plans, trail

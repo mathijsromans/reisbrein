@@ -18,13 +18,12 @@ from wandelbrein.planner import WandelbreinPlanner
 logger = logging.getLogger(__name__)
 
 
-class PlanViewReisbrein(TemplateView):
+class PlanViewWandelbrein(TemplateView):
     template_name = 'wandelbrein/plan_results.html'
 
     def get_context_data(self, start, timestamp, **kwargs):
         user, user_preferences = PlanView.get_user_preferences(self.request)
 
-        request_start = time.time()
         fix_time = FixTime.START
         if timestamp[-1].isalpha:
             if timestamp[-1] == 'a':
@@ -36,20 +35,13 @@ class PlanViewReisbrein(TemplateView):
             start_time = datetime.datetime.fromtimestamp(60*float(timestamp))
 
         p = WandelbreinPlanner()
-        plans = p.solve(start, start_time, user_preferences)
+        plans, trail = p.solve(start, start_time, user_preferences)
         results = PlanView.get_results(plans)
 
-        title = ''
-        title_url = ''
-        for p in plans:
-            for segment in p.route:
-                if segment.transport_type == TransportType.WALK and segment.route_name:
-                    title = 'Wandeling ' + segment.route_name
-                    title_url = segment.map_url
-
         context = super().get_context_data()
-        context['title'] = title
-        context['title_url'] = title_url
+        context['trail'] = trail
+        context['start'] = start
+        context['end'] = ''
         context['arrive_by'] = fix_time == FixTime.END
         context['results'] = results
         return context
