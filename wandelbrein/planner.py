@@ -9,6 +9,9 @@ from reisbrein.primitives import Point, Location, TransportType, Segment
 from reisbrein.userpreference import order_and_select
 from reisbrein.models import UserTravelPreferences
 from reisbrein.planner import Plan, RichRouter, Planner
+from wandelbrein.models import Trail
+from reisbrein.primitives import noon_today
+
 
 logger = logging.getLogger(__name__)
 
@@ -20,10 +23,18 @@ class Hike:
         self.time_delta = time_delta
 
 
-def get_hikes():
+def get_hike():
+    trails = Trail.objects.all()
+    index = len(trails) // 2  # perfectly random choice
+    print(index)
+    choice = trails[index]
     return [
         Hike(Location('Zeewolde'), Location('Swifterbant'), timedelta(hours=5)),
         Hike(Location('Lage Vuursche'), Location('Hoge Vuursche'), timedelta(hours=3)),
+    ]
+    return [
+        Hike(Location(choice.title + ' start', (choice.begin_lat, choice.begin_lon)),
+             Location(choice.title + ' end', (choice.end_lat, choice.end_lon)), timedelta(hours=5)),
     ]
 
 
@@ -34,13 +45,18 @@ class WandelbreinPlanner:
         self.router = router()
 
     def solve(self, start_loc_str, start_time, user_preferences=UserTravelPreferences()):
+
+        noon = noon_today()
+        start_loc_str, start_time = 'Utrecht', noon
+
         logger.info('BEGIN')
         log_start = time.time()
 
         reisbrein_planner = Planner()
 
-        hike = get_hikes()[0]
+        hike = get_hike()[0]
         hike_start = Point(hike.start_loc, start_time + timedelta(hours=12))
+        print('hike_start=' + str(hike_start.location.full_str()))
 
         plans = reisbrein_planner.solve(start_loc_str, hike_start.location.loc_str, start_time, FixTime.START)
         best_start_hike_time = plans[0].route[-1].to_vertex.time
