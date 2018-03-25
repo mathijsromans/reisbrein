@@ -1,6 +1,7 @@
 {% extends "website/base.html" %}
 
 {% load bootstrap3 %}
+{% load static %}
 
 {% block title %}Reisplanner op maat {{ block.super }}{% endblock %}
 
@@ -27,6 +28,13 @@
         {% buttons %}
           <button id="submit-directions" type="submit" class="btn btn-block btn-primary" title="Plan reis">
             <strong>Plan</strong>
+          </button>
+
+          <!--button id="Wandelbrein" type="button" class="btn btn-block-block btn-primary" title="Wandelbrein" style= "background: url(website/static/logo_wandelbrein.png); width:78px; height:54px;" -->
+          <input type="button" name="Wandelbrein" class="btn btn-block-block btn-primary" style="background: url(
+          {% static 'img/logo_wandelbrein.png' %}); width: 54px; height: 78px; float: right;border:none;" title="Wandelbrein"/>
+           <!-- // add border:none to remove border -->
+            <!--<strong>Wandel!</strong>-->
           </button>
         {% endbuttons %}
       </form>
