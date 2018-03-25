@@ -1,5 +1,4 @@
 import datetime
-import time
 import logging
 
 from django.views.generic import TemplateView
@@ -9,9 +8,9 @@ from django.urls import reverse
 
 from datetimewidget.widgets import DateTimeWidget
 
-from reisbrein.primitives import TransportType
 from reisbrein.generator.gen_common import FixTime
 from reisbrein.views import PlanView
+from reisbrein.views import PlanInputView
 from reisbrein.models import UserTravelPreferences
 from wandelbrein.planner import WandelbreinPlanner
 
@@ -53,7 +52,7 @@ class PlanForm(forms.Form):
     leave = forms.DateTimeField(label='Vertrek', widget=date_time_widget)
 
 
-class PlanInputView(FormView):
+class PlanInputWandelView(FormView):
     template_name = 'wandelbrein/plan_input.html'
     form_class = PlanForm
 
@@ -73,6 +72,7 @@ class PlanInputView(FormView):
 
     def form_valid(self, form):
         self.start = form.cleaned_data['start']
+        PlanInputView.set_home_address_if_empty(self.request.user, self.start)
         self.timestamp_minutes = int(form.cleaned_data['leave'].timestamp()/60)
         return super().form_valid(form)
 

@@ -65,6 +65,7 @@ class PlanInputView(FormView):
         self.end = form.cleaned_data['end']
         self.timestamp_minutes = int(form.cleaned_data['leave'].timestamp()/60)
         self.arrive_by = form.cleaned_data['arrive_by']
+        PlanInputView.set_home_address_if_empty(self.request.user, self.start)
         return super().form_valid(form)
 
     def get_success_url(self):
@@ -78,6 +79,13 @@ class PlanInputView(FormView):
             plan_history = UserTravelPlan.objects.filter(user=self.request.user)[:5]
         context['plan_history'] = plan_history
         return context
+
+    @staticmethod
+    def set_home_address_if_empty(user, address):
+        user_preferences, created = UserTravelPreferences.objects.get_or_create(user=user)
+        if not user_preferences.home_address:
+            user_preferences.home_address = address
+            user_preferences.save()
 
 
 class PlanViewReisbrein(TemplateView):
