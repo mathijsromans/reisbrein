@@ -140,6 +140,7 @@ class Segment(Edge):
         self.delay = 0
         self.map_url = ''
         self.route_name = ''
+        self.platform_code = ''
 
     def has_same_points_and_type(self, other):
         return self.from_vertex == other.from_vertex and\
@@ -152,6 +153,8 @@ class Segment(Edge):
                       self.transport_type == TransportType.TRAM
         if bus_or_tram and self.route_name:
             return self.transport_type.to_dutch() + ' ' + self.route_name
+        if self.platform_code:
+            return 'Perron ' + self.platform_code
         return ''
 
     def __lt__(self, other):

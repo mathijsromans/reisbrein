@@ -72,6 +72,8 @@ class PublicGeneratorRequest:
                 segment = Segment(transport_type, p_start, p_end)
                 if 'routeShortName' in leg:
                     segment.route_name = leg['routeShortName']
+                if 'platformCode' in leg['from']:
+                    segment.platform_code = leg['from']['platformCode']
                 new_edges.append(segment)
                 prev_point = p_end
 
