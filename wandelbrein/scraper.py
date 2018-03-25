@@ -81,7 +81,8 @@ def get_title_and_wandelzoekpagina_url(groene_wissel_url):
         title = titles[0].text
     titles_extra = tree.xpath("//span[@class='style2']")
     for title_extra in titles_extra:
-        title += ' ' + title_extra.text
+        if title_extra.text is not None:
+            title += ' ' + title_extra.text
     links = tree.xpath("//a")
     for link in links:
         if 'wandelzoekpagina.nl' in link.get('href'):
