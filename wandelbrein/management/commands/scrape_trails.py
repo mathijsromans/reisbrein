@@ -7,4 +7,4 @@ class Command(BaseCommand):
     help = 'Scrapes nswandel.nl for hiking trails and adds them in the database'
 
     def handle(self, *args, **options):
-        wandelbrein.scrape_and_create_trails(max_trails=5)
+        wandelbrein.scrape_and_create_trails()
