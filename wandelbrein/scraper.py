@@ -74,10 +74,10 @@ def get_title_and_wandelzoekpagina_url(groene_wissel_url):
     tree = lxml.html.fromstring(page.content)
     titles = tree.xpath("//span[@class='style1']")
     title = ''
-    if titles:
+    if titles and titles[0].text is not None:
         title = titles[0].text
     titles = tree.xpath("//span[@class='auto-style1']")
-    if titles:
+    if titles and titles[0].text is not None:
         title = titles[0].text
     titles_extra = tree.xpath("//span[@class='style2']")
     for title_extra in titles_extra:
