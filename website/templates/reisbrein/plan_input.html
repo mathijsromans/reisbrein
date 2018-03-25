@@ -22,10 +22,11 @@
           <input type="checkbox" id="arrive-toggle-button">
           <div class="toggle-slider round"></div>
         </label>
+        <a href="{% url 'user-travel-preferences' %}" class="btn btn-primary pull-right">Voorkeuren</a>
         {% bootstrap_field form.arrive_by %}
         {% buttons %}
           <button id="submit-directions" type="submit" class="btn btn-block btn-primary" title="Plan reis">
-            Plan
+            <strong>Plan</strong>
           </button>
         {% endbuttons %}
       </form>
