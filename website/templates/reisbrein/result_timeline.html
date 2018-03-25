@@ -55,8 +55,6 @@
                     reistijd: {{ segment.travel_time_str }}
                     {% if segment.obj.delay %}
                       <span class="text-danger"> +{{ segment.obj.delay|floatformat:0 }} min</span>
-                    {% elif segment.obj.transport_type.name == 'CAR' %}
-                      <span class="text-danger"> +0 min</span>
                     {% endif %}
                     </span>
                   </span>
