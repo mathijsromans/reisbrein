@@ -194,8 +194,6 @@ class UserTravelPreferencesForm(forms.Form):
     #reduce_number_of_transfers = forms.BooleanField(label='Avoid transfers where it makes sense', required=False)
 
 
-
-
 class UserTravelPreferencesView(FormView):
     form_class=UserTravelPreferencesForm
     template_name = 'reisbrein/user_travel_preferences.html'

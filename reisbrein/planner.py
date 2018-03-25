@@ -114,7 +114,7 @@ class Planner():
             if r[n].transport_type == TransportType.WAIT:
                 r.pop(n)
 
-    def solve(self, start_loc, end_loc, req_time, fix_time, user_preferences=UserTravelPreferences()):
+    def solve(self, start_loc_str, end_loc_str, req_time, fix_time, user_preferences=UserTravelPreferences()):
         logger.info('BEGIN')
         log_start = time.time()
         if fix_time == FixTime.START:
@@ -123,8 +123,8 @@ class Planner():
         else:
             start_time = req_time - timedelta(hours=12)
             end_time = req_time
-        start = Point(Location(start_loc), start_time)
-        end = Point(Location(end_loc), end_time)
+        start = Point(Location(start_loc_str), start_time)
+        end = Point(Location(end_loc_str), end_time)
         edges = self.generator.create_edges(start, end, fix_time)
         routes = self.router.make_routes(start, end, edges)
         routes = list(filter(self.has_no_double_biking, routes))
