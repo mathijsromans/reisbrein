@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.views.generic import TemplateView
 
 from reisbrein.views import PlanInputView
-from reisbrein.views import PlanView
+from reisbrein.views import PlanViewReisbrein
 from reisbrein.views import UserTravelPreferencesView
 
 from website.views import RegisterView
@@ -14,7 +14,7 @@ from website.views import UserProfileView
 
 urlpatterns = [
     url(r'^$', PlanInputView.as_view(), name='plan-input'),
-    url(r'^reisadvies/(?P<start>.+)/(?P<end>.+)/(?P<timestamp>.+)$', PlanView.as_view(), name='plan-results'),
+    url(r'^reisadvies/(?P<start>.+)/(?P<end>.+)/(?P<timestamp>.+)$', PlanViewReisbrein.as_view(), name='plan-results'),
 
     url(r'^about/$', TemplateView.as_view(template_name="website/about.html"), name='about'),
 

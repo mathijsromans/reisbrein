@@ -80,36 +80,13 @@ class PlanInputView(FormView):
         return context
 
 
-class PlanView(TemplateView):
+class PlanViewReisbrein(TemplateView):
+
     template_name = 'reisbrein/plan_results.html'
 
-    @staticmethod
-    def register_request(start, end, user):
-        plan, created = UserTravelPlan.objects.get_or_create(
-            user=user,
-            start=start,
-            end=end
-        )
-        if not created:
-            plan.save()  # update datetime updated
-
-    def get_user_preferences(self):
-        user_preferences = UserTravelPreferences()
-        user = None
-        if self.request.user.is_authenticated:
-            user = self.request.user
-            user_preferences, created = UserTravelPreferences.objects.get_or_create(user=user)
-        return user, user_preferences
-
-    def solve(self, start, end, req_time, fix_time, user_preferences):
-        p = Planner()
-        # leave = datetime.datetime(year=2017, month=12, day=11, hour=9, minute=20, second=0)
-        plans = p.solve(start, end, req_time, fix_time, user_preferences)
-        return self.get_results(plans)
-
     def get_context_data(self, start, end, timestamp, **kwargs):
-        user, user_preferences = self.get_user_preferences()
-        self.register_request(start, end, user)
+        user, user_preferences = PlanView.get_user_preferences(self.request)
+        PlanView.register_request(start, end, user)
 
         request_start = time.time()
         fix_time = FixTime.START
@@ -121,7 +98,7 @@ class PlanView(TemplateView):
             req_time = datetime.datetime.now()
         else:
             req_time = datetime.datetime.fromtimestamp(60*float(timestamp))
-        results = self.solve(start, end, req_time, fix_time, user_preferences)
+        results = PlanView.solve(start, end, req_time, fix_time, user_preferences)
         request_end = time.time()
         Request.objects.create(user=user, start=start, end=end, timedelta=request_end - request_start)
 
@@ -131,6 +108,34 @@ class PlanView(TemplateView):
         context['arrive_by'] = fix_time == FixTime.END
         context['results'] = results
         return context
+
+class PlanView():
+
+    @staticmethod
+    def register_request(start, end, user):
+        plan, created = UserTravelPlan.objects.get_or_create(
+            user=user,
+            start=start,
+            end=end
+        )
+        if not created:
+            plan.save()  # update datetime updated
+
+    @staticmethod
+    def get_user_preferences(request):
+        user_preferences = UserTravelPreferences()
+        user = None
+        if request.user.is_authenticated:
+            user = request.user
+            user_preferences, created = UserTravelPreferences.objects.get_or_create(user=user)
+        return user, user_preferences
+
+    @staticmethod
+    def solve(start, end, req_time, fix_time, user_preferences):
+        p = Planner()
+        # leave = datetime.datetime(year=2017, month=12, day=11, hour=9, minute=20, second=0)
+        plans = p.solve(start, end, req_time, fix_time, user_preferences)
+        return PlanView.get_results(plans)
 
     @staticmethod
     def get_results(plans):

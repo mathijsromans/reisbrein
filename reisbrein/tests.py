@@ -4,7 +4,7 @@ from .graph import Graph, shortest_path, Edge
 from .planner import Planner, DijkstraRouter, recur_map, Plan
 from reisbrein.generator.generator import TestGenerator
 from reisbrein.generator.gen_common import FixTime
-from .views import PlanView
+from .views import PlanViewReisbrein
 from reisbrein.primitives import Location, Point, TransportType, Segment, noon_today
 from .userpreference import order_and_select
 from .models import UserTravelPreferences
@@ -193,7 +193,7 @@ class TestViews(TestCase):
     def test(self):
         noon = noon_today()
         plans = self.planner.solve('Den Haag', 'Nieuwegein', noon, FixTime.START)
-        results = PlanView.get_results(plans)
+        results = PlanViewReisbrein.get_results(plans)
         # for p in plans:
         #     print (list(map(str,p)))
         self.assertGreater(len(plans), 2)
