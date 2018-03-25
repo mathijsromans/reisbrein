@@ -23,19 +23,29 @@ class Hike:
         self.time_delta = time_delta
 
 
+def get_default_trail():
+    return Trail(
+        title='GW660 / Bemmel: Bemmelse Waard',
+        wandelpagina_id=17454,
+        wandelpagina_url='http://www.wandelzoekpagina.nl/dagwandelingen/wandeling.php?wnummer=17454',
+        nswandel_url='http://nswandel.nl/Album/GW-Bemmel-660/index.html',
+        begin_lon=5.895478,
+        begin_lat=51.8929925,
+        end_lon=5.8954863,
+        end_lat=51.8929898,
+        distance=14158.4412752064,
+    )
+
+
 def get_hike():
     trails = Trail.objects.all()
-    index = len(trails) // 2  # perfectly random choice
-    print(index)
-    choice = trails[index]
-    # return [
-    #     Hike(Location('Zeewolde'), Location('Swifterbant'), timedelta(hours=5)),
-    #     Hike(Location('Lage Vuursche'), Location('Hoge Vuursche'), timedelta(hours=3)),
-    # ]
-    return [
-        Hike(Location(choice.title + ' start', (choice.begin_lat, choice.begin_lon)),
-             Location(choice.title + ' end', (choice.end_lat, choice.end_lon)), timedelta(hours=5)),
-    ]
+    if trails:
+        index = len(trails) // 2  # perfectly random choice
+        trail = trails[index]
+    else:
+        trail = get_default_trail()
+    return Hike(Location(trail.title + ' start', (trail.begin_lat, trail.begin_lon)),
+                Location(trail.title + ' end', (trail.end_lat, trail.end_lon)), timedelta(hours=5))
 
 
 class WandelbreinPlanner:
@@ -50,7 +60,7 @@ class WandelbreinPlanner:
 
         reisbrein_planner = Planner()
 
-        hike = get_hike()[0]
+        hike = get_hike()
         hike_start = Point(hike.start_loc, start_time + timedelta(hours=12))
         print('hike_start=' + str(hike_start.location.full_str()))
         print('hike_end=' + str(hike.end_loc.full_str()))
