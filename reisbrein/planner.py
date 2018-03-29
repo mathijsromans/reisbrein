@@ -49,7 +49,7 @@ class RichRouter(object):
             new_plans.clear()
             for p in partial_plans:
                 for e in self.edges_starting_at(p.route[-1].to_vertex, edges):
-                    new_p = copy.copy(p)
+                    new_p = Plan(copy.copy(p.route))
                     new_p.route.append(e)
                     new_plans.append(new_p)
             # print(list(recur_map(str, partial_routes)))
