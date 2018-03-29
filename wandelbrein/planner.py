@@ -35,6 +35,7 @@ def get_default_trail():
 def get_trail():
     trails = Trail.objects.all()
     if trails:
+        # return trails[2]
         return random.choice(trails)
     return get_default_trail()
 
@@ -71,11 +72,11 @@ class WandelbreinPlanner:
         logger.info('end=' + str(end))
 
         edges = self.generator.create_edges(start, hike_start, FixTime.END)
+        edges += self.generator.create_edges(hike_end, end, FixTime.START)
         hiking_segment = Segment(TransportType.WALK, hike_start, hike_end)
         hiking_segment.route_name = trail.title
         hiking_segment.map_url = trail.wandelpagina_url
         edges.append(hiking_segment)
-        edges += self.generator.create_edges(hike_end, end, FixTime.START)
         # for e in edges:
         #     print(e)
 

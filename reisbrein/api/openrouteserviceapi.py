@@ -1,3 +1,4 @@
+import logging
 import requests
 import datetime
 from reisbrein.primitives import TransportType, Location
@@ -5,6 +6,9 @@ from reisbrein.api import cache
 from website.local_settings import OPENROUTESERVICE_APIKEY
 from geopy.distance import vincenty
 from copy import deepcopy
+
+
+logger = logging.getLogger(__name__)
 
 # Note that adding 'format=geojson' gives a different result
 # https://api.openrouteservice.org/directions?api_key=your-api-key&coordinates=8.34234%2C48.23424%7C8.34423%2C48.26424&profile=driving-car
@@ -69,12 +73,16 @@ def try_travel_time(start, end, mode):
         # print('openrouteserviceapi.travel_time ' + str(start_gps) + ' -> ' + str(end_gps) + ': ' + str(datetime.timedelta(seconds=time_sec)))
     except (KeyError, IndexError) as error:
         response = requests.Request('GET', BASE_API_URL, params=arguments).prepare()
-        # print('Failed with start=' + str(start) + ', end=' + str(end) + ', profile=' + str(translate_mode[mode]))
-        # print('Failed URL = ' + str(response.url))
-        # print('Failed with route ' + map_url(start, end, mode))
-        # check for "Connection between locations not found"
-        if 'error' in result and 'code' in result['error'] and result['error']['code'] == 2099:
-            raise ConnectionNotFoundError()
+        logger.error('Failed with start=' + str(start) + ', end=' + str(end) + ', profile=' + str(translate_mode[mode]))
+        logger.error('Failed URL = ' + str(response.url))
+        logger.error('Failed with route ' + map_url(start, end, mode))
+        if 'error' in result:
+            if 'message' in result['error']:
+                logger.error('Error message: ' + result['error']['message'])
+            if 'code' in result['error']:
+                logger.error('Error code: ' + str(result['error']['code']))
+                if result['error']['code'] == 2009:
+                    raise ConnectionNotFoundError()
         raise ValueError
     return time_sec
 
