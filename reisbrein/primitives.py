@@ -140,6 +140,11 @@ class Point:
 
 
 class Segment(Edge):
+
+    # unique vehicles
+    my_car = 'my_car'
+    my_bike = 'my_bike'
+
     def __init__(self, transport_type, start, end):
         super(Segment, self).__init__(start, end, (end.time - start.time).total_seconds())
         self.transport_type = transport_type
@@ -149,8 +154,11 @@ class Segment(Edge):
         self.map_url = ''
         self.route_name = ''
         self.platform_code = ''
-        transporttypes_with_unique_vehicles = [TransportType.CAR, TransportType.OVFIETS, TransportType.BIKE]
-        self.unique_vehicle = transport_type if transport_type in transporttypes_with_unique_vehicles else None
+        self.unique_vehicle = None
+        if transport_type == TransportType.CAR:
+            self.unique_vehicle = Segment.my_car
+        elif transport_type == TransportType.OVFIETS or transport_type == TransportType.BIKE: # todo: fix bike/ovfiets confusion
+            self.unique_vehicle = Segment.my_bike
 
     def has_same_points_and_type(self, other):
         return self.from_vertex == other.from_vertex and\

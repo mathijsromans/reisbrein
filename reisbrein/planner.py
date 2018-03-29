@@ -24,15 +24,44 @@ class Plan():
         for segment in route:
             self.travel_time += segment.time_sec
 
+    def is_round_trip(self):
+        return not self.route or self.route[0].from_vertex.location == self.route[-1].to_vertex.location
+
+    class VehicleIncosistency(Exception):
+        pass
+
     ''' a used vehicle cannot be used from a different location where it was left '''
-    def is_legal_partial_plan(self):
-        vehicles_left = {}
+    def get_vehicle_movements(self):
+        vehicles_from_to = {}  # { vehicle_1 : {'from': from_loc, 'to': to_loc), ... }
         for segment in self.route:
-            uv = segment.unique_vehicle
-            if uv:
-                if uv in vehicles_left and segment.from_vertex.location != vehicles_left[uv]:
+            vehicle = segment.unique_vehicle
+            if vehicle:
+                if vehicle in vehicles_from_to:
+                    if segment.from_vertex.location != vehicles_from_to[vehicle]['to']:
+                        # a used vehicle cannot be used from a different location where it was left
+                        raise self.VehicleIncosistency()
+                    vehicles_from_to[vehicle]['to'] = segment.to_vertex.location
+                else:
+                    vehicles_from_to[vehicle] = {'from': segment.from_vertex.location, 'to': segment.to_vertex.location}
+        return vehicles_from_to
+
+    def is_legal_partial_plan(self):
+        try:
+            self.get_vehicle_movements()
+        except self.VehicleIncosistency:
+            return False
+        return True
+
+    def is_legal_final_plan(self):
+        try:
+            vehicles_from_to = self.get_vehicle_movements()
+        except self.VehicleIncosistency:
+            return False
+        if self.is_round_trip():
+            for veh, from_to in vehicles_from_to.items():
+                if from_to['from'] != from_to['to']:
+                    # a vehicle must be returned to where it came from
                     return False
-                vehicles_left[uv] = segment.to_vertex.location
         return True
 
     def __str__(self):
@@ -47,13 +76,14 @@ class RichRouter(object):
         final_plans = []
         while new_plans:
             num_changes += len(new_plans)
-            if num_changes > 1000:
+            if num_changes > 10000:
                 logger.error('make_plans search limit exceeded')
                 break
             partial_plans = []
             for p in new_plans:
                 if p.route[-1].to_vertex == end:
-                    final_plans.append(p)
+                    if p.is_legal_final_plan():
+                        final_plans.append(p)
                 else:
                     partial_plans.append(p)
             new_plans.clear()
