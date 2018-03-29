@@ -1,5 +1,6 @@
 from django.contrib import admin
 from reisbrein.models import UserTravelPlan, UserTravelPreferences, Request, TravelTime, ApiCache
+from reisbrein.primitives import TransportType
 from django.conf.locale.en import formats as en_formats
 en_formats.DATETIME_FORMAT = "d M Y H:i:s"
 
@@ -19,8 +20,13 @@ class RequestAdmin(admin.ModelAdmin):
 
 
 class TravelTimeAdmin(admin.ModelAdmin):
+
+    @staticmethod
+    def transport_type_dutch(travel_time):
+        return TransportType(travel_time.transport_type).to_dutch()
+
     model = TravelTime
-    list_display = ('flat', 'flon', 'tlat', 'tlon', 'transport_type', 'distance', 'time_sec', 'speed', 'datetime_created')
+    list_display = ('flat', 'flon', 'tlat', 'tlon', 'transport_type_dutch', 'distance', 'time_sec', 'speed', 'datetime_created')
 
 
 class ApiCacheAdmin(admin.ModelAdmin):
