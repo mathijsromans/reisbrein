@@ -1,7 +1,9 @@
+import datetime
+from geopy.distance import vincenty
 from .graph import Edge
 from enum import Enum
 from reisbrein.api.tomtom import TomTomApi
-import datetime
+
 
 
 class _CaptureEq:
@@ -98,6 +100,9 @@ class Location:
     def longitude(self):
         return self.gps.longitude
 
+    def distance_to(self, other):
+        return vincenty(self.gps, other.gps)
+
     def __eq__(self, other):
         # see https://stackoverflow.com/a/25176504
         if isinstance(self, other.__class__):
@@ -144,6 +149,8 @@ class Segment(Edge):
         self.map_url = ''
         self.route_name = ''
         self.platform_code = ''
+        transporttypes_that_need_returning = [TransportType.CAR, TransportType.OVFIETS]
+        self.vehicle_to_be_returned = transport_type if transport_type in transporttypes_that_need_returning else None
 
     def has_same_points_and_type(self, other):
         return self.from_vertex == other.from_vertex and\

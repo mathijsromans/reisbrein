@@ -77,7 +77,6 @@ def try_travel_time(start, end, mode):
         logger.error('Failed URL = ' + str(response.url))
         logger.error('Failed with route ' + map_url(start, end, mode))
         if 'error' in result:
-            logger.error('ERROR ' + str(result['error']))
             if result['error'] == 'Rate limit exceeded':
                 logger.error('Rate limit exceeded')
                 cache.remove_cache(q)

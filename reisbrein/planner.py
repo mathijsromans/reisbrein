@@ -16,6 +16,18 @@ def recur_map(f, data):
     return [not hasattr(x, "__iter__") and f(x) or recur_map(f, x) for x in data]
 
 
+class Plan():
+    def __init__(self, route):
+        self.route = route
+        self.score = 0
+        self.travel_time = 0
+        for segment in route:
+            self.travel_time += segment.time_sec
+
+    def __str__(self):
+        return str(list(map(str, self.route)))
+
+
 class RichRouter(object):
 
     def make_routes(self, start, end, edges):
@@ -79,18 +91,6 @@ class DijkstraRouter(object):
             G.add_edge(e)
 
         return G
-
-
-class Plan():
-    def __init__(self, route):
-        self.route = route
-        self.score = 0
-        self.travel_time = 0
-        for segment in route:
-            self.travel_time += segment.time_sec
-
-    def __str__(self):
-        return str(list(map(str, self.route)))
 
 
 class Planner():
