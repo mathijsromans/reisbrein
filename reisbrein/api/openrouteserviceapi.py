@@ -64,8 +64,8 @@ def try_travel_time(start, end, mode):
 
         headers = {}
 
-        result = cache.query(BASE_API_URL, arguments, headers, expiry=datetime.timedelta(days=7))
-        response = requests.Request('GET', BASE_API_URL, params=arguments).prepare()
+        q = cache.Query(None, BASE_API_URL, arguments, headers, datetime.timedelta(days=7))
+        result = cache.query(q)
         # print(response.url)
         # print(response.json())
         # print(result['routes'][0]['summary']['duration'])
@@ -77,6 +77,10 @@ def try_travel_time(start, end, mode):
         logger.error('Failed URL = ' + str(response.url))
         logger.error('Failed with route ' + map_url(start, end, mode))
         if 'error' in result:
+            logger.error('ERROR ' + str(result['error']))
+            if result['error'] == 'Rate limit exceeded':
+                logger.error('Rate limit exceeded')
+                cache.remove_cache(q)
             if 'message' in result['error']:
                 logger.error('Error message: ' + result['error']['message'])
             if 'code' in result['error']:

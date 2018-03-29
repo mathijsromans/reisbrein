@@ -16,7 +16,7 @@ class WeatherApi:
             'APPID': OPENWEATHERMAP_APIKEY
         }
         url = WeatherApi.BASE_URL
-        result = cache.query(url, arguments, headers=dict(), expiry=datetime.timedelta(minutes=15))
+        result = cache.query_from(url, arguments, headers=dict(), expiry=datetime.timedelta(minutes=15))
         weather = ''
         icon = ''
         try:

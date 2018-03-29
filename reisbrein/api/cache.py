@@ -21,12 +21,14 @@ Query = recordclass('Query',
                      'headers',
                      'expiry'])
 
-QueryInfo = recordclass('QueryInfo',
-                        ['q',
-                         'arguments_str',
-                         'headers_str',
-                         'update_cache',
-                         'filename_to_be_updated'])
+
+class QueryInfo:
+    def __init__(self, q):
+        self.q = q
+        self.arguments_str = make_str(q.arguments)
+        self.headers_str = make_str(q.headers)
+        self.update_cache = False
+        self.filename_to_be_updated = ''
 
 
 def make_str(coll):
@@ -39,7 +41,7 @@ def make_str(coll):
     return str(coll)
 
 
-def try_get_from_cache(qi):
+def try_get_from_database(qi):
         now = datetime.now(timezone.utc)
         try:
             cache = ApiCache.objects.get(url=qi.q.url, params=qi.arguments_str, headers=qi.headers_str)
@@ -54,15 +56,31 @@ def try_get_from_cache(qi):
             qi.update_cache = True
 
 
+def remove_from_database(qi):
+    ApiCache.objects.filter(url=qi.q.url, params=qi.arguments_str, headers=qi.headers_str).delete()
+
+
+def get_filename(qi):
+    h = hashlib.md5((qi.q.url+qi.arguments_str+qi.headers_str).encode('utf-8')).hexdigest()
+    o = urlparse(qi.q.url)
+    return 'data/cache/' + o.netloc + '_' + h + '.dat'
+
+
 def try_get_from_file(qi):
-        h = hashlib.md5((qi.q.url+qi.arguments_str+qi.headers_str).encode('utf-8')).hexdigest()
-        o = urlparse(qi.q.url)
-        filename = 'data/cache/' + o.netloc + '_' + h + '.dat'
-        try:
-            with open(filename, 'r') as json_file:
-                qi.q.result = json.load(json_file)
-        except OSError:
-            qi.filename_to_be_updated = filename
+    filename = get_filename(qi)
+    try:
+        with open(filename, 'r') as json_file:
+            qi.q.result = json.load(json_file)
+    except OSError:
+        qi.filename_to_be_updated = filename
+
+
+def remove_from_file(qi):
+    filename = get_filename(qi)
+    try:
+        os.remove(filename)
+    except OSError:
+        pass
 
 
 def bg_cb(sess, resp):
@@ -92,10 +110,10 @@ def do_queries(qis):
 
 
 def query_list(queries):
-    qis = [QueryInfo(q, make_str(q.arguments), make_str(q.headers), False, '') for q in queries]
+    qis = [QueryInfo(q) for q in queries]
     for qi in qis:
         qi.q.result = None
-        try_get_from_cache(qi)
+        try_get_from_database(qi)
         if not qi.q.result and TESTING_FROM_CMD_LINE:
             try_get_from_file(qi)
 
@@ -113,8 +131,17 @@ def query_list(queries):
                 json.dump(qi.q.result, json_file)
 
 
-def query(url, arguments, headers, expiry):
+def query_from(url, arguments, headers, expiry):
     q = Query(None, url, arguments, headers, expiry)
+    return query(q)
+
+
+def query(q):
     query_list([q])
     return q.result
 
+
+def remove_cache(q):
+    qi = QueryInfo(q)
+    remove_from_database(qi)
+    remove_from_file(qi)

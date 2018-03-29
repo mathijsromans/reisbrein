@@ -35,6 +35,7 @@ def get_common_args(start_gps, end_gps, mode):
         ('layer', 'mapnik'),  # Provide 'cn' for using bicycle routing using cycle route networks only.
     ]
 
+
 def do_travel_time_sec(start_gps, end_gps, mode):
     try:
         arguments = get_common_args(start_gps, end_gps, mode)
@@ -44,7 +45,7 @@ def do_travel_time_sec(start_gps, end_gps, mode):
         # as requested by http://wiki.openstreetmap.org/wiki/YOURS#Version_1.0
         headers = {'X-Yours-client': 'www.reisbrein.nl'}
 
-        result = cache.query(BASE_URL + API_PATH, arguments, headers, expiry=datetime.timedelta(days=7))
+        result = cache.query_from(BASE_URL + API_PATH, arguments, headers, expiry=datetime.timedelta(days=7))
         # response = requests.get(BASE_URL + API_PATH, arguments, headers=headers)
         # print(response.url)
         # print(response.json())

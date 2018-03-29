@@ -35,7 +35,7 @@ class TomTomApi:
         url = TomTomApi.BASE_URL + TomTomApi.SEARCHING_URL + loc_str + '.json'
         # url = TomTomApi.BASE_URL + TomTomApi.SEARCHING_URL + 'madurodam' + '.json?key=' + TOMTOM_APIKEY + '&lat=' \
         #        '52.8085' + '&lon=' + '4.4239' + '&idxSet=POI,PAD,Str,Xstr,Geo,Addr'
-        json = cache.query(url, arguments, headers=dict(), expiry=datetime.timedelta(days=1))
+        json = cache.query_from(url, arguments, headers=dict(), expiry=datetime.timedelta(days=1))
         try:
             loc = json['results'][0]['position']
             result = (float(loc['lat']), float(loc['lon']))
@@ -59,7 +59,7 @@ class TomTomApi:
                 str(start_gps[1]) + ':' + \
                 str(end_gps[0]) + ',' + \
                 str(end_gps[1]) + '/json'
-        result = cache.query(url, arguments, headers=dict(), expiry=datetime.timedelta(minutes=5))
+        result = cache.query_from(url, arguments, headers=dict(), expiry=datetime.timedelta(minutes=5))
         # print(result['routes'][0]['summary'])
         summary = result['routes'][0]['summary']
         time = summary['travelTimeInSeconds']

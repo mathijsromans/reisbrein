@@ -18,7 +18,7 @@ class RdwApi:
     @staticmethod
     def get_json(suburl, arguments={}):
         url = RdwApi.BASE_URL + suburl
-        response = cache.query(url, arguments, headers=dict(), expiry=datetime.timedelta(minutes=5))
+        response = cache.query_from(url, arguments, headers=dict(), expiry=datetime.timedelta(minutes=5))
         return response
 
     @staticmethod
