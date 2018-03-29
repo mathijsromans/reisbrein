@@ -30,7 +30,7 @@ class Plan():
 
 class RichRouter(object):
 
-    def make_routes(self, start, end, edges):
+    def make_plans(self, start, end, edges):
         new_routes = [[edge] for edge in self.edges_starting_at(start, edges)]
         num_changes = 0
         final_routes = []
@@ -52,7 +52,8 @@ class RichRouter(object):
                     new_routes.append(new_p)
             # print(list(recur_map(str, partial_routes)))
 
-        return final_routes
+        plans = [Plan(r) for r in final_routes]
+        return plans
 
     @staticmethod
     def edges_starting_at(point, edges):
@@ -61,14 +62,14 @@ class RichRouter(object):
 
 class DijkstraRouter(object):
 
-    def make_routes(self, start, end, edges):
+    def make_plans(self, start, end, edges):
         graphs = [
             self.create_graph(edges),
             self.create_graph(self.exclude(edges, TransportType.BIKE)),
             self.create_graph(self.exclude(edges, TransportType.TRAIN)),
         ]
 
-        return [shortest_path(g, start, end) for g in graphs]
+        return [Plan(shortest_path(g, start, end)) for g in graphs]
 
     @staticmethod
     def exclude(edges, transport_type):
@@ -99,20 +100,20 @@ class Planner():
         self.router = router()
 
     @staticmethod
-    def has_no_double_biking(route):
-        for index, segment in enumerate(route[:-1]):
-            if route[index].transport_type == TransportType.BIKE and \
-               route[index+1].transport_type == TransportType.BIKE:
+    def has_no_double_biking(plan):
+        for index, segment in enumerate(plan.route[:-1]):
+            if plan.route[index].transport_type == TransportType.BIKE and \
+               plan.route[index+1].transport_type == TransportType.BIKE:
                 return False
         return True
 
     @staticmethod
-    def remove_unnecessary_waiting(routes, fix_time):
-        for r in routes:
-            if r:
-                n = 0 if fix_time == FixTime.END else len(r)-1  # remove waiting at the time which is NOT fixed
-            if r[n].transport_type == TransportType.WAIT:
-                r.pop(n)
+    def remove_unnecessary_waiting(plans, fix_time):
+        for p in plans:
+            if p.route:
+                n = 0 if fix_time == FixTime.END else len(p.route)-1  # remove waiting at the time which is NOT fixed
+            if p.route[n].transport_type == TransportType.WAIT:
+                p.route.pop(n)
 
     def solve(self, start_loc, end_loc, req_time, fix_time, user_preferences=UserTravelPreferences()):
         logger.info('BEGIN')
@@ -126,10 +127,9 @@ class Planner():
         start = Point(start_loc, start_time)
         end = Point(end_loc, end_time)
         edges = self.generator.create_edges(start, end, fix_time)
-        routes = self.router.make_routes(start, end, edges)
-        routes = list(filter(self.has_no_double_biking, routes))
-        self.remove_unnecessary_waiting(routes, fix_time)
-        plans = [Plan(r) for r in routes]
+        plans = self.router.make_plans(start, end, edges)
+        plans = list(filter(self.has_no_double_biking, plans))
+        self.remove_unnecessary_waiting(plans, fix_time)
         order_and_select(plans, user_preferences)
         log_end = time.time()
         logger.info('END - time: ' + str(log_end - log_start))

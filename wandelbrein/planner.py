@@ -35,7 +35,7 @@ def get_default_trail():
 def get_trail():
     trails = Trail.objects.all()
     if trails:
-        # return trails[2]
+        return trails[2]
         return random.choice(trails)
     return get_default_trail()
 
@@ -83,10 +83,9 @@ class WandelbreinPlanner:
         # for e in edges:
         #     print(e)
 
-        routes = self.router.make_routes(start, end, edges)
-        routes = list(filter(Planner.has_no_double_biking, routes))
-        Planner.remove_unnecessary_waiting(routes, FixTime.START)
-        plans = [Plan(r) for r in routes]
+        plans = self.router.make_plans(start, end, edges)
+        plans = list(filter(Planner.has_no_double_biking, plans))
+        Planner.remove_unnecessary_waiting(plans, FixTime.START)
         order_and_select(plans, user_preferences)
         log_end = time.time()
         logger.info('END - time: ' + str(log_end - log_start))
