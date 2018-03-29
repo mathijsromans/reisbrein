@@ -21,9 +21,19 @@ class Plan():
         self.route = route
         self.score = 0
         self.travel_time = 0
-        self.vehicle_left = None
         for segment in route:
             self.travel_time += segment.time_sec
+
+    ''' a used vehicle cannot be used from a different location where it was left '''
+    def is_legal_partial_plan(self):
+        vehicles_left = {}
+        for segment in self.route:
+            uv = segment.unique_vehicle
+            if uv:
+                if uv in vehicles_left and segment.from_vertex.location != vehicles_left[uv]:
+                    return False
+                vehicles_left[uv] = segment.to_vertex.location
+        return True
 
     def __str__(self):
         return str(list(map(str, self.route)))
@@ -51,7 +61,8 @@ class RichRouter(object):
                 for e in self.edges_starting_at(p.route[-1].to_vertex, edges):
                     new_p = Plan(copy.copy(p.route))
                     new_p.route.append(e)
-                    new_plans.append(new_p)
+                    if new_p.is_legal_partial_plan():
+                        new_plans.append(new_p)
             # print(list(recur_map(str, partial_routes)))
 
         return final_plans

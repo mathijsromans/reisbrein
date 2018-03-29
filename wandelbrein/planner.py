@@ -56,7 +56,8 @@ class WandelbreinPlanner:
         hike_start_loc = Location('start wandeling', (trail.begin_lat, trail.begin_lon))
         hike_end_loc = Location('eind wandeling', (trail.end_lat, trail.end_lon))
         if hike_start_loc.distance_to(hike_end_loc).meters < 100:
-            hike_end_loc = Location('eind wandeling', hike_start_loc.gps)
+            hike_end_loc = hike_start_loc
+            hike_start_loc.loc_str = 'wandeling'
 
         hike_start = Point(hike_start_loc, start_time + timedelta(hours=12))
 

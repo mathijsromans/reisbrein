@@ -149,8 +149,8 @@ class Segment(Edge):
         self.map_url = ''
         self.route_name = ''
         self.platform_code = ''
-        transporttypes_that_need_returning = [TransportType.CAR, TransportType.OVFIETS]
-        self.vehicle_to_be_returned = transport_type if transport_type in transporttypes_that_need_returning else None
+        transporttypes_with_unique_vehicles = [TransportType.CAR, TransportType.OVFIETS, TransportType.BIKE]
+        self.unique_vehicle = transport_type if transport_type in transporttypes_with_unique_vehicles else None
 
     def has_same_points_and_type(self, other):
         return self.from_vertex == other.from_vertex and\
