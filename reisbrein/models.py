@@ -47,7 +47,9 @@ class TravelTime(models.Model):
 
     @property
     def speed(self):
-        return self.distance/self.time_sec
+        if self.time_sec != 0:
+            return self.distance/self.time_sec
+        return 0.0
 
 
 class ApiCache(models.Model):
