@@ -144,6 +144,7 @@ class Segment(Edge):
     # unique vehicles
     my_car = 'my_car'
     my_bike = 'my_bike'
+    my_ovfiets = 'my_ovfiets'
 
     def __init__(self, transport_type, start, end):
         super(Segment, self).__init__(start, end, (end.time - start.time).total_seconds())
@@ -157,8 +158,10 @@ class Segment(Edge):
         self.unique_vehicle = None
         if transport_type == TransportType.CAR:
             self.unique_vehicle = Segment.my_car
-        elif transport_type == TransportType.OVFIETS or transport_type == TransportType.BIKE: # todo: fix bike/ovfiets confusion
+        elif transport_type == TransportType.OVFIETS: # todo: fix bike/ovfiets confusion
             self.unique_vehicle = Segment.my_bike
+        elif transport_type == TransportType.BIKE: # todo: fix bike/ovfiets confusion
+            self.unique_vehicle = Segment.my_ovfiets
 
     def has_same_points_and_type(self, other):
         return self.from_vertex == other.from_vertex and\
