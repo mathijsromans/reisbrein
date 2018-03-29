@@ -21,6 +21,7 @@ class Plan():
         self.route = route
         self.score = 0
         self.travel_time = 0
+        self.vehicle_left = None
         for segment in route:
             self.travel_time += segment.time_sec
 
@@ -31,29 +32,29 @@ class Plan():
 class RichRouter(object):
 
     def make_plans(self, start, end, edges):
-        new_routes = [[edge] for edge in self.edges_starting_at(start, edges)]
+        new_plans = [Plan([edge]) for edge in self.edges_starting_at(start, edges)]
         num_changes = 0
-        final_routes = []
-        while new_routes:
-            partial_routes = []
-            for p in new_routes:
-                if p[-1].to_vertex == end:
-                    final_routes.append(p)
-                else:
-                    partial_routes.append(p)
-            num_changes += len(new_routes)
+        final_plans = []
+        while new_plans:
+            num_changes += len(new_plans)
             if num_changes > 1000:
+                logger.error('make_plans search limit exceeded')
                 break
-            new_routes.clear()
-            for p in partial_routes:
-                for e in self.edges_starting_at(p[-1].to_vertex, edges):
+            partial_plans = []
+            for p in new_plans:
+                if p.route[-1].to_vertex == end:
+                    final_plans.append(p)
+                else:
+                    partial_plans.append(p)
+            new_plans.clear()
+            for p in partial_plans:
+                for e in self.edges_starting_at(p.route[-1].to_vertex, edges):
                     new_p = copy.copy(p)
-                    new_p.append(e)
-                    new_routes.append(new_p)
+                    new_p.route.append(e)
+                    new_plans.append(new_p)
             # print(list(recur_map(str, partial_routes)))
 
-        plans = [Plan(r) for r in final_routes]
-        return plans
+        return final_plans
 
     @staticmethod
     def edges_starting_at(point, edges):

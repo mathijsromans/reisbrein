@@ -35,7 +35,7 @@ def get_default_trail():
 def get_trail():
     trails = Trail.objects.all()
     if trails:
-        return trails[2]
+        # return trails[2]
         return random.choice(trails)
     return get_default_trail()
 
