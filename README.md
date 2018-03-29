@@ -7,7 +7,7 @@ Requires Python 3.4+ and Django 1.11+
 These instructions assume a Linux based OS.
 For Windows installation instructions see [Install Windows](docs/install_windows.md).
 
-### Get the code and create virtualenv
+#### Get the Code
 
 Get the code and enter the project directory,
 ```
@@ -39,14 +39,14 @@ Make sure you have a recent version of pip,
 pip install --upgrade pip
 ```
 
-### Install dependencies
+#### Dependencies
 
 Install python packages in the local env,
 ```
 pip install -r requirements.txt
 ```
 
-### Create local settings
+#### Local Settings
 There are some settings that are local and/or secret, these are set in `website/local_settings.py`.
 
 Generate a `local_settings.py` file from the example,
@@ -54,7 +54,7 @@ Generate a `local_settings.py` file from the example,
 python create_local_settings.py
 ```
 
-### Create local database
+#### Database
 Create a database (default is sqlite),
 ```
 python manage.py migrate
