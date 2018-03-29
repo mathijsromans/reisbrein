@@ -161,7 +161,7 @@ class Segment(Edge):
         elif transport_type == TransportType.OVFIETS: # todo: fix bike/ovfiets confusion
             self.unique_vehicle = Segment.my_bike
         elif transport_type == TransportType.BIKE: # todo: fix bike/ovfiets confusion
-            self.unique_vehicle = Segment.my_ovfiets
+            self.unique_vehicle = Segment.my_bike
 
     def has_same_points_and_type(self, other):
         return self.from_vertex == other.from_vertex and\

@@ -84,7 +84,7 @@ def try_travel_time(start, end, mode):
                 logger.error('Error message: ' + result['error']['message'])
             if 'code' in result['error']:
                 logger.error('Error code: ' + str(result['error']['code']))
-                if result['error']['code'] == 2009:
+                if result['error']['code'] == 2009 or result['error']['code'] == 2099:
                     raise ConnectionNotFoundError()
         raise ValueError
     return time_sec
