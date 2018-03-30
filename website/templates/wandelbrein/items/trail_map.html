@@ -1,0 +1,41 @@
+
+<div id="map_{{ trail.id }}" class="map"></div>
+<script>
+  const osm_{{ trail.id }} = new ol.layer.Tile({
+    source: new ol.source.OSM()
+  });
+
+  const style_{{ trail.id }} = {
+    'LineString': new ol.style.Style({
+      stroke: new ol.style.Stroke({
+        color: '#0090ff',
+        width: 3
+      })
+    }),
+    'MultiLineString': new ol.style.Style({
+      stroke: new ol.style.Stroke({
+        color: '#0090ff',
+        width: 5
+      })
+    })
+  };
+
+  const vector_{{ trail.id }} = new ol.layer.Vector({
+    source: new ol.source.Vector({
+      url: "{% url 'trail-gpx' trail.id %}",
+      format: new ol.format.GPX()
+    }),
+    style: function(feature) {
+        return style_{{ trail.id }}[feature.getGeometry().getType()];
+    }
+  });
+
+  const map_{{ trail.id }} = new ol.Map({
+    layers: [osm_{{ trail.id }}, vector_{{ trail.id }}],
+    target: document.getElementById('map_{{ trail.id }}'),
+    view: new ol.View({
+      center: ol.proj.transform([{{ trail.begin_lon }}, {{ trail.begin_lat }}], 'EPSG:4326', 'EPSG:3857'),
+      zoom: 11
+    })
+  });
+</script>

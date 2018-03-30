@@ -1,0 +1,16 @@
+{% extends "wandelbrein/base.html" %}
+
+{% load static %}
+{% load bootstrap3 %}
+{% load reisbrein %}
+
+{% block title %}Wandelkaart | trail.name {{ block.super }}{% endblock %}
+
+{% block content %}
+<div class="container">
+
+  {% include "wandelbrein/items/trail_map.html" %}
+
+</div>
+
+{% endblock %}

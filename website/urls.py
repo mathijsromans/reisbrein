@@ -22,7 +22,12 @@ urlpatterns = [
     url(r'^userprofile/(?P<pk>[0-9]+)/$', login_required(UserProfileView.as_view()), name='userprofile'),
 
     url(r'^wandelen/$', wandelviews.PlanInputWandelView.as_view(), name='wandel-plan-input'),
-    url(r'^wandelen/(?P<start>.+)/(?P<timestamp>.+)$', wandelviews.PlanViewWandelbrein.as_view(), name='wandel-plan-results'),
+
+    url(r'^wandelen/wandelingen/$', wandelviews.TrailsView.as_view(), name='trails'),
+    url(r'^wandelen/advies/(?P<start>.+)/(?P<timestamp>.+)$', wandelviews.PlanViewWandelbrein.as_view(), name='wandel-plan-results'),
+    url(r'^wandelen/wandeling/(?P<trail_id>[0-9]+)/gpx/$', wandelviews.get_gpx, name='trail-gpx'),
+    url(r'^wandelen/wandeling/(?P<trail_id>[0-9]+)/kaart/$', wandelviews.TrailDetailsView.as_view(), name='trail-map'),
+
 
     url(r'^register/$', RegisterView.as_view()),  # needed to logout the auto-generated anonymous user
     url(r'^accounts/', include('registration.backends.simple.urls')),  # the django-registration module

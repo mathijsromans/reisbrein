@@ -18,6 +18,7 @@ INSTALLED_APPS = [
     'wandelbrein',
     'datetimewidget',
     'bootstrap3',
+    'bootstrap_pagination',
     'registration',
     'dbbackup',
     'django_cron',

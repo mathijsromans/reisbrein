@@ -1,4 +1,4 @@
-{% extends "website/base.html" %}
+{% extends "wandelbrein/base.html" %}
 
 {% load static %}
 {% load bootstrap3 %}
@@ -30,6 +30,11 @@
             <tr>
               <td>
                 <a href="{{ trail.wandelpagina_url }}" target="_blank">wandelzoekpagina.nl</a>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                {% include "wandelbrein/items/trail_map.html" %}
               </td>
             </tr>
           </table>

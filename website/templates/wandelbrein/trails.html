@@ -1,0 +1,40 @@
+{% extends "wandelbrein/base.html" %}
+
+{% load static %}
+{% load bootstrap3 %}
+{% load reisbrein %}
+{% load bootstrap_pagination %}
+
+
+{% block title %}Wandelingen {{ block.super }}{% endblock %}
+
+{% block content %}
+<div class="container">
+
+  <div class="row">
+  {% for trail in trails %}
+    <div class="col-md-4">
+      <div class="panel panel-default">
+        <div class="panel-heading text-center">
+          <a href="{{ trail.wandelpagina_url }}">{{ trail.title }}</a>
+        </div>
+        <div class="panel-body" style="padding: 0;">
+            {% include "wandelbrein/items/trail_map.html" %}
+        </div>
+      </div>
+    </div>
+    {% if forloop.counter|divisibleby:3 %}
+      <div class="clearfix"></div>
+    {% endif %}
+  {% endfor %}
+  </div>
+
+  <div class="row">
+    <div class="col-xs-12">
+      {% bootstrap_paginate trails %}
+    </div>
+  </div>
+
+</div>
+
+{% endblock %}
