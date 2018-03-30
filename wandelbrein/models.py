@@ -3,7 +3,7 @@ from django.db import models
 
 class Trail(models.Model):
     title = models.CharField(max_length=500)
-    wandelpagina_id = models.CharField(unique=True, primary_key=True, max_length=100)
+    wandelpagina_id = models.CharField(unique=True, db_index=True, max_length=100)
     wandelpagina_url = models.URLField(blank=True, null=True, max_length=500)
     nswandel_url = models.URLField(blank=True, null=True, max_length=500)
     begin_lon = models.FloatField()

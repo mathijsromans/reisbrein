@@ -16,4 +16,9 @@ def scrape_and_create_trails(max_trails=None):
         trail.end_lon = trail_data.end_point.longitude
         trail.end_lat = trail_data.end_point.latitude
         trail.gpx = trail_data.gpx
+        Trail.objects.filter(wandelpagina_id=trail.wandelpagina_id).delete()
         trail.save()
+
+
+def delete_trails():
+    Trail.objects.all().delete()
