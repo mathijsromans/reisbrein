@@ -47,7 +47,7 @@ class MonotchApi:
         url = self.PLANNERSTACK_PRODUCTION_URL if PRODUCTION_SERVER else self.PLANNERSTACK_DEMO_URL
         headers = {'Content-Type': 'application/json'}
         expiry = datetime.timedelta(minutes=15)
-        query = cache.Query(None, url, arguments, headers, expiry)
+        query = cache.Query(url, arguments, headers, expiry)
         req = self.RequestQuery(request, query)
         self.reqs.append(req)
         return request
@@ -58,6 +58,8 @@ class MonotchApi:
         queries = [rq.query for rq in self.reqs]
         cache.query_list(queries)
         for rq in self.reqs:
+            if 'plan' not in rq.query.result:
+                logger.error('Incomplete response from ' + rq.query.full_url())
             rq.request.result = rq.query.result['plan']
         log_end = time.time()
         logger.info('END - time: ' + str(log_end - log_start))

@@ -64,7 +64,7 @@ def try_travel_time(start, end, mode):
 
         headers = {}
 
-        q = cache.Query(None, BASE_API_URL, arguments, headers, datetime.timedelta(days=7))
+        q = cache.Query(BASE_API_URL, arguments, headers, datetime.timedelta(days=7))
         result = cache.query(q)
         # print(response.url)
         # print(response.json())

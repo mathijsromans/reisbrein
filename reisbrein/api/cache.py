@@ -1,6 +1,6 @@
-from recordclass import recordclass
 from requests_futures.sessions import FuturesSession
 from concurrent.futures import wait
+import requests
 import json
 import time
 import logging
@@ -14,12 +14,16 @@ from website.settings import TESTING_FROM_CMD_LINE, ASSUME_NO_API_EXPIRY
 logger = logging.getLogger(__name__)
 
 
-Query = recordclass('Query',
-                    ['result',
-                     'url',
-                     'arguments',
-                     'headers',
-                     'expiry'])
+class Query:
+    def __init__(self, url, arguments, headers, expiry):
+        self.url = url
+        self.arguments = arguments
+        self.headers = headers
+        self.expiry = expiry
+        self.result = None
+
+    def full_url(self):
+        return requests.Request('GET', self.url, params=self.arguments).prepare().url()
 
 
 class QueryInfo:
@@ -132,7 +136,7 @@ def query_list(queries):
 
 
 def query_from(url, arguments, headers, expiry):
-    q = Query(None, url, arguments, headers, expiry)
+    q = Query(url, arguments, headers, expiry)
     return query(q)
 
 
