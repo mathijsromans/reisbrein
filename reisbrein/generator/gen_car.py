@@ -30,12 +30,13 @@ class CarGenerator:
         new_edges = []
         
         #both including and excluding highways, to possibly filter later on
-        for highway_toggle in (True, False):
+        # for avoid_highways in (True, False):
+        for avoid_highways in [False]:
 
-            new_edges += create_wait_and_move_segments(self, start, end, fix_time, TransportType.CAR, option=highway_toggle)
+            new_edges += create_wait_and_move_segments(self, start, end, fix_time, TransportType.CAR, option=avoid_highways)
 
             for e in edges:
                 if e.from_vertex.location.has_parking:
-                    new_edges += create_wait_and_move_segments(self, start, e.from_vertex, FixTime.END, TransportType.CAR, option=highway_toggle)
+                    new_edges += create_wait_and_move_segments(self, start, e.from_vertex, FixTime.END, TransportType.CAR, option=avoid_highways)
 
         edges += new_edges
