@@ -11,7 +11,7 @@ class UserTravelPreferences(models.Model):
     #reduce_number_of_transfers = models.BooleanField(default=False, blank=False)
     travel_time_importance = models.IntegerField(default=5)
     likes_to_bike = models.IntegerField(default=5)
-    save_CO2 = models.IntegerField(default=5)
+    save_CO2 = models.IntegerField(default=0)
     show_n_results = models.IntegerField(default=15)
     datetime_update = models.DateTimeField(auto_now=True)
 
