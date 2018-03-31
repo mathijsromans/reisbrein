@@ -46,7 +46,7 @@ class WandelbreinPlanner:
         self.generator = generator()
         self.router = router()
 
-    def solve(self, start_loc_str, start_time, user_preferences=UserTravelPreferences()):
+    def solve(self, start_loc_str, start_hike_time, user_preferences=UserTravelPreferences()):
         logger.info('BEGIN')
         log_start = time.time()
 
@@ -59,16 +59,10 @@ class WandelbreinPlanner:
             hike_end_loc = hike_start_loc
             hike_start_loc.loc_str = 'wandeling'
 
-        hike_start = Point(hike_start_loc, start_time + timedelta(hours=12))
-
-        start_loc = Location(start_loc_str)
-        plans = reisbrein_planner.solve(start_loc, hike_start.location, start_time, FixTime.START)
-        best_start_hike_time = plans[0].route[-1].to_vertex.time
-
-        start = Point(Location(start_loc_str), start_time)
-        hike_start = Point(hike_start_loc, best_start_hike_time + timedelta(minutes=60))
-        hike_end = Point(hike_end_loc, best_start_hike_time + timedelta(seconds=trail.distance/WALKING_SPEED))
-        end = Point(Location(start_loc_str), start_time + timedelta(hours=12))
+        start = Point(Location(start_loc_str), start_hike_time - timedelta(hours=12))
+        hike_start = Point(hike_start_loc, start_hike_time)
+        hike_end = Point(hike_end_loc, start_hike_time + timedelta(seconds=trail.distance/WALKING_SPEED))
+        end = Point(Location(start_loc_str), hike_end.time + timedelta(hours=12))
 
         logger.info('start=' + str(start))
         logger.info('hike_start=' + str(hike_start))

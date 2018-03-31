@@ -152,10 +152,14 @@ class Planner():
     @staticmethod
     def remove_unnecessary_waiting(plans, fix_time):
         for p in plans:
-            if p.route:
-                n = 0 if fix_time == FixTime.END else len(p.route)-1  # remove waiting at the time which is NOT fixed
-            if p.route[n].transport_type == TransportType.WAIT:
-                p.route.pop(n)
+            if not p.route:
+                continue
+            remove_waiting_at_start = fix_time == FixTime.END or plans[0].is_round_trip()
+            if remove_waiting_at_start and p.route[0].transport_type == TransportType.WAIT:
+                p.route.pop(0)
+            remove_waiting_at_end = fix_time == FixTime.START or plans[0].is_round_trip()
+            if remove_waiting_at_end and p.route[-1].transport_type == TransportType.WAIT:
+                p.route.pop(-1)
 
     def solve(self, start_loc, end_loc, req_time, fix_time, user_preferences=UserTravelPreferences()):
         logger.info('BEGIN')
