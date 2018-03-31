@@ -23,7 +23,7 @@ class Query:
         self.result = None
 
     def full_url(self):
-        return requests.Request('GET', self.url, params=self.arguments).prepare().url()
+        return requests.Request('GET', self.url, params=self.arguments).prepare().url
 
 
 class QueryInfo:
