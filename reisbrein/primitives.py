@@ -1,6 +1,6 @@
 import datetime
 from geopy.distance import vincenty
-from .graph import Edge
+from .graph import BasicEdge
 from enum import Enum
 from reisbrein.api.tomtom import TomTomApi
 
@@ -55,6 +55,7 @@ class TransportType(Enum):
     BUS = 5
     TRAM = 6
     OVFIETS = 7
+    INVISIBLE_WAIT = 8
 
     def to_dutch(self):
         translate = {
@@ -66,6 +67,7 @@ class TransportType(Enum):
             TransportType.BUS: 'Bus',
             TransportType.TRAM: 'Tram',
             TransportType.OVFIETS: 'OV-fiets',
+            TransportType.INVISIBLE_WAIT: 'Wachten (buiten reis)',
         }
         try:
             return translate[self]
@@ -139,7 +141,7 @@ class Point:
         return str(self.location) + ' @ ' + str(self.time)
 
 
-class Segment(Edge):
+class Segment(BasicEdge):
 
     # unique vehicles
     my_car = 'my_car'
@@ -147,7 +149,7 @@ class Segment(Edge):
     my_ovfiets = 'my_ovfiets'
 
     def __init__(self, transport_type, start, end):
-        super(Segment, self).__init__(start, end, (end.time - start.time).total_seconds())
+        super(Segment, self).__init__(start, end, )
         self.transport_type = transport_type
         self.weather = ''
         self.weather_icon = ''
@@ -162,6 +164,10 @@ class Segment(Edge):
             self.unique_vehicle = Segment.my_bike
         elif transport_type == TransportType.BIKE: # todo: fix bike/ovfiets confusion
             self.unique_vehicle = Segment.my_bike
+
+    @property
+    def time_sec(self):
+        return (self.to_vertex.time - self.from_vertex.time).total_seconds()
 
     def has_same_points_and_type(self, other):
         return self.from_vertex == other.from_vertex and\

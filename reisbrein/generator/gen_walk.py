@@ -75,8 +75,8 @@ class WalkGenerator:
         return segment, new_point
 
     def do_create_edges(self, start, end, fix_time, edges):
-        edges += create_wait_and_move_segments(self, start, end, FixTime.START, TransportType.WALK)
-        edges += create_wait_and_move_segments(self, start, end, FixTime.START, TransportType.BIKE,
+        edges += create_wait_and_move_segments(self, start, end, fix_time, TransportType.WALK)
+        edges += create_wait_and_move_segments(self, start, end, fix_time, TransportType.BIKE,
                                                WalkGenerator.MIN_BIKE_TIME_SEC)
 
         public_types = [TransportType.TRAIN, TransportType.TRAM, TransportType.BUS]

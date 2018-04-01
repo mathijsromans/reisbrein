@@ -8,7 +8,7 @@ from reisbrein.generator.gen_common import FixTime
 from reisbrein.primitives import Point, Location, TransportType, Segment
 from reisbrein.userpreference import order_and_select
 from reisbrein.models import UserTravelPreferences
-from reisbrein.planner import Plan, RichRouter, Planner
+from reisbrein.planner import RichRouter, Planner
 from wandelbrein.models import Trail
 
 logger = logging.getLogger(__name__)
@@ -44,6 +44,7 @@ def get_weight(close_to_location, trail):
 
 def get_trail(close_to_location):
     trails = Trail.objects.all()
+    # return trails[2]
     weights = [get_weight(close_to_location, t) for t in trails]
     s = sum(weights)
     if s == 0:
@@ -62,8 +63,6 @@ class WandelbreinPlanner:
     def solve(self, start_loc_str, start_hike_time, user_preferences=UserTravelPreferences()):
         logger.info('BEGIN')
         log_start = time.time()
-
-        reisbrein_planner = Planner()
 
         start = Point(Location(start_loc_str), start_hike_time - timedelta(hours=12))
 
@@ -85,17 +84,18 @@ class WandelbreinPlanner:
 
         edges = self.generator.create_edges(start, hike_start, FixTime.END)
         edges += self.generator.create_edges(hike_end, end, FixTime.START)
+
         hiking_segment = Segment(TransportType.WALK, hike_start, hike_end)
         hiking_segment.route_name = trail.title
         hiking_segment.map_url = trail.wandelpagina_url
         edges.append(hiking_segment)
         # for e in edges:
-        #     print(e)
+        #     logger.info('Edge: ' + str(e))
 
         plans = self.router.make_plans(start, end, edges)
         plans = list(filter(Planner.has_no_double_biking, plans))
+        order_and_select(plans, user_preferences, None)
         Planner.remove_unnecessary_waiting(plans, FixTime.START)
-        order_and_select(plans, user_preferences)
         log_end = time.time()
         logger.info('END - time: ' + str(log_end - log_start))
         return plans, trail

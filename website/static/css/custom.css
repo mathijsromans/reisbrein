@@ -45,6 +45,10 @@ body {
     background-color: #c5c9cb;
 }
 
+.progress-bar-invisible {
+    background-color: #ffffff;
+}
+
 .progress-bar-tram {
     background-color: #02b3ef;
 }

@@ -1,5 +1,6 @@
 from reisbrein.load_preference import *
 from reisbrein.primitives import TransportType
+from reisbrein.generator.gen_common import FixTime
 from numpy import array, zeros
 import heapq
 
@@ -24,16 +25,16 @@ def remove_really_bad_plans(plans):
     plans[:] = [p for p in plans if p.score > -1e8]
 
 
-def order_and_select(plans, user_preferences):
+def order_and_select(plans, user_preferences, fix_time):
     for p in plans:
-        p.score = score(p.route, user_preferences)
+        p.score = score(p.route, user_preferences, fix_time)
     remove_really_bad_plans(plans)
     remove_long_plans(plans)
     plans.sort(key=lambda plan: plan.score, reverse=True)
     del plans[user_preferences.show_n_results:]
 
 
-def get_conditions(option):
+def get_conditions(option, fix_time):
     condition_dict = {}
     # starts with car, starts with bike, includes car, includes bike, total time
 
@@ -70,9 +71,6 @@ def get_conditions(option):
     condition_dict['tram distance'] = 0
     condition_dict['bus distance'] = 0
 
-    if option[0].transport_type == TransportType.WAIT:
-        condition_dict['time at home'] = option[0].time_sec / 60
-
     for s in option:
         if s.transport_type in [TransportType.CAR, TransportType.TRAIN, TransportType.BUS, TransportType.TRAM]: 
             condition_dict['num transfers'] += 1
@@ -97,12 +95,22 @@ def get_conditions(option):
         condition_dict['total time'] += s.time_sec / 60
         if s.weather == 'rainy':
             condition_dict['rainy'] += 1
+
+    if option[0].transport_type == TransportType.WAIT:
+        condition_dict['time at home'] = option[0].time_sec / 60
+
+    # if an end is not fixed, waiting there should not be counted as travel time
+    if option[0].transport_type == TransportType.WAIT and fix_time != FixTime.START:
+        condition_dict['total time'] -= option[0].time_sec / 60
+    if option[-1].transport_type == TransportType.WAIT and fix_time != FixTime.END:
+        condition_dict['total time'] -= option[-1].time_sec / 60
+
     return condition_dict
 
-def score(option, user_preferences):
+def score(option, user_preferences, fix_time):
     preference_vec = load_user_preference(user_preferences, option)
     Matrix, preference_list, conditions_list = load_dummy_preference_condition_matrix()
-    cd = get_conditions(option)
+    cd = get_conditions(option, fix_time)
     conditions = array( [cd[cond] for cond in conditions_list] )
     conditions_vector = Matrix.dot(conditions)
     preference = conditions_vector.dot(preference_vec)

@@ -15,6 +15,7 @@ def transport_type_icon(transport_type):
         TransportType.BIKE.name: 'fa-bicycle',
         TransportType.OVFIETS.name: 'fa-bicycle',
         TransportType.WAIT.name: 'fa-child',
+        TransportType.INVISIBLE_WAIT.name: 'fa-child',
     }
     if transport_type in icon_map:
         return icon_map[transport_type]
@@ -32,6 +33,7 @@ def transport_type_color(transport_type):
         TransportType.BIKE.name: 'warning',
         TransportType.OVFIETS.name: 'ovfiets',
         TransportType.WAIT.name: 'wait',
+        TransportType.INVISIBLE_WAIT.name: 'invisible',
     }
     if transport_type in color_map:
         return color_map[transport_type]
@@ -49,6 +51,7 @@ def transport_type_bgcolor(transport_type):
         TransportType.BIKE.name: 'bg-warning',
         TransportType.OVFIETS.name: 'bg-info',
         TransportType.WAIT.name: 'bg-danger',
+        TransportType.INVISIBLE_WAIT.name: 'bg-danger',
     }
     if transport_type in color_map:
         return color_map[transport_type]

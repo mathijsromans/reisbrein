@@ -64,6 +64,12 @@ class Plan():
                     return False
         return True
 
+    def departure_time(self):
+        for s in self.route:
+            if s.transport_type != TransportType.WAIT:
+                logger.info('departure_time of '  + str(s) + ' is ' + str(s.from_vertex.time))
+                return s.from_vertex.time
+
     def __str__(self):
         return str(list(map(str, self.route)))
 
@@ -94,7 +100,7 @@ class RichRouter(object):
                     if new_p.is_legal_partial_plan():
                         new_plans.append(new_p)
             # print(list(recur_map(str, partial_routes)))
-
+        logger.info('Made ' + str(len(final_plans)) + ' plans')
         return final_plans
 
     @staticmethod
@@ -151,15 +157,31 @@ class Planner():
 
     @staticmethod
     def remove_unnecessary_waiting(plans, fix_time):
-        for p in plans:
-            if not p.route:
-                continue
-            remove_waiting_at_start = fix_time == FixTime.END or plans[0].is_round_trip()
-            if remove_waiting_at_start and p.route[0].transport_type == TransportType.WAIT:
-                p.route.pop(0)
-            remove_waiting_at_end = fix_time == FixTime.START or plans[0].is_round_trip()
-            if remove_waiting_at_end and p.route[-1].transport_type == TransportType.WAIT:
-                p.route.pop(-1)
+        if not plans:
+            return
+        if plans[0].is_round_trip():
+            logger.info('is round trip')
+            earliest_departure = min(p.departure_time() for p in plans)
+            logger.info('earliest_departure = ' + str(earliest_departure))
+            for p in plans:
+                s1 = p.route[0]
+                s2 = p.route[-1]
+                if s1.transport_type == TransportType.WAIT:
+                    if s1.to_vertex.time == earliest_departure:
+                        logger.info('popping ' + str(s1))
+                        p.route.pop(0)
+                    else:
+                        s1.from_vertex.time = earliest_departure
+                        s1.transport_type = TransportType.INVISIBLE_WAIT
+                        logger.info('changing ' + str(s1))
+                if s2.transport_type == TransportType.WAIT:
+                    p.route.pop(-1)
+        else:
+            for p in plans:
+                if fix_time == FixTime.END and p.route[0].transport_type == TransportType.WAIT:
+                    p.route.pop(0)
+                if fix_time == FixTime.START and p.route[-1].transport_type == TransportType.WAIT:
+                    p.route.pop(-1)
 
     def solve(self, start_loc, end_loc, req_time, fix_time, user_preferences=UserTravelPreferences()):
         logger.info('BEGIN')
@@ -173,10 +195,12 @@ class Planner():
         start = Point(start_loc, start_time)
         end = Point(end_loc, end_time)
         edges = self.generator.create_edges(start, end, fix_time)
+        # for e in edges:
+        #     logger.info('Edge: ' + str(e))
         plans = self.router.make_plans(start, end, edges)
         plans = list(filter(self.has_no_double_biking, plans))
+        order_and_select(plans, user_preferences, fix_time)
         self.remove_unnecessary_waiting(plans, fix_time)
-        order_and_select(plans, user_preferences)
         log_end = time.time()
         logger.info('END - time: ' + str(log_end - log_start))
         return plans

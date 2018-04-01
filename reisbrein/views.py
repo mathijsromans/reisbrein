@@ -8,7 +8,7 @@ from django.views.generic.edit import FormView
 from django.urls import reverse
 from datetimewidget.widgets import DateTimeWidget
 from reisbrein.generator.gen_common import FixTime
-from reisbrein.primitives import Location
+from reisbrein.primitives import Location, TransportType
 from reisbrein.planner import Planner
 from reisbrein.models import UserTravelPreferences
 from reisbrein.models import UserTravelPlan, Request
@@ -152,7 +152,7 @@ class PlanView():
 
         result = []
         for plan in plans:
-            time = PlanView.travel_time(plan)
+            time, time_without_invisible_waiting = PlanView.travel_time(plan)
             segments = []
             for segment in plan.route:
                 segments.append(
@@ -164,9 +164,9 @@ class PlanView():
                     })
             result.append(
             {
-                'travel_time_min': int(time/60),
+                'travel_time_min': int(time_without_invisible_waiting/60),
                 'arrival_time': plan.route[-1].to_vertex.time,
-                'travel_time_str': PlanView.format_minutes(int(time/60)),
+                'travel_time_str': PlanView.format_minutes(int(time_without_invisible_waiting/60)),
                 'travel_time_percentage': 100*time/max_time,
                 'segments': segments
             })
@@ -183,15 +183,19 @@ class PlanView():
     def max_travel_time(plans):
         max_travel_time = 0
         for plan in plans:
-            max_travel_time = max(max_travel_time, PlanView.travel_time(plan))
+            time, time_without_invisible_waiting = PlanView.travel_time(plan)
+            max_travel_time = max(max_travel_time, time)
         return max_travel_time
 
     @staticmethod
     def travel_time(plan):
         time = 0
+        time_without_invisible_waiting = 0
         for segment in plan.route:
             time += segment.time_sec
-        return time
+            if segment.transport_type != TransportType.INVISIBLE_WAIT:
+                time_without_invisible_waiting += segment.time_sec
+        return time, time_without_invisible_waiting
 
 
 class UserTravelPreferencesForm(forms.Form):

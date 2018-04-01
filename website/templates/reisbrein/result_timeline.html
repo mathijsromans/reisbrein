@@ -20,9 +20,13 @@
                 <span class="timeline-text">
                   <span class="text-success">
                     <strong>
-                      vertrek over
+                      vertrek
+                      {% comment %}
+                      over
                       <span class="text-success"><strong>{{ segment.travel_time_min }}</strong></span>
-                      minuten om
+                      minuten
+                      {% endcomment %}
+                      om
                     {% if segment.obj.transport_type.name == 'WAIT' %}
                       {{ segment.obj.to_vertex.time|date:"H:i" }}
                     {% else %}
@@ -67,7 +71,11 @@
                   {% if segment.obj.transport_type.name == 'OVFIETS' %}
                     <img src="{% static 'img/ovfiets.png' %}" height="20px"/>
                   {% endif %}
-                  <span class="text-info">{{ segment.obj.from_vertex.location }}</span>
+                  <span class="text-info">
+                  {% if segment.obj.transport_type.name == 'WAIT' or segment.obj.transport_type.name == 'INVISIBLE_WAIT' %}
+                    wacht bij
+                  {% endif %}
+                  {{ segment.obj.from_vertex.location }}</span>
                   {% if segment.obj.from_vertex.location != segment.obj.to_vertex.location %}
                     naar <span class="text-info">{{ segment.obj.to_vertex.location }}</span>
                   {% endif %}
