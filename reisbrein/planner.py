@@ -1,6 +1,7 @@
 import copy
 import logging
 import time
+from collections import defaultdict
 from datetime import timedelta
 from reisbrein.generator.generator import Generator
 from reisbrein.generator.gen_common import FixTime
@@ -77,13 +78,21 @@ class Plan():
 class RichRouter(object):
 
     def make_plans(self, start, end, edges):
-        new_plans = [Plan([edge]) for edge in self.edges_starting_at(start, edges)]
+        from_to_edge_dict = defaultdict(list)
+        for e in edges:
+            from_to_edge_dict[e.from_vertex].append(e)
+        new_plans = [Plan([edge]) for edge in from_to_edge_dict[start]]
         num_changes = 0
         final_plans = []
         while new_plans:
+            logger.info('There are ' + str(len(new_plans)) + ' new_plans')
+            logger.info('There are ' + str(len(final_plans)) + ' final_plans')
             num_changes += len(new_plans)
-            if num_changes > 10000:
-                logger.error('make_plans search limit exceeded')
+            if num_changes > 100000:
+                logger.error('num_changes search limit exceeded')
+                break
+            if len(final_plans) > 1000:
+                logger.error('final_plans search limit exceeded')
                 break
             partial_plans = []
             for p in new_plans:
@@ -91,21 +100,14 @@ class RichRouter(object):
                     if p.is_legal_final_plan():
                         final_plans.append(p)
                 else:
-                    partial_plans.append(p)
-            new_plans.clear()
-            for p in partial_plans:
-                for e in self.edges_starting_at(p.route[-1].to_vertex, edges):
-                    new_p = Plan(copy.copy(p.route))
-                    new_p.route.append(e)
-                    if new_p.is_legal_partial_plan():
-                        new_plans.append(new_p)
-            # print(list(recur_map(str, partial_routes)))
+                    for e in from_to_edge_dict[p.route[-1].to_vertex]:
+                        new_p = Plan(copy.copy(p.route))
+                        new_p.route.append(e)
+                        if new_p.is_legal_partial_plan():
+                            partial_plans.append(new_p)
+            new_plans = partial_plans
         logger.info('Made ' + str(len(final_plans)) + ' plans')
         return final_plans
-
-    @staticmethod
-    def edges_starting_at(point, edges):
-        return filter(lambda x: x.from_vertex == point, edges)
 
 
 class DijkstraRouter(object):
@@ -168,12 +170,10 @@ class Planner():
                 s2 = p.route[-1]
                 if s1.transport_type == TransportType.WAIT:
                     if s1.to_vertex.time == earliest_departure:
-                        logger.info('popping ' + str(s1))
                         p.route.pop(0)
                     else:
                         s1.from_vertex.time = earliest_departure
                         s1.transport_type = TransportType.INVISIBLE_WAIT
-                        logger.info('changing ' + str(s1))
                 if s2.transport_type == TransportType.WAIT:
                     p.route.pop(-1)
         else:
