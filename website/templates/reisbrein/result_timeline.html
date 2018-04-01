@@ -52,7 +52,12 @@
                   <span class="text-success">
                     <strong>{{ segment.obj.from_vertex.time|date:"H:i" }}</strong>
                     <span class="text-info pull-right">
-                    reistijd: {{ segment.travel_time_str }}
+                    {% if segment.obj.transport_type.name == 'WAIT' %}
+                      wachttijd:
+                    {% else %}
+                      reistijd:
+                    {% endif %}
+                    {{ segment.travel_time_str }}
                     {% if segment.obj.delay %}
                       <span class="text-danger"> +{{ segment.obj.delay|floatformat:0 }} min</span>
                     {% endif %}
@@ -62,7 +67,10 @@
                   {% if segment.obj.transport_type.name == 'OVFIETS' %}
                     <img src="{% static 'img/ovfiets.png' %}" height="20px"/>
                   {% endif %}
-                    <span class="text-info">{{ segment.obj.from_vertex.location }}</span> naar <span class="text-info">{{ segment.obj.to_vertex.location }}</span>
+                  <span class="text-info">{{ segment.obj.from_vertex.location }}</span>
+                  {% if segment.obj.from_vertex.location != segment.obj.to_vertex.location %}
+                    naar <span class="text-info">{{ segment.obj.to_vertex.location }}</span>
+                  {% endif %}
                   {% if segment.obj.transport_type.name == 'WALK' %}
                     <img class="pull-right" src="{{ segment.obj.weather_icon }}" height="40px"/>
                   {% endif %}
