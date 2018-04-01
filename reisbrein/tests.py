@@ -251,7 +251,7 @@ class TestUserPreference(TestCase):
         bikeplan, carplan, publicplan1, publicplan2, walkplan, bikeplan2 = self.get_plans()
         plans = [bikeplan, carplan, publicplan1]
         order_and_select(plans, UserTravelPreferences())
-        self.assertEqual(plans, [bikeplan, publicplan1, carplan])
+        self.assertEqual(plans, [bikeplan, carplan, publicplan1])
 
         # quick biking is better than long walking
         plans = [walkplan, bikeplan]
@@ -265,12 +265,12 @@ class TestUserPreference(TestCase):
         bikeplan, carplan, publicplan1, publicplan2, walkplan, bikeplan2 = self.get_plans()
         plans = [bikeplan, carplan, publicplan1, publicplan2]
         order_and_select(plans, UserTravelPreferences())
-        self.assertEqual(plans, [bikeplan, publicplan1, carplan])
+        self.assertEqual(plans, [bikeplan, carplan, publicplan1])
 
         # not enough plans, so keep publicplan2
         plans = [publicplan2, carplan, publicplan1]
         order_and_select(plans, UserTravelPreferences())
-        self.assertEqual(plans, [publicplan1, carplan, publicplan2])
+        self.assertEqual(plans, [carplan, publicplan1, publicplan2])
 
     def test_bike_preference(self):
         bikeplan, carplan, publicplan1, publicplan2, walkplan, bikeplan2 = self.get_plans()
@@ -279,18 +279,18 @@ class TestUserPreference(TestCase):
         plans = [bikeplan, carplan]
         order_and_select(plans, prefs)
         self.assertEqual(plans, [bikeplan, carplan])
-        prefs.likes_to_bike=6
+        prefs.likes_to_bike = 6
         plans = [bikeplan, carplan]
         order_and_select(plans, prefs)
         self.assertEqual(plans, [bikeplan, carplan])
-        prefs.likes_to_bike=5
+        prefs.likes_to_bike = 3
         plans = [bikeplan2, carplan]
         order_and_select(plans, prefs)
         self.assertEqual(plans, [bikeplan2, carplan])
-        prefs.likes_to_bike=4
+        prefs.likes_to_bike = 2
         plans = [bikeplan2, carplan]
         order_and_select(plans, prefs)
-        self.assertEqual(plans, [bikeplan2, carplan])
+        self.assertEqual(plans, [carplan, bikeplan2])
 
 
 
