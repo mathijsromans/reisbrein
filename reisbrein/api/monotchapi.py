@@ -60,6 +60,8 @@ class MonotchApi:
         for rq in self.reqs:
             if 'plan' not in rq.query.result:
                 logger.error('Incomplete response from ' + rq.query.full_url())
+            if 'error' in rq.query.result and 'msg' in rq.query.result['error']:
+                logger.error(rq.query.result['error']['msg'])
             rq.request.result = rq.query.result['plan']
         log_end = time.time()
         logger.info('END - time: ' + str(log_end - log_start))

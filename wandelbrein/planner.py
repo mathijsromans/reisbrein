@@ -53,11 +53,11 @@ class WandelbreinPlanner:
         reisbrein_planner = Planner()
 
         trail = get_trail()
-        hike_start_loc = Location('start wandeling', (trail.begin_lat, trail.begin_lon))
-        hike_end_loc = Location('eind wandeling', (trail.end_lat, trail.end_lon))
+        hike_start_loc = Location('wandeling vertrek', (trail.begin_lat, trail.begin_lon))
+        hike_end_loc = Location('wandeling aankomst', (trail.end_lat, trail.end_lon))
         if hike_start_loc.distance_to(hike_end_loc).meters < 100:
             hike_end_loc = hike_start_loc
-            hike_start_loc.loc_str = 'wandeling'
+            hike_start_loc.loc_str = 'wandeling vertrek/aankomst'
 
         start = Point(Location(start_loc_str), start_hike_time - timedelta(hours=12))
         hike_start = Point(hike_start_loc, start_hike_time)
