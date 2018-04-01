@@ -1,16 +1,15 @@
-import random
 import logging
 import time
+import numpy
 from datetime import timedelta
+from geopy.distance import vincenty
 from reisbrein.generator.generator import Generator
 from reisbrein.generator.gen_common import FixTime
-from reisbrein.graph import Graph, shortest_path
 from reisbrein.primitives import Point, Location, TransportType, Segment
 from reisbrein.userpreference import order_and_select
 from reisbrein.models import UserTravelPreferences
 from reisbrein.planner import Plan, RichRouter, Planner
 from wandelbrein.models import Trail
-from reisbrein.primitives import noon_today
 
 logger = logging.getLogger(__name__)
 
@@ -32,12 +31,26 @@ def get_default_trail():
     )
 
 
-def get_trail():
+def sqr(x):
+    return x*x
+
+
+def get_weight(close_to_location, trail):
+    avg_trail_gps = (0.5*(trail.begin_lat + trail.end_lat),
+                     0.5*(trail.begin_lon + trail.end_lon))
+    dist = vincenty(close_to_location.gps, avg_trail_gps).meters
+    return 1/sqr(dist)
+
+
+def get_trail(close_to_location):
     trails = Trail.objects.all()
-    if trails:
-        # return trails[2]
-        return random.choice(trails)
-    return get_default_trail()
+    weights = [get_weight(close_to_location, t) for t in trails]
+    s = sum(weights)
+    if s == 0:
+        return get_default_trail()  # no valid trails
+    norm_weights = [w/s for w in weights]
+    # print(norm_weights)
+    return numpy.random.choice(trails, p=norm_weights)
 
 
 class WandelbreinPlanner:
@@ -52,14 +65,15 @@ class WandelbreinPlanner:
 
         reisbrein_planner = Planner()
 
-        trail = get_trail()
+        start = Point(Location(start_loc_str), start_hike_time - timedelta(hours=12))
+
+        trail = get_trail(start.location)
         hike_start_loc = Location('wandeling vertrek', (trail.begin_lat, trail.begin_lon))
         hike_end_loc = Location('wandeling aankomst', (trail.end_lat, trail.end_lon))
         if hike_start_loc.distance_to(hike_end_loc).meters < 100:
             hike_end_loc = hike_start_loc
             hike_start_loc.loc_str = 'wandeling vertrek/aankomst'
 
-        start = Point(Location(start_loc_str), start_hike_time - timedelta(hours=12))
         hike_start = Point(hike_start_loc, start_hike_time)
         hike_end = Point(hike_end_loc, start_hike_time + timedelta(seconds=trail.distance/WALKING_SPEED))
         end = Point(Location(start_loc_str), hike_end.time + timedelta(hours=12))
