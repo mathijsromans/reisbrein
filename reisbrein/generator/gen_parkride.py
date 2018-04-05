@@ -8,12 +8,11 @@ from .gen_common import FixTime
 
 class ParkRideGeneratorRequest:
 
-    def __init__(self, start, end, fix_time, public_generator):
+    def __init__(self, start, end, fix_time, public_generator, parkings):
         self.ppars = []
-        rdwapi = RdwApi()
         cargenerator = CarGenerator()
         for loc in {start.location, end.location}:
-            park_loc = self.closest_parking(loc, rdwapi)
+            park_loc = self.closest_parking(loc, parkings)
             if park_loc:
                 park = Point(park_loc, end.time)
                 segment, new_point = cargenerator.create_segment(start, park, FixTime.START)
@@ -21,8 +20,7 @@ class ParkRideGeneratorRequest:
                 self.ppars.append((park, request))
 
     @staticmethod
-    def closest_parking(location, rdwapi):
-        parkings = rdwapi.get_park_and_rides()
+    def closest_parking(location, parkings):
         return min(parkings, key=lambda x: vincenty(location.gps, x.gps).meters, default=None)
 
     def finish(self, edges):
@@ -41,11 +39,13 @@ class ParkRideGeneratorRequest:
 
 class ParkRideGenerator:
 
-    def __init__(self, public_generator):
+    def __init__(self, public_generator, location_holder):
         self.public_generator = public_generator
+        rdwapi = RdwApi()
+        self.parkings = location_holder.process(rdwapi.get_park_and_rides())
 
     def prepare_request(self, start, end, fix_time):
-        return ParkRideGeneratorRequest(start, end, fix_time, self.public_generator)
+        return ParkRideGeneratorRequest(start, end, fix_time, self.public_generator, self.parkings)
 
     def do_requests(self):
         self.public_generator.do_requests()

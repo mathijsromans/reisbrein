@@ -73,7 +73,6 @@ def try_travel_time(start, end, mode):
         # print('openrouteserviceapi.travel_time ' + str(start_gps) + ' -> ' + str(end_gps) + ': ' + str(datetime.timedelta(seconds=time_sec)))
     except (KeyError, IndexError) as error:
         response = requests.Request('GET', BASE_API_URL, params=arguments).prepare()
-        logger.error('Failed with start=' + str(start) + ', end=' + str(end) + ', profile=' + str(translate_mode[mode]))
         logger.error('Failed URL = ' + str(response.url))
         logger.error('Failed with route ' + map_url(start, end, mode))
         if 'error' in result:
@@ -99,7 +98,8 @@ def travel_time_and_map_url(start, end, mode):
     local_end = deepcopy(end)
     for i in range(0, 3):
         try:
-            # print('Trying with locations ' + local_start.full_str() + ', ' + local_end.full_str())
+            if i != 0:
+                logger.info('Trying again with locations ' + local_start.full_str() + ', ' + local_end.full_str())
             extra_time = i * jump_closer_distance / bicycle_speed
             time_sec = try_travel_time(local_start, local_end, mode) + extra_time
             return time_sec, map_url(local_start, local_end, mode)
@@ -109,6 +109,7 @@ def travel_time_and_map_url(start, end, mode):
             new_end = Location.midpoint(local_start, local_end, (distance-jump_closer_distance)/distance)
             local_start = new_start
             local_end = new_end
+    logger.error('Giving up on finding a route')
     return 99999, map_url(local_start, local_end, mode)  # no bike route found, please ignore
 
 

@@ -16,11 +16,12 @@ def get_or_add(container, item):
 
 
 class PublicGeneratorRequest:
-    def __init__(self, start, end, fix_time, routing_api):
+    def __init__(self, start, end, fix_time, routing_api, location_holder):
         self.start = start
         self.end = end
         self.fix_time = fix_time
         self.routing_api = routing_api
+        self.location_holder = location_holder
         req_time = self.start.time if self.fix_time == FixTime.START else self.end.time
         self.search_request = self.routing_api.add_search_request(self.start.location,
                                                                   self.end.location,
@@ -37,7 +38,6 @@ class PublicGeneratorRequest:
         points = set()
         points.update(s.from_vertex for s in edges)
         points.update(s.to_vertex for s in edges)
-        locations = set(p.location for p in points)
         new_edges = []
         for it in self.search_request.result['itineraries']:
             prev_point = self.start
@@ -58,7 +58,7 @@ class PublicGeneratorRequest:
                 else:
                     p_loc_lat = float(leg['to']['lat'])
                     p_loc_lon = float(leg['to']['lon'])
-                    loc = get_or_add(locations, Location(p_loc_name, (p_loc_lat, p_loc_lon)))
+                    loc = self.location_holder.create_location(p_loc_name, (p_loc_lat, p_loc_lon))
                 p_end = get_or_add(points, Point(loc, end_time))
                 if index == 0:  # walk to first stop will be added later
                     prev_point = p_end
@@ -117,11 +117,12 @@ class MockPublicGeneratorRequest:
 
 class PublicGenerator:
 
-    def __init__(self, routing_api):
+    def __init__(self, routing_api, location_holder):
         self.routing_api = routing_api
+        self.location_holder = location_holder
 
     def prepare_request(self, start, end, fix_time):
-        return PublicGeneratorRequest(start, end, fix_time, self.routing_api)
+        return PublicGeneratorRequest(start, end, fix_time, self.routing_api, self.location_holder)
 
     def do_requests(self):
         self.routing_api.do_requests()

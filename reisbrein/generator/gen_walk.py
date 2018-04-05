@@ -38,7 +38,7 @@ class WalkGenerator:
             time_sec = distance/WalkGenerator.SPEED_WALK
         else:  # transport_type == TransportType.BIKE or transport_type == TransportType.OVFIETS:
             time_sec_min = distance/WalkGenerator.MAX_SPEED_BIKE
-            time_sec, map_url = yoursapi.travel_time_and_map_url(start_loc, end_loc, TransportType.BIKE)
+            time_sec, map_url = openrouteserviceapi.travel_time_and_map_url(start_loc, end_loc, TransportType.BIKE)
             if time_sec_min > 30 and time_sec < time_sec_min:
                 logger.error('Unrealistic bike timing of ' +
                              str(timedelta(seconds=time_sec)) + ' from: ' +
@@ -91,7 +91,7 @@ class WalkGenerator:
         for s in stops_2:
             edges += create_wait_and_move_segments(self, s, end, FixTime.START, TransportType.WALK)
             if WalkGenerator.OV_FIETS_API.has_ovfiets(s.location.loc_str):
-                bike_type = TransportType.OVFIETS
+                bike_type = TransportType.BIKE
                 edges += create_wait_and_move_segments(self, s, end, FixTime.START, bike_type,
                                                    WalkGenerator.MIN_BIKE_TIME_SEC)
 

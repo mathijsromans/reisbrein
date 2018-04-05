@@ -6,7 +6,7 @@ from datetime import timedelta
 from reisbrein.generator.generator import Generator
 from reisbrein.generator.gen_common import FixTime
 from .graph import Graph, shortest_path
-from .primitives import Point, Location, TransportType
+from .primitives import Point, TransportType
 from .userpreference import order_and_select
 from .models import UserTravelPreferences
 
@@ -68,7 +68,6 @@ class Plan():
     def departure_time(self):
         for s in self.route:
             if s.transport_type != TransportType.WAIT:
-                logger.info('departure_time of '  + str(s) + ' is ' + str(s.from_vertex.time))
                 return s.from_vertex.time
 
     def __str__(self):
@@ -80,13 +79,13 @@ class RichRouter(object):
     def make_plans(self, start, end, edges):
         from_to_edge_dict = defaultdict(list)
         for e in edges:
+            # logger.info(str(e) + str(id(e.from_vertex.location)) + '-' + str(id(e.to_vertex.location)))
             from_to_edge_dict[e.from_vertex].append(e)
         new_plans = [Plan([edge]) for edge in from_to_edge_dict[start]]
         num_changes = 0
         final_plans = []
         while new_plans:
-            logger.info('There are ' + str(len(new_plans)) + ' new_plans')
-            logger.info('There are ' + str(len(final_plans)) + ' final_plans')
+            logger.info('There are ' + str(len(new_plans)) + ' new_plans, ' + str(len(final_plans)) + ' final_plans')
             num_changes += len(new_plans)
             if num_changes > 100000:
                 logger.error('num_changes search limit exceeded')

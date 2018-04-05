@@ -1,5 +1,6 @@
 from django.test import TestCase
 from datetime import datetime, timedelta
+from reisbrein.generator.generator import LocationHolder
 from reisbrein.generator.gen_walk import WalkGenerator
 from reisbrein.generator.gen_public import PublicGenerator, MockPublicGenerator
 from reisbrein.generator.gen_train import TrainGenerator, skip_first
@@ -112,7 +113,8 @@ class TestPublicGenerator(TestCase):
     def setUp(self):
         self.noon = noon_today()
         routing_api = MonotchApi()
-        self.public_generator = PublicGenerator(routing_api)
+        location_holder = LocationHolder()
+        self.public_generator = PublicGenerator(routing_api, location_holder)
 
     def test_fixed_time_start(self):
         fix_time = FixTime.START
@@ -167,7 +169,7 @@ class TestParkRideGenerator(TestCase):
 
     def setUp(self):
         self.public_generator = MockPublicGenerator()
-        self.park_ride_generator = ParkRideGenerator(self.public_generator)
+        self.park_ride_generator = ParkRideGenerator(self.public_generator, LocationHolder())
         self.car_generator = CarGenerator()
         self.noon = noon_today()
 
@@ -199,3 +201,34 @@ class TestParkRideGenerator(TestCase):
                 self.assertGreater(e.to_vertex.time, self.noon - timedelta(hours=2, minutes=30))
         self.assertEqual(len(edges), 14)
 
+
+class TestGenerator(TestCase):
+
+    def test_location_holder(self):
+        a = Location('location a', (0, 0))
+        a1 = Location('location a', (0, 0))
+        a2 = Location('location a', (0.0002, 0.0001))
+        a3 = Location('location a', (0.002, 0.001))
+        b = Location('location b', (0, 0))
+        b1 = Location('loca tion b', (0, 0))
+        b2 = Location('loca tion b', (0.0002, 0.0001))
+        b3 = Location('loca tion b', (0.002, 0.001))
+        lh = LocationHolder()
+
+        test_a = lh.process(a)
+        test_a1 = lh.process(a1)
+        test_a2 = lh.process(a2)
+        test_a3 = lh.process(a3)
+        self.assertTrue(test_a is a)
+        self.assertFalse(test_a1 is a1)
+        self.assertFalse(test_a2 is a2)
+        self.assertTrue(test_a3 is a3)
+
+        test_b = lh.process(b)
+        test_b1 = lh.process(b1)
+        test_b2 = lh.process(b2)
+        test_b3 = lh.process(b3)
+        self.assertTrue(test_b is b)
+        self.assertFalse(test_b1 is b1)
+        self.assertFalse(test_b2 is b2)
+        self.assertTrue(test_b3 is b3)

@@ -1,6 +1,6 @@
 import datetime
 import logging
-from reisbrein.primitives import Segment, TransportType, Point
+from reisbrein.primitives import Segment, TransportType, Point, Location
 from reisbrein.generator.gen_public import PublicGenerator
 from reisbrein.generator.gen_walk import WalkGenerator
 from reisbrein.generator.gen_car import CarGenerator
@@ -10,10 +10,43 @@ from reisbrein.api.monotchapi import MonotchApi
 logger = logging.getLogger(__name__)
 
 
+class LocationHolder:
+    """Locations created by data from different sources can contain (near) duplicates
+    To prevent this, locations should be created or processed by this LocationHolder,
+    which will eliminate the duplicates.
+    """
+
+    def __init__(self):
+        self.existing_locations = {}  # {name_without_spaces: location}
+
+    def create_location(self, loc_str, gps=None):
+        return self.process(Location(loc_str, gps))
+
+    def process(self, arg):
+        MAX_DISTANCE = 200  # max distance for locations to be possibly counted as identical
+        if type(arg) is list:
+            return [self.process(location) for location in arg]
+        assert isinstance(arg, Location)
+        name_without_spaces = arg.loc_str.replace(' ', '')
+        existing = self.existing_locations.get(name_without_spaces)
+        if existing:
+            if arg.distance_to(existing).meters < MAX_DISTANCE:
+                # if arg != existing:
+                #     logger.info('New location \"' + str(arg) + '\" is not identical but equivalent to
+                #       \"' + str(existing) + '\" (distance = ' + str(arg.distance_to(existing).meters) + ' meters)')
+                return existing  # too similar, discard new location and use existing location
+            if arg.distance_to(existing).meters < 2*MAX_DISTANCE:
+                logger.error('WARNING: New location \"' + str(arg) + '\" is very similar to \"' + str(existing) +
+                             '\" (distance = ' + str(arg.distance_to(existing).meters) + ' meters)')
+        self.existing_locations[name_without_spaces] = arg
+        return arg
+
+
 class Generator:
     def __init__(self):
         self.walk_generator = WalkGenerator()
         self.car_generator = CarGenerator()
+        self.location_holder = LocationHolder()
 
     @staticmethod
     def remove_duplicates(edges):
@@ -50,11 +83,14 @@ class Generator:
         edges[:] = [e for e in edges if e not in duplicates]
 
     def create_edges(self, start, end, fix_time):
+        start.location = self.location_holder.process(start.location)
+        end.location = self.location_holder.process(end.location)
+
         edges = []
 
         routing_api = MonotchApi()
-        public_generator = PublicGenerator(routing_api)
-        parkride_generator = ParkRideGenerator(public_generator)
+        public_generator = PublicGenerator(routing_api, self.location_holder)
+        parkride_generator = ParkRideGenerator(public_generator, self.location_holder)
         pub_request = public_generator.prepare_request(start, end, fix_time)
         park_request = parkride_generator.prepare_request(start, end, fix_time)
 

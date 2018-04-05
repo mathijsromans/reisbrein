@@ -1,9 +1,12 @@
 import datetime
+import logging
 from geopy.distance import vincenty
 from .graph import BasicEdge
 from enum import Enum
 from reisbrein.api.tomtom import TomTomApi
 
+
+logger = logging.getLogger(__name__)
 
 
 class _CaptureEq:
@@ -138,7 +141,7 @@ class Point:
         return hash(tuple(sorted(self.__dict__.items())))
 
     def __str__(self):
-        return str(self.location) + ' @ ' + str(self.time)
+        return str(self.location.full_str()) + ' @ ' + str(self.time)
 
 
 class Segment(BasicEdge):
