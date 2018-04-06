@@ -158,6 +158,7 @@ class PlanView():
                 segments.append(
                     {
                         'obj': segment,
+                        'vehicle': plan.segment_vehicles.get(segment),
                         'travel_time_min': int(segment.time_sec/60),
                         'travel_time_str': PlanView.format_minutes(int(segment.time_sec/60)),
                         'travel_time_percentage': 100*segment.time_sec / time,

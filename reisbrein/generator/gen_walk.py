@@ -5,7 +5,7 @@ from reisbrein.primitives import Segment, TransportType, Point
 from reisbrein.api.weather import WeatherApi
 from reisbrein.api import openrouteserviceapi, yoursapi
 from reisbrein.models import TravelTime
-from .gen_common import FixTime, create_wait_and_move_segments
+from .gen_common import FixTime, create_wait_and_move_segments, get_points
 import logging
 import time
 
@@ -75,24 +75,18 @@ class WalkGenerator:
         return segment, new_point
 
     def do_create_edges(self, start, end, fix_time, edges):
-        edges += create_wait_and_move_segments(self, start, end, fix_time, TransportType.WALK)
+        edges += create_wait_and_move_segments(self, start, end, fix_time, TransportType.WALK, max_time_sec=1800)
         edges += create_wait_and_move_segments(self, start, end, fix_time, TransportType.BIKE,
                                                WalkGenerator.MIN_BIKE_TIME_SEC)
 
         public_types = [TransportType.TRAIN, TransportType.TRAM, TransportType.BUS]
         train_edges = [e for e in edges if e.transport_type in public_types]
-        stops_1 = set([e.from_vertex for e in train_edges])
-        stops_2 = set([e.to_vertex for e in train_edges])
-        for s in stops_1:
-            edges += create_wait_and_move_segments(self, start, s, FixTime.END, TransportType.WALK)
+        for s in get_points(train_edges):
+            edges += create_wait_and_move_segments(self, start, s, FixTime.END, TransportType.WALK, max_time_sec=1800)
             edges += create_wait_and_move_segments(self, start, s, FixTime.END, TransportType.BIKE,
                                                    WalkGenerator.MIN_BIKE_TIME_SEC)
-
-        for s in stops_2:
-            edges += create_wait_and_move_segments(self, s, end, FixTime.START, TransportType.WALK)
-            if WalkGenerator.OV_FIETS_API.has_ovfiets(s.location.loc_str):
-                bike_type = TransportType.BIKE
-                edges += create_wait_and_move_segments(self, s, end, FixTime.START, bike_type,
+            edges += create_wait_and_move_segments(self, s, end, FixTime.START, TransportType.WALK, max_time_sec=1800)
+            edges += create_wait_and_move_segments(self, s, end, FixTime.START, TransportType.BIKE,
                                                    WalkGenerator.MIN_BIKE_TIME_SEC)
 
     @staticmethod

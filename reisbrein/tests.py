@@ -1,11 +1,10 @@
 from datetime import datetime, timedelta
 from django.test import TestCase
 from .graph import Graph, shortest_path, Edge
-from .planner import Planner, DijkstraRouter, recur_map, Plan
-from reisbrein.generator.generator import TestGenerator
-from reisbrein.generator.gen_common import FixTime
+from .planner import Planner, Plan, VehiclePositions
+from reisbrein.generator.gen_common import FixTime, get_locations
 from .views import PlanView
-from reisbrein.primitives import Location, Point, TransportType, Segment, noon_today
+from reisbrein.primitives import Location, Point, TransportType, Segment, noon_today, VehicleType, Vehicle
 from .userpreference import order_and_select
 from .models import UserTravelPreferences
 
@@ -117,45 +116,7 @@ class TestLocation(TestCase):
         self.assertEqual(mid2.gps, (1.25, 3.0))
 
 
-class TestDijkstraRouter(TestCase):
-
-    def test_fixed_generator(self):
-        p = Planner(TestGenerator, DijkstraRouter)
-
-        vertices = []
-        noon = noon_today()
-        for plan in p.solve('a', 'e', noon, FixTime.START):
-            vertices.append([edge.to_vertex for edge in plan.route])
-
-        # [['b', 'c', <reisbrein.planner.Point object at 0x7f8eee966630>],
-        #  [<reisbrein.planner.Point object at 0x7f8eee966630>],
-        #  [<reisbrein.planner.Point object at 0x7f8eee966630>]]
-
-        # self.assertEqual(len(vertices), 3)
-        # self.assertEqual(len(vertices[0]), 3)
-        # self.assertEqual(vertices[0][0], 'b')
-        # self.assertEqual(vertices[0][1], 'c')
-        # self.assertEqual(vertices[0][2].location.loc_str, 'e')
-
-    def test_planner(self):
-        p = Planner(router=DijkstraRouter)
-        vertices = []
-        noon = noon_today()
-        for plan in p.solve(Location('Nijverheidsweg Utrecht'), Location('Voorstraat Utrecht'), noon, FixTime.START):
-            vertices.append([edge.to_vertex for edge in plan.route])
-
-        # print(list(recur_map(str, vertices)))
-        # [['Station: Den Haag HS @ 2017-11-17 12:10:00', 'Station: Groningen Noord @ 2017-11-17 12:40:00',
-        # 'Martinitoren @ 2017-11-17 12:50:00'], ['Station: Den Haag HS @ 2017-11-17 12:10:00',
-        # 'Station: Groningen Noord @ 2017-11-17 12:40:00', 'Martinitoren @ 2017-11-17 12:50:00'], []]
-
-        # self.assertEqual(len(vertices), 2)
-        # self.assertEqual(len(vertices[0]), 1)
-        # self.assertEqual(len(vertices[1]), 1)
-        # self.assertEqual(len(vertices[2]), 1)
-
-
-class TestViews(TestCase):
+class TestViewSimple(TestCase):
 
     def setUp(self):
         self.planner = Planner()
@@ -173,6 +134,13 @@ class TestViews(TestCase):
             for s in p.route:
                 if s.transport_type in (TransportType.BIKE, TransportType.CAR):
                     self.assertNotEqual(s.map_url, '')
+
+
+class TestViewExtra(TestCase):
+
+    def setUp(self):
+        self.planner = Planner()
+
 
     def test_no_short_bike_rides(self):
         noon = noon_today()
@@ -198,6 +166,20 @@ class TestViews(TestCase):
 
 class TestUserPreference(TestCase):
 
+    @staticmethod
+    def create_plan(segments):
+
+        # litter the place with OV-fietsen and cars
+        vehicle_positions = VehiclePositions()
+        for location in get_locations(segments):
+            vehicle_positions.add_vehicle(location, Vehicle(TransportType.BIKE, VehicleType.OVFIETS))
+            vehicle_positions.add_vehicle(location, Vehicle(TransportType.CAR, VehicleType.CAR))
+
+        p = Plan(vehicle_positions)
+        for s in segments:
+            assert p.add_segment(s)
+        return p
+
     def get_plans(self):
         t0 = datetime(year=2000, month=1, day=1)
         points = {
@@ -212,35 +194,35 @@ class TestUserPreference(TestCase):
             'z5': Point('z', t0 + timedelta(hours=6)),
             'z6': Point('z', t0 + timedelta(hours=2, minutes=59)),
         }
-        carplan = Plan(
+        carplan = self.create_plan(
             [
                 Segment(TransportType.CAR, points['a'], points['z1']),
             ]
         )
-        bikeplan = Plan(
+        bikeplan = self.create_plan(
             [
                 Segment(TransportType.BIKE, points['a'], points['z2']),
             ]
         )
-        publicplan1 = Plan(
+        publicplan1 = self.create_plan(
             [
                 Segment(TransportType.WALK, points['a'], points['c']),
                 Segment(TransportType.TRAIN, points['c'], points['z3']),
             ]
         )
-        publicplan2 = Plan(
+        publicplan2 = self.create_plan(
             [
                 Segment(TransportType.WAIT, points['a'], points['a2']),
                 Segment(TransportType.WALK, points['a2'], points['c2']),
                 Segment(TransportType.TRAIN, points['c2'], points['z4']),
             ]
         )
-        walkplan = Plan(
+        walkplan = self.create_plan(
             [
                 Segment(TransportType.WALK, points['a'], points['z5']),
             ]
         )
-        bikeplan2 = Plan(
+        bikeplan2 = self.create_plan(
             [
                 Segment(TransportType.BIKE, points['a'], points['z6']),
             ]

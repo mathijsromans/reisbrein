@@ -68,7 +68,7 @@
                     </span>
                   </span>
                   <br/>
-                  {% if segment.obj.transport_type.name == 'OVFIETS' %}
+                  {% if segment.vehicle and segment.vehicle.vehicle_type.name == 'OVFIETS' %}
                     <img src="{% static 'img/ovfiets.png' %}" height="20px"/>
                   {% endif %}
                   <span class="text-info">

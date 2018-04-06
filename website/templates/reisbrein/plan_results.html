@@ -34,7 +34,7 @@
                    style="width: {{ segment.travel_time_percentage }}%">
                 <span style="font-size: 16px; line-height: 30px;">
                   {% if segment.travel_time_percentage > 5 %}
-                    {% if segment.obj.transport_type.name == 'OVFIETS' %}
+                    {% if segment.vehicle and segment.vehicle.vehicle_type.name == 'OVFIETS' %}
                     <img src="{% static 'img/ovfiets.png' %}" height="18px"/>
                     {% else %}
                     <span class="fa {{ icon }}"></span>

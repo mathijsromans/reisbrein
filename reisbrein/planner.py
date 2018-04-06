@@ -1,4 +1,4 @@
-import copy
+import collections
 import logging
 import time
 from collections import defaultdict
@@ -6,9 +6,10 @@ from datetime import timedelta
 from reisbrein.generator.generator import Generator
 from reisbrein.generator.gen_common import FixTime
 from .graph import Graph, shortest_path
-from .primitives import Point, TransportType
+from .primitives import Point, TransportType, Vehicle, VehicleType
 from .userpreference import order_and_select
 from .models import UserTravelPreferences
+from reisbrein.api.ovfiets import OvFietsStations
 
 logger = logging.getLogger(__name__)
 
@@ -17,71 +18,113 @@ def recur_map(f, data):
     return [not hasattr(x, "__iter__") and f(x) or recur_map(f, x) for x in data]
 
 
+class VehiclePositions:
+    def __init__(self):
+        self.data = collections.defaultdict(set)  # { location : {vehicle1, vehicle2}, ... }
+
+    def __eq__(self, other):
+        return self.data == other.data
+
+    def __ne__(self, other):
+        return not self == other
+
+    def __str__(self):
+        return 'Vehicle positions: <' + str(self.data) + '>'
+
+    def copy(self):
+        new = VehiclePositions()
+
+        # a shallow copy is not enough, a deepcopy is too much...
+        for location in self.data:
+            new.data[location] = self.data[location].copy()
+
+        return new
+
+    def add_vehicle(self, location, vehicle):
+        self.data[location].add(vehicle)
+
+    def apply_segment(self, segment):
+        if not segment.transport_type.needs_vehicle():
+            return None
+        vehicles = self.data[segment.from_vertex.location]
+        try:
+            vehicle = next(v for v in vehicles if v.transport_type == segment.transport_type)
+        except StopIteration as error:
+            raise ValueError from error
+        vehicles.remove(vehicle)
+        if not vehicles:
+            self.data.pop(segment.from_vertex.location)  # attention! needed for a proper __eq__ comparison
+        self.data[segment.to_vertex.location].add(vehicle)
+        return vehicle
+
+
 class Plan():
-    def __init__(self, route):
-        self.route = route
+    def __init__(self, init_vehicle_positions):
+        assert isinstance(init_vehicle_positions, VehiclePositions)
+        self.vehicle_positions = init_vehicle_positions.copy()
+        self.segments = []
+        self.segment_vehicles = {}  # { segment1: vehicle1, ... }
         self.score = 0
         self.travel_time = 0
-        for segment in route:
-            self.travel_time += segment.time_sec
+
+    @property
+    def route(self):
+        return self.segments
+
+    def copy(self):
+        new = Plan(self.vehicle_positions)
+        new.segments = self.segments.copy()
+        new.segment_vehicles = self.segment_vehicles.copy()
+        new.score = self.score
+        new.travel_time = self.travel_time
+        return new
+
+    def add_segment(self, segment):
+        if self.segments and segment.from_vertex != self.segments[-1].to_vertex:
+            return False
+        try:
+            vehicle = self.vehicle_positions.apply_segment(segment)
+        except ValueError:
+            return False
+        self.segments.append(segment)
+        if vehicle:
+            self.segment_vehicles[segment] = vehicle
+        self.travel_time += segment.time_sec
+        return True
 
     def is_round_trip(self):
-        return not self.route or self.route[0].from_vertex.location == self.route[-1].to_vertex.location
+        return not self.segments or self.segments[0].from_vertex.location == self.segments[-1].to_vertex.location
 
-    class VehicleIncosistency(Exception):
+    class VehicleInconsistency(Exception):
         pass
 
-    ''' a used vehicle cannot be used from a different location where it was left '''
-    def get_vehicle_movements(self):
-        vehicles_from_to = {}  # { vehicle_1 : {'from': from_loc, 'to': to_loc), ... }
-        for segment in self.route:
-            vehicle = segment.unique_vehicle
-            if vehicle:
-                if vehicle in vehicles_from_to:
-                    if segment.from_vertex.location != vehicles_from_to[vehicle]['to']:
-                        # a used vehicle cannot be used from a different location where it was left
-                        raise self.VehicleIncosistency()
-                    vehicles_from_to[vehicle]['to'] = segment.to_vertex.location
-                else:
-                    vehicles_from_to[vehicle] = {'from': segment.from_vertex.location, 'to': segment.to_vertex.location}
-        return vehicles_from_to
-
-    def is_legal_partial_plan(self):
-        try:
-            self.get_vehicle_movements()
-        except self.VehicleIncosistency:
-            return False
-        return True
-
-    def is_legal_final_plan(self):
-        try:
-            vehicles_from_to = self.get_vehicle_movements()
-        except self.VehicleIncosistency:
-            return False
-        if self.is_round_trip():
-            for veh, from_to in vehicles_from_to.items():
-                if from_to['from'] != from_to['to']:
-                    # a vehicle must be returned to where it came from
-                    return False
-        return True
+    def is_legal_final_plan(self, init_vehicle_positions):
+        # for a round trip, a vehicle must be returned to where it came from
+        return not self.is_round_trip() or self.vehicle_positions == init_vehicle_positions
 
     def departure_time(self):
-        for s in self.route:
+        for s in self.segments:
             if s.transport_type != TransportType.WAIT:
                 return s.from_vertex.time
 
     def __str__(self):
-        return str(list(map(str, self.route)))
+        return '********* Plan ' + str(self.vehicle_positions) + ' ** ' + str(self.segment_vehicles) + ' ** ' + str(recur_map(str, self.segments))
 
 
 class RichRouter(object):
 
-    def make_plans(self, start, end, edges):
-        from_to_edge_dict = defaultdict(list)
-        for e in edges:
-            # logger.info(str(e) + str(id(e.from_vertex.location)) + '-' + str(id(e.to_vertex.location)))
-            from_to_edge_dict[e.from_vertex].append(e)
-        new_plans = [Plan([edge]) for edge in from_to_edge_dict[start]]
+    @staticmethod
+    def make_plans(start, end, segments, init_vehicle_positions):
+        print('Making plans from ' + str(start) + ' to ' + str(end))
+        from_to_segments_dict = defaultdict(list)  # { location : [segment1, segment2], ... }
+        for e in segments:
+            # logger.info(str(e))
+            from_to_segments_dict[e.from_vertex].append(e)
+        new_plans = []
+        for segment in from_to_segments_dict[start]:
+            p = Plan(init_vehicle_positions)
+            if p.add_segment(segment):
+                new_plans.append(p)
         num_changes = 0
         final_plans = []
         while new_plans:
@@ -96,51 +139,16 @@ class RichRouter(object):
             partial_plans = []
             for p in new_plans:
                 if p.route[-1].to_vertex == end:
-                    if p.is_legal_final_plan():
+                    if p.is_legal_final_plan(init_vehicle_positions):
                         final_plans.append(p)
                 else:
-                    for e in from_to_edge_dict[p.route[-1].to_vertex]:
-                        new_p = Plan(copy.copy(p.route))
-                        new_p.route.append(e)
-                        if new_p.is_legal_partial_plan():
-                            partial_plans.append(new_p)
+                    for e in from_to_segments_dict[p.route[-1].to_vertex]:
+                        new_plan = p.copy()
+                        if new_plan.add_segment(e):
+                            partial_plans.append(new_plan)
             new_plans = partial_plans
         logger.info('Made ' + str(len(final_plans)) + ' plans')
         return final_plans
-
-
-class DijkstraRouter(object):
-
-    def make_plans(self, start, end, edges):
-        graphs = [
-            self.create_graph(edges),
-            self.create_graph(self.exclude(edges, TransportType.BIKE)),
-            self.create_graph(self.exclude(edges, TransportType.TRAIN)),
-        ]
-
-        return [Plan(shortest_path(g, start, end)) for g in graphs]
-
-    @staticmethod
-    def exclude(edges, transport_type):
-        return [e for e in edges if e.transport_type != transport_type ]
-
-    @staticmethod
-    def create_graph(edges):
-
-        vertices = set()
-        for e in edges:
-            vertices.add(e.from_vertex)
-            vertices.add(e.to_vertex)
-
-        G = Graph()
-
-        for v in vertices:
-            G.add_vertex(v)
-
-        for e in edges:
-            G.add_edge(e)
-
-        return G
 
 
 class Planner():
@@ -150,9 +158,10 @@ class Planner():
 
     @staticmethod
     def has_no_double_biking(plan):
-        for index, segment in enumerate(plan.route[:-1]):
-            if plan.route[index].transport_type == TransportType.BIKE and \
-               plan.route[index+1].transport_type == TransportType.BIKE:
+        route_without_waiting = [s for s in plan.route if s.transport_type != TransportType.WAIT]
+        for index, segment in enumerate(route_without_waiting[:-1]):
+            if route_without_waiting[index].transport_type == TransportType.BIKE and \
+               route_without_waiting[index+1].transport_type == TransportType.BIKE:
                 return False
         return True
 
@@ -193,10 +202,21 @@ class Planner():
             end_time = req_time
         start = Point(start_loc, start_time)
         end = Point(end_loc, end_time)
-        edges = self.generator.create_edges(start, end, fix_time)
-        # for e in edges:
-        #     logger.info('Edge: ' + str(e))
-        plans = self.router.make_plans(start, end, edges)
+        segments = self.generator.create_edges(start, end, fix_time)
+        # for s in segments:
+        #     logger.info('Segment: ' + str(s))
+
+        vehicle_positions = VehiclePositions()
+
+        # put a bicycle and car at home...
+        vehicle_positions.add_vehicle(start.location, Vehicle(TransportType.BIKE, VehicleType.BIKE))
+        vehicle_positions.add_vehicle(start.location, Vehicle(TransportType.CAR, VehicleType.CAR))
+
+        # add OV fietsen
+        ov_fiets_stations = OvFietsStations()
+        vehicle_positions = ov_fiets_stations.add_default_ovfiets_positions(vehicle_positions, segments)
+
+        plans = self.router.make_plans(start, end, segments, vehicle_positions)
         plans = list(filter(self.has_no_double_biking, plans))
         order_and_select(plans, user_preferences, fix_time)
         self.remove_unnecessary_waiting(plans, fix_time)

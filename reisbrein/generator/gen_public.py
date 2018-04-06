@@ -1,4 +1,3 @@
-import heapq
 import logging
 from datetime import timedelta, datetime
 from reisbrein.primitives import Segment, TransportType, Point, Location, get_equivalent

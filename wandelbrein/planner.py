@@ -5,11 +5,12 @@ from datetime import timedelta
 from geopy.distance import vincenty
 from reisbrein.generator.generator import Generator
 from reisbrein.generator.gen_common import FixTime
-from reisbrein.primitives import Point, Location, TransportType, Segment
+from reisbrein.primitives import Point, Location, TransportType, Segment, Vehicle, VehicleType
 from reisbrein.userpreference import order_and_select
 from reisbrein.models import UserTravelPreferences
-from reisbrein.planner import RichRouter, Planner
+from reisbrein.planner import RichRouter, Planner, VehiclePositions
 from wandelbrein.models import Trail
+from reisbrein.api.ovfiets import OvFietsStations
 
 logger = logging.getLogger(__name__)
 
@@ -44,7 +45,7 @@ def get_weight(close_to_location, trail):
 
 def get_trail(close_to_location):
     trails = Trail.objects.all()
-    # return trails[5]
+    return trails[5]
     weights = [get_weight(close_to_location, t) for t in trails]
     s = sum(weights)
     if s == 0:
@@ -82,17 +83,27 @@ class WandelbreinPlanner:
         logger.info('hike_end=' + str(hike_end))
         logger.info('end=' + str(end))
 
-        edges = self.generator.create_edges(start, hike_start, FixTime.END)
-        edges += self.generator.create_edges(hike_end, end, FixTime.START)
+        segments = self.generator.create_edges(start, hike_start, FixTime.END)
+        segments += self.generator.create_edges(hike_end, end, FixTime.START)
 
         hiking_segment = Segment(TransportType.WALK, hike_start, hike_end)
         hiking_segment.route_name = trail.title
         hiking_segment.map_url = trail.wandelpagina_url
-        edges.append(hiking_segment)
-        # for e in edges:
+        segments.append(hiking_segment)
+        # for e in segments:
         #     logger.info('Edge: ' + str(e))
 
-        plans = self.router.make_plans(start, end, edges)
+        vehicle_positions = VehiclePositions()
+
+        # put a bicycle and car at home...
+        vehicle_positions.add_vehicle(start.location, Vehicle(TransportType.BIKE, VehicleType.BIKE))
+        vehicle_positions.add_vehicle(start.location, Vehicle(TransportType.CAR, VehicleType.CAR))
+
+        # add OV fietsen
+        ov_fiets_stations = OvFietsStations()
+        vehicle_positions = ov_fiets_stations.add_default_ovfiets_positions(vehicle_positions, segments)
+
+        plans = self.router.make_plans(start, end, segments, vehicle_positions)
         plans = list(filter(Planner.has_no_double_biking, plans))
         order_and_select(plans, user_preferences, None)
         Planner.remove_unnecessary_waiting(plans, FixTime.START)

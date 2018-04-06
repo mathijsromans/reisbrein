@@ -23,6 +23,9 @@ class _CaptureEq:
             self.match = other
         return result
 
+    def __ne__(self, other):
+        return not self == other
+
     def __hash__(self):
         return hash(self.obj)
 
@@ -59,6 +62,11 @@ class TransportType(Enum):
     TRAM = 6
     OVFIETS = 7
     INVISIBLE_WAIT = 8
+
+    def needs_vehicle(self):
+        return self == self.BIKE or\
+               self == self.CAR or\
+               self == self.OVFIETS
 
     def to_dutch(self):
         translate = {
@@ -114,11 +122,14 @@ class Location:
             return self.__dict__ == other.__dict__
         return NotImplemented
 
+    def __ne__(self, other):
+        return not self == other
+
     def __hash__(self):
         """Overrides the default implementation"""
         return hash(tuple(sorted(self.__dict__.items())))
 
-    def __str__(self):
+    def __repr__(self):
         return self.loc_str
 
     def full_str(self):
@@ -136,20 +147,44 @@ class Point:
             return self.__dict__ == other.__dict__
         return NotImplemented
 
+    def __ne__(self, other):
+        return not self == other
+
     def __hash__(self):
         """Overrides the default implementation"""
         return hash(tuple(sorted(self.__dict__.items())))
 
     def __str__(self):
-        return str(self.location.full_str()) + ' @ ' + str(self.time)
+        return str(self.location) + ' @ ' + str(self.time)
+
+
+class VehicleType(Enum):
+    CAR = 0
+    BIKE = 1
+    OVFIETS = 2
+
+    def __str__(self):
+        translate = {
+            VehicleType.CAR: 'Car',
+            VehicleType.BIKE: 'Bike',
+            VehicleType.OVFIETS: 'OVFiets',
+        }
+        try:
+            return translate[self]
+        except KeyError:
+            return ''
+
+
+class Vehicle:
+    def __init__(self, transport_type, vehicle_type):
+        self.transport_type = transport_type
+        self.vehicle_type = vehicle_type
+
+    def __repr__(self):
+        return 'Vehicle ' + str(id(self)) + ' ' + str(self.vehicle_type)
 
 
 class Segment(BasicEdge):
-
-    # unique vehicles
-    my_car = 'my_car'
-    my_bike = 'my_bike'
-    my_ovfiets = 'my_ovfiets'
 
     def __init__(self, transport_type, start, end):
         super(Segment, self).__init__(start, end, )
@@ -160,13 +195,6 @@ class Segment(BasicEdge):
         self.map_url = ''
         self.route_name = ''
         self.platform_code = ''
-        self.unique_vehicle = None
-        if transport_type == TransportType.CAR:
-            self.unique_vehicle = Segment.my_car
-        elif transport_type == TransportType.OVFIETS: # todo: fix bike/ovfiets confusion
-            self.unique_vehicle = Segment.my_bike
-        elif transport_type == TransportType.BIKE: # todo: fix bike/ovfiets confusion
-            self.unique_vehicle = Segment.my_bike
 
     @property
     def time_sec(self):
@@ -188,6 +216,6 @@ class Segment(BasicEdge):
     def __lt__(self, other):
         return self.time < other.time_sec
 
-    def __str__(self):
+    def __repr__(self):
         return '['+str(self.transport_type)+ ' ' + str(self.weather) + '] '+str(self.from_vertex)+' --> '+str(self.to_vertex)
 
