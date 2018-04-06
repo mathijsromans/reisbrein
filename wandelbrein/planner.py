@@ -45,7 +45,7 @@ def get_weight(close_to_location, trail):
 
 def get_trail(close_to_location):
     trails = Trail.objects.all()
-    return trails[5]
+    # return trails[5]
     weights = [get_weight(close_to_location, t) for t in trails]
     s = sum(weights)
     if s == 0:
